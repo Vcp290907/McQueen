@@ -1,0 +1,17 @@
+{
+  "port": "COM5",
+  "configuration": "cpu=atmega2560",
+  "output": "build",
+  "board": "arduino:avr:mega",
+  "programmer": "Arduino as ISP",
+  "useProgrammer": false,
+  "configurationRequired": true,
+  "monitorPortSettings": {
+    "port": "COM5",
+    "baudRate": 115200,
+    "lineEnding": "\r\n",
+    "dataBits": 8,
+    "parity": "none",
+    "stopBits": "one"
+  }
+}
