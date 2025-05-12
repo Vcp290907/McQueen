@@ -1,0 +1,127 @@
+[
+  {
+    "Sourcefile": null,
+    "Include": "",
+    "Includepath": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino"
+  },
+  {
+    "Sourcefile": null,
+    "Include": "",
+    "Includepath": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\mega"
+  },
+  {
+    "Sourcefile": "c:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\sketch\\V4.ino.cpp",
+    "Include": "EEPROM.h",
+    "Includepath": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\EEPROM\\src"
+  },
+  {
+    "Sourcefile": "c:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\sketch\\V4.ino.cpp",
+    "Include": "Servo.h",
+    "Includepath": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src"
+  },
+  {
+    "Sourcefile": "c:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\sketch\\V4.ino.cpp",
+    "Include": "Adafruit_TCS34725softi2c.h",
+    "Includepath": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Adafruit_TCS34725_Soft_i2c"
+  },
+  {
+    "Sourcefile": "c:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\sketch\\V4.ino.cpp",
+    "Include": "SoftwareWire.h",
+    "Includepath": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\SoftwareWire"
+  },
+  {
+    "Sourcefile": "c:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\sketch\\V4.ino.cpp",
+    "Include": "Wire.h",
+    "Includepath": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\Wire\\src"
+  },
+  {
+    "Sourcefile": "c:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\sketch\\V4.ino.cpp",
+    "Include": "MPU6050_light.h",
+    "Includepath": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\MPU6050_light\\src"
+  },
+  {
+    "Sourcefile": "c:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\sketch\\V4.ino.cpp",
+    "Include": "SharpIR.h",
+    "Includepath": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\SharpIR-master"
+  },
+  {
+    "Sourcefile": "c:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\sketch\\V4.ino.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\avr\\Servo.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\mbed\\Servo.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\megaavr\\Servo.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\nrf52\\Servo.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\renesas\\Servo.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\sam\\Servo.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\samd\\Servo.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\stm32f4\\Servo.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\xmc\\Servo.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Adafruit_TCS34725_Soft_i2c\\Adafruit_TCS34725softi2c.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\SoftwareWire\\SoftwareWire.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\Wire\\src\\Wire.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\Wire\\src\\utility\\twi.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\MPU6050_light\\src\\MPU6050_light.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\SharpIR-master\\SharpIR.cpp",
+    "Include": "",
+    "Includepath": null
+  }
+]
