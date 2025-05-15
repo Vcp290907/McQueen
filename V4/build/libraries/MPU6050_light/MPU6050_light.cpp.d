@@ -1,4 +1,4 @@
-c:\Users\VCP2909\Desktop\Carrinho_OBR\Programação\ OBR_Arduino\2025\V4\McQueen\V4\build\libraries\MPU6050_light\MPU6050_light.cpp.o: \
+C:\Users\VCP2909\Desktop\Carrinho_OBR\Programação\ OBR_Arduino\2025\V4\McQueen\V4\build\libraries\MPU6050_light\MPU6050_light.cpp.o: \
  C:\Users\VCP2909\Documents\Arduino\libraries\MPU6050_light\src\MPU6050_light.cpp \
  C:\Users\VCP2909\Documents\Arduino\libraries\MPU6050_light\src\MPU6050_light.h \
  C:\Users\VCP2909\AppData\Local\Arduino15\packages\arduino\hardware\avr\1.8.6\cores\arduino/Arduino.h \
