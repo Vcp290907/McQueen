@@ -84,13 +84,13 @@ int pequenaCurva = 10;
 int veloCurva90 = 40;
 
 int grausCurva90 = 85;
-int graqusCurva180 = 175;
+int graqusCurva180 = 165;
 
 int anguloAtual = 0;
 
 int verificacaoCurvaVerde = 150; //Pulinho para ver se é curva verde
 int erroGiro = 0;
-int tempoDepoisDoVerde = 750;
+int tempoDepoisDoVerde90 = 1500;
 int delayCurvasverde = 0; //Verificar esse valor e onde ele é usado
 int tempoAntesCurva90 = 0;
 int tempoDepoisCurva90 = 750;
@@ -123,11 +123,11 @@ int minCNoCinza = 1000;
 int maxCNoCinza = 1350;
 
 // Vermelho
-int minLuxVermelho = 40;
-int maxLuxVermelho = 90;
-int minCVermelho = 375;
-int maxCVermelho = 550;
-int diferencaDasCoresVermelho = 75;
+int minLuxVermelho = 100;
+int maxLuxVermelho = 150;
+int minCVermelho = 400;
+int maxCVermelho = 650;
+int diferencaDasCoresVermelho = 40;
 
 // Outros
 int diferencaDasCores = 15;
@@ -167,9 +167,9 @@ void verificaVermelho() {
   int luu1 = (int)lux1;
   int luu2 = (int)lux2;
 
-  bool vermelhoDireita = (r1 > g1 && r1 > b1 && r1 - g1 > diferencaDasCoresVermelho && r1 - b1 > diferencaDasCoresVermelho && 
+  bool vermelhoDireita = (r1 > g1 && r1 > b1 && r1 - g1 > diferencaDasCoresVermelho && 
                           cc1 >= minCVermelho && cc1 <= maxCVermelho && luu1 >= minLuxVermelho && luu1 <= maxLuxVermelho);
-  bool vermelhoEsquerda = (r2 > g2 && r2 > b2 && r2 - g2 > diferencaDasCoresVermelho && r2 - b2 > diferencaDasCoresVermelho && 
+  bool vermelhoEsquerda = (r2 > g2 && r2 > b2 && r2 - g2 > diferencaDasCoresVermelho && 
                           cc2 >= minCVermelho && cc2 <= maxCVermelho && luu2 >= minLuxVermelho && luu2 <= maxLuxVermelho);
 
   if (vermelhoDireita || vermelhoEsquerda) {
@@ -330,14 +330,15 @@ void giroVerde() {
     Serial.print("Abs(cc1 - cc2) < subtracaoSensoresCor: "); Serial.println(abs(cc1 - cc2) < subtracaoSensoresCor);
 
     if (verdeAmbos) {
-      Serial.println("VERDE!! Curva 180°");
-      anguloReto = retornoAnguloZ();
+      //anguloReto = retornoAnguloZ();
+
+      Serial.print("VERDE!! Curva 180°"); Serial.print(" | Angulo Reto: "); Serial.print(anguloReto); Serial.print(" | Angulo Atual: "); Serial.println(retornoAnguloZ());
       motorE.write(veloBaseDir - pequenaCurva);
       motorD.write(veloBaseDir - pequenaCurva);
       tocar_buzzer(1000, 3, 100);
       while (anguloReto - graqusCurva180 <= retornoAnguloZ()) {
         giro.update();
-        Serial.print("VERDE!! Fazendo curva 180° | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - 180);
+        Serial.print("VERDE!! Fazendo curva 180° | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - graqusCurva180);
       }
 
       delay(tempoDepoisDoVerde180);
@@ -351,8 +352,6 @@ void giroVerde() {
 
       delay(delayCurvasverde);
 
-      motorE.write(90);
-      motorD.write(90);
       anguloReto = retornoAnguloZ();
       motorE.write(veloBaseDir);
       motorD.write(veloBaseDir);
@@ -364,10 +363,7 @@ void giroVerde() {
       motorE.write(veloBaseEsq);
       motorD.write(veloBaseDir);
 
-      delay(tempoDepoisDoVerde);
-
-      motorE.write(90);
-      motorD.write(90);
+      delay(tempoDepoisDoVerde90);
 
     } else if (verdeEsquerda) {
       Serial.println("Verde na Esquerda!");
@@ -376,9 +372,6 @@ void giroVerde() {
 
       delay(delayCurvasverde);
 
-      motorE.write(90);
-      motorD.write(90);
-      sl = lerSensoresLinha();
       anguloReto = retornoAnguloZ();
       motorE.write(veloBaseEsq);
       motorD.write(veloBaseEsq);
@@ -390,48 +383,43 @@ void giroVerde() {
       motorE.write(veloBaseEsq);
       motorD.write(veloBaseDir);
 
-      delay(tempoDepoisDoVerde);
-
-      motorE.write(90);
-      motorD.write(90);
+      delay(tempoDepoisDoVerde90);
     }
   }
 }
 
 //Revisar
 void correcao() {
-
   sl = lerSensoresLinha();
   if(sl[0] == 0 || sl[1] == 0 || sl[2] == 0 || sl[3] == 0 || sl[4] == 0){
     return;
   }else{
-    // Serial.print("Caiu na correção | AnguloReto: "); Serial.print(anguloReto);
-    // Serial.print(" | AnguloAtual: "); Serial.println(retornoAnguloZ());
-      int anguloAtual = retornoAnguloZ();
-      if (anguloReto - erro > anguloAtual) {
-        while (anguloReto - erro > retornoAnguloZ()) {
-          verificaVermelho();
-          motorE.write(100); // Gira levemente para a esquerda
-          motorD.write(90);
-          sl = lerSensoresLinha();
-          if (sl[0] == 0 || sl[1] == 0 || sl[3] == 0 || sl[4] == 0) return;
-        }
-      }
-      else if (anguloReto + erro < anguloAtual) {
-        while (anguloReto + erro < retornoAnguloZ()) {
-          verificaVermelho();
-          motorE.write(90);
-          motorD.write(80); // Gira levemente para a direita
-          sl = lerSensoresLinha();
-          if (sl[0] == 0 || sl[1] == 0 || sl[3] == 0 || sl[4] == 0) return;
-        }
-      }
-      else if (abs(anguloReto - anguloAtual) <= erro) {
-        motorE.write(veloBaseEsq);
-        motorD.write(veloBaseDir);
+    int anguloAtual = retornoAnguloZ();
+    if (anguloReto - erro > anguloAtual) {
+      while (anguloReto - erro > retornoAnguloZ()) {
+        verificaVermelho();
+        motorE.write(100);
+        motorD.write(90);
+        sl = lerSensoresLinha();
         if (sl[0] == 0 || sl[1] == 0 || sl[3] == 0 || sl[4] == 0) return;
       }
     }
+    else if (anguloReto + erro < anguloAtual) {
+      while (anguloReto + erro < retornoAnguloZ()) {
+        verificaVermelho();
+        motorE.write(90);
+        motorD.write(80);
+        sl = lerSensoresLinha();
+        if (sl[0] == 0 || sl[1] == 0 || sl[3] == 0 || sl[4] == 0) return;
+      }
+    }
+    else if (abs(anguloReto - anguloAtual) <= erro) {
+      verificaVermelho();
+      motorE.write(veloBaseEsq);
+      motorD.write(veloBaseDir);
+      if (sl[0] == 0 || sl[1] == 0 || sl[3] == 0 || sl[4] == 0) return;
+    }
+  }
 }
 
 //Alterar pra o sensor infravermelho
@@ -648,7 +636,7 @@ void andarReto() {
 
       motorE.write(veloBaseEsq);
       motorD.write(veloBaseEsq);
-      while (((anguloReto + grausCurva90) >= retornoAnguloZ()) || sl[2] == 0) {
+      while (((anguloReto + grausCurva90) >= retornoAnguloZ()) || sl[2] == 1) {
         giro.update();
         sl = lerSensoresLinha();
         Serial.print("Fazendo curva para a esquerda | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto + 90);
@@ -687,7 +675,7 @@ void andarReto() {
 
       motorE.write(veloBaseDir);
       motorD.write(veloBaseDir);
-      while (((anguloReto - grausCurva90) <= retornoAnguloZ()) || sl[2] == 0) {
+      while (((anguloReto - grausCurva90) <= retornoAnguloZ()) || sl[2] == 1) {
         giro.update();
         sl = lerSensoresLinha();
         Serial.print("Fazendo curva para a direita | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - 90);
@@ -711,14 +699,14 @@ void andarReto() {
       Serial.println("Saiu do principal, esquerda");
       motorE.write(veloBaseEsq);
       motorD.write(90);
-      trava = true;
+      trava = false;
       break;
 
     case 0b11101: // Saiu do principal, direita
       Serial.println("Saiu do principal, direita");
       motorE.write(90);
       motorD.write(veloBaseDir);
-      trava = true;
+      trava = false;
       break;
 
     case 0b11111: // Branco, final ou resgate
@@ -1034,14 +1022,14 @@ void setup() {
   EEPROM.get(EEPROM_MAX_C_VERDE, maxCVerde);
   EEPROM.get(EEPROM_DIFERENCA_CORES, diferencaDasCores);
   
-  tocar_buzzer(750, 4, 125);
+  tocar_buzzer(750, 3, 125);
 }
 
 //******************************************************************************
 //*                                                                            *
 //*                                Void Loop                                   *
 //*                                                                            *
-//******************************************************************************
+//******************************************************'************************
 
 void loop() {
   //verificaVermelho();
