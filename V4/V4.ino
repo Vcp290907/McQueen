@@ -69,7 +69,7 @@ static int valores[5];
 uint16_t r1, g1, b1, c1, lux1, r2, g2, b2, c2, lux2;
 long duration1, distance1, duration2, distance2;
 
-int erro = 2;
+int erro = 1;
 int anguloRampaSubida, anguloRampaDescida, anguloDoReto, anguloReto;
 int* sl;
 boolean trava = false;
@@ -408,33 +408,23 @@ void giroVerde() {
 //Revisar
 void correcao() {
   sl = lerSensoresLinha();
-  if(sl[0] == 0 || sl[1] == 0 || sl[2] == 0 || sl[3] == 0 || sl[4] == 0){
+  if (sl[0] == 0 || sl[1] == 0 || sl[2] == 0 || sl[3] == 0 || sl[4] == 0) {
     return;
-  }else{
-    // int anguloAtual = retornoAnguloZ();
+  } else {
     if (anguloReto - erro > anguloAtual) {
-      while (anguloReto - erro > retornoAnguloZ()) {
-        verificaVermelho();
-        motorE.write(100);
-        motorD.write(90);
-        sl = lerSensoresLinha();
-        if (sl[0] == 0 || sl[1] == 0 || sl[3] == 0 || sl[4] == 0) return;
-      }
+      verificaVermelho();
+      motorE.write(100);
+      motorD.write(90);
     }
     else if (anguloReto + erro < anguloAtual) {
-      while (anguloReto + erro < retornoAnguloZ()) {
-        verificaVermelho();
-        motorE.write(90);
-        motorD.write(80);
-        sl = lerSensoresLinha();
-        if (sl[0] == 0 || sl[1] == 0 || sl[3] == 0 || sl[4] == 0) return;
-      }
+      verificaVermelho();
+      motorE.write(90);
+      motorD.write(80);
     }
     else if (abs(anguloReto - anguloAtual) <= erro) {
       verificaVermelho();
       motorE.write(veloBaseEsq);
       motorD.write(veloBaseDir);
-      if (sl[0] == 0 || sl[1] == 0 || sl[3] == 0 || sl[4] == 0) return;
     }
   }
 }
@@ -613,8 +603,8 @@ static bool estavaDesalinhado = true;
 
 void andarReto() {
   giro.update();
-
   sl = lerSensoresLinha();
+
   int combinacaoSensores = sl[0] * 16 + sl[1] * 8 + sl[2] * 4 + sl[3] * 2 + sl[4];
 
   switch (combinacaoSensores) {
@@ -625,7 +615,7 @@ void andarReto() {
 
       // Integral
       erroI += erroP;
-      erroI = constrain(erroI, -100, 100); // evita acúmulo excessivo
+      erroI = constrain(erroI, -100, 100);
 
       // Derivativo
       erroD = erroP - erroAnterior;
@@ -633,7 +623,7 @@ void andarReto() {
 
       // PID
       ajuste = Kp * erroP + Ki * erroI + Kd * erroD;
-      ajuste = abs(ajuste); // ajuste sempre positivo
+      ajuste = abs(ajuste);
       ajuste = constrain(ajuste, 0, 40);
 
       if (erroP > 0) {
@@ -752,7 +742,6 @@ void andarReto() {
       motorE.write(90);
       motorD.write(90);
       Serial.println("Início da pista, ou encruzilhada");
-      // anguloReto = retornoAnguloZ();
       giroVerde();
       break;
 
