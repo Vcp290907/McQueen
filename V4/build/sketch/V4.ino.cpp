@@ -36,9 +36,9 @@ boolean modoConfig = false;
 
 #define buzzer 32
 
-#define SIF A0
+#define SIF A4
 #define SID A2
-#define SIE A4
+#define SIE A0
 
 #define model1 1080
 #define model2 1080
@@ -71,7 +71,7 @@ static int valores[5];
 uint16_t r1, g1, b1, c1, lux1, r2, g2, b2, c2, lux2;
 long duration1, distance1, duration2, distance2;
 
-int erro = 2;
+int erro = 1;
 int anguloRampaSubida, anguloRampaDescida, anguloDoReto, anguloReto;
 int* sl;
 boolean trava = false;
@@ -87,7 +87,7 @@ int pequenaCurvaLadoR = 5;
 int veloCurva90 = 40;
 
 int grausCurva90 = 90;
-int graqusCurva180 = 165;
+int graqusCurva180 = 175;
 
 int anguloAtual = 0;
 
@@ -147,55 +147,60 @@ float erroI = 0;
 float erroD = 0;
 int ajuste = 0;
 
+//Desvio OBJETO
+int distanciaDesvio = 10;
+int delayCurva1 = 4;
+int delayCurva2 = 8;
+int delayMeio = 1;
 //************************************************************************
 //*                                                                      *
 //*                              Funções                                 *
 //*                                                                      *
 //************************************************************************
 
-#line 154 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 159 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void tocar_buzzer(int freque, int unidades, int espera);
-#line 164 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 169 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 int * lerSensoresLinha();
-#line 171 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 176 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void verificaVermelho();
-#line 200 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 205 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 bool lerVerde1();
-#line 269 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 274 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void lerCinza();
-#line 283 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
-int retornoAnguloZ();
 #line 288 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
-int retornoAnguloY();
+int retornoAnguloZ();
 #line 293 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+int retornoAnguloY();
+#line 298 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void giroVerde();
-#line 409 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 419 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void correcao();
-#line 443 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
-int retornoSensorFrente();
-#line 448 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
-void ultrasonico();
-#line 614 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 446 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+void correcaoObjeto();
+#line 464 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+void desvioObjeto();
+#line 559 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void andarReto();
-#line 887 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 834 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 int retornoSensoresCor();
-#line 920 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 867 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void retornoGiroscopio();
-#line 941 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 888 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void retornoSensoresLinha();
-#line 949 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 896 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void lerInfravermelho();
-#line 960 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 907 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void processarComandoSerial();
-#line 1064 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1011 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void printEEPROMValues();
-#line 1073 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1020 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void exibirMenu();
-#line 1093 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1040 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void setup();
-#line 1149 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1096 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void loop();
-#line 154 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 159 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void tocar_buzzer(int freque, int unidades, int espera){
   int i = 0;
   for (i; i < unidades; i++) {
@@ -397,12 +402,14 @@ void giroVerde() {
         Serial.print("VERDE!! Fazendo curva 180° | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - graqusCurva180);
       }
 
-      delay(tempoDepoisDoVerde180);
       motorE.write(veloBaseEsq);
       motorD.write(veloBaseDir);
 
+      delay(tempoDepoisDoVerde180);
+
       anguloReto = anguloReto - graqusCurva180;
       erroI = 0;
+
     } else if (verdeDireita) {
       Serial.println("Verde na Direita!");
       motorE.write(veloBaseEsq);
@@ -421,6 +428,7 @@ void giroVerde() {
       motorD.write(veloBaseDir);
 
       delay(tempoDepoisDoVerde90);
+
       anguloReto = anguloReto - grausCurva90;
       erroI = 0;
 
@@ -443,6 +451,7 @@ void giroVerde() {
       motorD.write(veloBaseDir);
 
       delay(tempoDepoisDoVerde90);
+
       anguloReto = anguloReto + grausCurva90;
       erroI = 0;
 
@@ -450,216 +459,152 @@ void giroVerde() {
   }
 }
 
-//Revisar
+// int anguloCorrecao = 0;
+
 void correcao() {
   sl = lerSensoresLinha();
-  if(sl[0] == 0 || sl[1] == 0 || sl[2] == 0 || sl[3] == 0 || sl[4] == 0){
+  anguloAtual = retornoAnguloZ();
+  if (sl[0] == 0 || sl[1] == 0 || sl[2] == 0 || sl[3] == 0 || sl[4] == 0) {
     return;
-  }else{
-    // int anguloAtual = retornoAnguloZ();
+  } else {
     if (anguloReto - erro > anguloAtual) {
-      while (anguloReto - erro > retornoAnguloZ()) {
-        verificaVermelho();
-        motorE.write(100);
-        motorD.write(90);
-        sl = lerSensoresLinha();
-        if (sl[0] == 0 || sl[1] == 0 || sl[3] == 0 || sl[4] == 0) return;
-      }
+      verificaVermelho();
+      motorE.write(100);
+      motorD.write(90);
+      Serial.println("Correção1");
     }
     else if (anguloReto + erro < anguloAtual) {
-      while (anguloReto + erro < retornoAnguloZ()) {
-        verificaVermelho();
-        motorE.write(90);
-        motorD.write(80);
-        sl = lerSensoresLinha();
-        if (sl[0] == 0 || sl[1] == 0 || sl[3] == 0 || sl[4] == 0) return;
-      }
+      verificaVermelho();
+      motorE.write(90);
+      motorD.write(80);
+      Serial.println("Correção2");
     }
     else if (abs(anguloReto - anguloAtual) <= erro) {
       verificaVermelho();
       motorE.write(veloBaseEsq);
       motorD.write(veloBaseDir);
-      if (sl[0] == 0 || sl[1] == 0 || sl[3] == 0 || sl[4] == 0) return;
+      Serial.println("Correção3");
     }
   }
 }
 
-//Alterar pra o sensor infravermelho
-int retornoSensorFrente(){
-  return 30;
+void correcaoObjeto() {
+  if (anguloReto - erro > anguloReto) {
+    motorE.write(100);
+    motorD.write(90);
+    Serial.println("Objeto Correção1");
+  }
+  else if (anguloReto + erro < anguloReto) {
+    motorE.write(90);
+    motorD.write(80);
+    Serial.println("Objeto Correção2");
+  }
+  else if (abs(anguloReto - anguloReto) <= erro) {
+    motorE.write(veloBaseEsq + veloCurva90);
+    motorD.write(veloBaseDir - veloCurva90);
+    Serial.println("Objeto Correção3");
+  }
 }
 
-//Alterar para os sensores infravermelho
-void ultrasonico(){
-  Serial.println("Ultrasonico");
-  if(retornoSensorFrente() == 7){//MUDAR O 1 para 7 e arrumar os angulos
-    Serial.println("Sim");
-    motorE.write(90);
-    motorD.write(90);
-    giro.update();
-    Serial.print("Distância frente: "); Serial.println(retornoSensorFrente());
+void desvioObjeto() {
+  if (SI_Frente.distance() < distanciaDesvio) {
 
-    //anguloReto = retornoAnguloZ();
+    //*************************/
+    // Curva para a esquerda 1
+    //*************************/
 
-    while(anguloReto - 84 < retornoAnguloZ()){//Primeira curva, direita
+    motorE.write(veloBaseEsq);
+    motorD.write(veloBaseEsq);
+
+    while (((anguloReto + grausCurva90) >= retornoAnguloZ())) {
       giro.update();
-      motorE.write(180);
-      motorD.write(180);
+      Serial.print("OBJETO 1 Fazendo curva para a esquerda | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto + 90);
     }
-    motorE.write(90);
-    motorD.write(90);
-    Serial.print("AnguloReto = "); Serial.print(anguloReto); Serial.print(" AnguloZ = "); Serial.println(retornoAnguloZ());
-    giro.update();
-    Serial.println("Andando reto");
-    giro.update();
+    motorE.write(veloBaseEsq + veloCurva90);
+    motorD.write(veloBaseDir - veloCurva90);
 
-    motorE.write(180);
-    motorD.write(0);
-    //delay com for pra ficar melhor
-    for(int i =0;i<20;i++){//anda reto por 2 segundos
-      Serial.print("Andando reto: "); Serial.println(i);
-      giro.update();
-      delay(100);
-      giro.update();
-    }
-    motorE.write(90);
-    motorD.write(90);
-    giro.update();
+    anguloReto = anguloReto + grausCurva90;
     
-    anguloReto = retornoAnguloZ(); 
-    Serial.print("Segunda curva, esquerda"); Serial.print(" Objetivo: "); Serial.println(anguloReto + 85);
-    Serial.print("Angulo reto = "); Serial.print(anguloReto); Serial.print(" Angulo Atual: "); Serial.println(retornoAnguloZ());
-    while(anguloReto + 85 > retornoAnguloZ()){//Segundo curva, esquerda
-      giro.update();
-      motorE.write(45);
-      motorD.write(45);
+    unsigned long startTime = millis();
+    while (millis() - startTime < delayCurva1 * 1000) {
+      Serial.print("Aguardando curva 1 | Tempo decorrido: "); Serial.println(millis() - startTime);
+      Serial.print("Tempo restante: "); Serial.println((delayCurva1 * 1000) - (millis() - startTime));
+      correcaoObjeto();
     }
-    motorE.write(90);
-    motorD.write(90);
-    giro.update();
 
-    motorE.write(180);
-    motorD.write(0);
+    //************************/
+    // Curva para a direita 1
+    //************************/
 
-    for(int i =0;i<35;i++){//anda reto por 4, ou para de achar linha
+    Serial.println("Curva para a direita 1");
+
+    motorE.write(veloBaseDir);
+    motorD.write(veloBaseDir);
+    while (((anguloReto - grausCurva90) <= retornoAnguloZ())) {
+      giro.update();
+      Serial.print("OBJETO 2 Fazendo curva para a direita | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - 90);
+    }
+    motorE.write(veloBaseEsq + veloCurva90);
+    motorD.write(veloBaseDir - veloCurva90);
+
+    anguloReto = anguloReto - grausCurva90;
+
+    startTime = millis();
+    while (millis() - startTime < delayCurva2 * 1000) {
+      correcaoObjeto();
+    }
+
+    //************************/
+    // Curva para a direita 2
+    //************************/
+
+    motorE.write(veloBaseDir);
+    motorD.write(veloBaseDir);
+    while (((anguloReto - grausCurva90) <= retornoAnguloZ())) {
+      giro.update();
+      Serial.print("OBJETO 3 Fazendo curva para a direita | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - 90);
+    }
+    motorE.write(veloBaseEsq + veloCurva90);
+    motorD.write(veloBaseDir - veloCurva90);
+
+    anguloReto = anguloReto - grausCurva90;
+    
+    sl = lerSensoresLinha();
+    while (sl[2] == 1) {
+      correcaoObjeto();
       sl = lerSensoresLinha();
-      giro.update();
-      if(sl[0]==0 || sl[1]==0 || sl[2]==0 || sl[3]==0 || sl[4]==0 || sl[5]==0){
-        giro.update();
-        motorE.write(180);
-        motorD.write(0);
-
-        for(int l=0;l<7;l++){//Pulo pra frente de 0.7segundos
-          giro.update();
-          delay(100);
-          giro.update();
-        }
-
-        anguloReto = retornoAnguloZ();
-        while(anguloReto - 85 < retornoAnguloZ()){//Curva direita, se tiver linha
-          giro.update();
-          motorE.write(125);
-          motorD.write(125);
-        }
-        giro.update();
-        Serial.println("Voltando 1");
-        return;
-      }
-      giro.update();
-      delay(100);
-      giro.update();
     }
+    motorE.write(veloBaseEsq);
+    motorD.write(veloBaseDir);
 
-    anguloReto = retornoAnguloZ(); 
-    Serial.print("Terceira curva, esquerda"); Serial.print(" Objetivo: "); Serial.println(anguloReto + 85);
-    Serial.print("Angulo reto = "); Serial.print(anguloReto); Serial.print(" Angulo Atual: "); Serial.println(retornoAnguloZ());
-    while(anguloReto + 85 > retornoAnguloZ()){//Terceira curva, esquerda
+    delay(delayMeio*1000);
+
+    //************************/
+    // Curva para a esquerda 2
+    //************************/
+
+    motorE.write(veloBaseEsq);
+    motorD.write(veloBaseEsq);
+
+    while (((anguloReto + grausCurva90) >= retornoAnguloZ())) {
       giro.update();
-      motorE.write(45);
-      motorD.write(45);
+      Serial.print("OBJETO 4 Fazendo curva para a esquerda | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto + 90);
     }
-    motorE.write(90);
-    motorD.write(90);
+    motorE.write(veloBaseEsq);
+    motorD.write(veloBaseDir);
 
-    motorE.write(180);
-    motorD.write(0);
-    for(int i =0;i<40;i++){//anda reto por 4, ou para de achar linha
-      sl = lerSensoresLinha();
-      giro.update();
-      if(sl[0]==0 || sl[1]==0 || sl[2]==0 || sl[3]==0 || sl[4]==0 || sl[5]==0){
-        giro.update();
-        motorE.write(180);
-        motorD.write(0);
+    anguloReto = anguloReto + grausCurva90;
 
-        for(int l=0;l<7;l++){//Pulo pra frente de 0.7segundos
-          giro.update();
-          delay(100);
-          giro.update();
-        }
-
-        anguloReto = retornoAnguloZ();
-        while(anguloReto - 85 < retornoAnguloZ()){//Curva direita, se tiver linha
-          giro.update();
-          motorE.write(125);
-          motorD.write(125);
-        }
-        giro.update();
-        Serial.println("Voltando 2");
-        return;
-      }
-      giro.update();
-      delay(100);
-      giro.update();
-    }
-
-    anguloReto = retornoAnguloZ(); 
-
-    Serial.print("Quarta curva, esquerda"); Serial.print(" Objetivo: "); Serial.println(anguloReto + 85);
-    Serial.print("Angulo reto = "); Serial.print(anguloReto); Serial.print(" Angulo Atual: "); Serial.println(retornoAnguloZ());
-    while(anguloReto + 85 > retornoAnguloZ()){//Quarta curva, esquerda
-      giro.update();
-      motorE.write(45);
-      motorD.write(45);
-    }
-    motorE.write(180);
-    motorD.write(0);
-    for(int i =0;i<40;i++){//anda reto por 4, ou para de achar linha
-      sl = lerSensoresLinha();
-      giro.update();
-      if(sl[0]==0 || sl[1]==0 || sl[2]==0 || sl[3]==0 || sl[4]==0 || sl[5]==0){
-        giro.update();
-        motorE.write(180);
-        motorD.write(0);
-
-        for(int l=0;l<7;l++){//Pulo pra frente de 0.7segundos
-          giro.update();
-          delay(100);
-          giro.update();
-        }
-
-        anguloReto = retornoAnguloZ();
-        while(anguloReto - 85 < retornoAnguloZ()){//Curva direita, se tiver linha
-          giro.update();
-          motorE.write(125);
-          motorD.write(125);
-        }
-        giro.update();
-        Serial.println("Voltando 2");
-        return;
-      }
-      giro.update();
-      delay(100);
-      giro.update();
-    }
   }
 }
+
 
 static bool estavaDesalinhado = true;
 
 void andarReto() {
   giro.update();
-
   sl = lerSensoresLinha();
+
   int combinacaoSensores = sl[0] * 16 + sl[1] * 8 + sl[2] * 4 + sl[3] * 2 + sl[4];
 
   switch (combinacaoSensores) {
@@ -670,7 +615,7 @@ void andarReto() {
 
       // Integral
       erroI += erroP;
-      erroI = constrain(erroI, -100, 100); // evita acúmulo excessivo
+      erroI = constrain(erroI, -100, 100);
 
       // Derivativo
       erroD = erroP - erroAnterior;
@@ -678,7 +623,7 @@ void andarReto() {
 
       // PID
       ajuste = Kp * erroP + Ki * erroI + Kd * erroD;
-      ajuste = abs(ajuste); // ajuste sempre positivo
+      ajuste = abs(ajuste);
       ajuste = constrain(ajuste, 0, 40);
 
       if (erroP > 0) {
@@ -705,6 +650,8 @@ void andarReto() {
         Serial.print("Novo angulo RETO (centralizado): "); Serial.println(anguloReto);
         estavaDesalinhado = false;
       }
+      
+      desvioObjeto();
 
       break;
 
@@ -725,7 +672,6 @@ void andarReto() {
 
     case 0b00111: // Curva esquerda
       Serial.println("Curva esquerda");
-      // anguloReto = retornoAnguloZ();
       sl = lerSensoresLinha();
 
       motorE.write(veloBaseEsq);
@@ -735,7 +681,7 @@ void andarReto() {
 
       motorE.write(veloBaseEsq);
       motorD.write(veloBaseEsq);
-      while (((anguloReto + grausCurva90) >= retornoAnguloZ()) || sl[2] == 1) {
+      while (((anguloReto + grausCurva90) >= retornoAnguloZ())) {
         giro.update();
         sl = lerSensoresLinha();
         Serial.print("Fazendo curva para a esquerda | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto + 90);
@@ -776,7 +722,7 @@ void andarReto() {
 
       motorE.write(veloBaseDir);
       motorD.write(veloBaseDir);
-      while (((anguloReto - grausCurva90) <= retornoAnguloZ()) || sl[2] == 1) {
+      while (((anguloReto - grausCurva90) <= retornoAnguloZ())) {
         giro.update();
         sl = lerSensoresLinha();
         Serial.print("Fazendo curva para a direita | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - 90);
@@ -797,7 +743,6 @@ void andarReto() {
       motorE.write(90);
       motorD.write(90);
       Serial.println("Início da pista, ou encruzilhada");
-      // anguloReto = retornoAnguloZ();
       giroVerde();
       break;
 
@@ -805,13 +750,15 @@ void andarReto() {
       Serial.println("Saiu do principal, esquerda");
       sl = lerSensoresLinha();
       motorE.write(veloBaseEsq);
-      motorD.write(90);
+      motorD.write(80);
+      sl = lerSensoresLinha();
       break;
 
     case 0b11101: // Saiu do principal, direita
       Serial.println("Saiu do principal, direita");
-      motorE.write(90);
+      motorE.write(100);
       motorD.write(veloBaseDir);
+      sl = lerSensoresLinha();
       break;
 
     case 0b11111: // Branco, final ou resgate
@@ -869,7 +816,7 @@ void andarReto() {
 
       motorE.write(veloBaseDir);
       motorD.write(veloBaseDir);
-      while (((anguloReto - grausCurva90) <= retornoAnguloZ()) || sl[2] == 1) {
+      while (((anguloReto - grausCurva90) <= retornoAnguloZ())) {
         giro.update();
         sl = lerSensoresLinha();
         Serial.print("Fazendo curva para a direita 2 | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - 90);
@@ -896,7 +843,7 @@ void andarReto() {
 
       motorE.write(veloBaseEsq);
       motorD.write(veloBaseEsq);
-      while (((anguloReto + grausCurva90) >= retornoAnguloZ()) || sl[2] == 1) {
+      while (((anguloReto + grausCurva90) >= retornoAnguloZ())) {
         giro.update();
         sl = lerSensoresLinha();
         Serial.print("Fazendo curva para a esquerda 2 | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto + 90);
@@ -1138,8 +1085,8 @@ void exibirMenu() {
 void setup() {
   Serial.begin(115200);
 
-  Wire.begin();
-  Wire.setClock(400000);
+  // Wire.begin();
+  // Wire.setClock(400000);
 
   byte status = giro.begin();
   Serial.print(F("MPU6050 status: "));
@@ -1182,7 +1129,7 @@ void setup() {
   EEPROM.get(EEPROM_MAX_C_VERDE, maxCVerde);
   EEPROM.get(EEPROM_DIFERENCA_CORES, diferencaDasCores);
   
-  tocar_buzzer(750, 3, 125);
+  tocar_buzzer(750, 2, 125);
 }
 
 //******************************************************************************
