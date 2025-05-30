@@ -553,7 +553,6 @@ void desvioObjeto() {
   }
 }
 
-
 static bool estavaDesalinhado = true;
 
 void andarReto() {
@@ -827,6 +826,50 @@ void andarReto() {
 
 //******************************************************************************
 //*                                                                            *
+//*                              Funções GARRA                                 *
+//*                                                                            *
+//******************************************************************************
+
+void ligarGarra(){
+  motorG.attach(motorGpin);
+  motorEsqG.attach(motorEsqGpin);
+  motorDirG.attach(motorDirGpin);
+}
+
+void desligarGarra(){
+  motorG.detach();
+  motorEsqG.detach();
+  motorDirG.detach();
+}
+
+void descerGarra() {
+  Serial.println("Descendo Garra");
+  motorG.write(180); // Posição de descida
+  delay(1000); // Tempo para descer
+}
+
+void subirGarra() {
+  Serial.println("Subindo Garra");
+  motorG.write(0); // Posição de subida
+  delay(1000); // Tempo para subir
+}
+
+void abrirGarra() {
+  Serial.println("Abrindo Garra");
+  motorEsqG.write(0); // Posição de abertura
+  motorDirG.write(180); // Posição de abertura
+  delay(1000); // Tempo para abrir
+}
+
+void fecharGarra() {
+  Serial.println("Fechando Garra");
+  motorEsqG.write(85); // Posição de fechamento
+  motorDirG.write(85); // Posição de fechamento
+  delay(1000); // Tempo para fechar
+}
+
+//******************************************************************************
+//*                                                                            *
 //*                              Funções DEBUG                                 *
 //*                                                                            *
 //******************************************************************************
@@ -1061,16 +1104,13 @@ void setup() {
 
   motorE.attach(motorEpin);
   motorD.attach(motorDpin);
+  
   motorE.write(90);
   motorD.write(90);
 
-  //motorG.attach(motorGpin);
-  //motorEsqG.attach(motorEsqGpin);
-  //motorDirG.attach(motorDirGpin);
-
-  //motorG.write(0);
-  //motorEsqG.write(90);
-  //motorDirG.write(90);
+  // motorG.write(0);
+  // motorEsqG.write(90);
+  // motorDirG.write(90);
 
   anguloDoReto = retornoAnguloY();
   anguloRampaSubida = anguloDoReto - 10;
@@ -1100,8 +1140,19 @@ void loop() {
   //delay(1000);
   //andarReto();
 
-  processarComandoSerial(); // Sempre verifica comandos seriais
-  if (!modoConfig) {
-    andarReto(); // Executa lógica normal do robô apenas se não estiver no modo de configuração
-  }
+  // processarComandoSerial(); // Sempre verifica comandos seriais
+  // if (!modoConfig) {
+  //   andarReto(); // Executa lógica normal do robô apenas se não estiver no modo de configuração
+  // }
+
+  //motorG.write(90);
+  
+  ligarGarra();
+  descerGarra();
+  abrirGarra();
+  delay(5000);
+  fecharGarra();
+  subirGarra();
+  delay(10000);
+  desligarGarra();
 }

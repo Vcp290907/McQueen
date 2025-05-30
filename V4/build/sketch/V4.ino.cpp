@@ -180,25 +180,37 @@ void correcao();
 void correcaoObjeto();
 #line 464 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void desvioObjeto();
-#line 559 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 558 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void andarReto();
-#line 834 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 833 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+void ligarGarra();
+#line 839 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+void desligarGarra();
+#line 845 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+void descerGarra();
+#line 851 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+void subirGarra();
+#line 857 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+void abrirGarra();
+#line 864 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+void fecharGarra();
+#line 877 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 int retornoSensoresCor();
-#line 867 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 910 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void retornoGiroscopio();
-#line 888 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 931 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void retornoSensoresLinha();
-#line 896 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 939 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void lerInfravermelho();
-#line 907 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 950 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void processarComandoSerial();
-#line 1011 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1054 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void printEEPROMValues();
-#line 1020 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1063 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void exibirMenu();
-#line 1040 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1083 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void setup();
-#line 1096 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1136 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void loop();
 #line 159 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void tocar_buzzer(int freque, int unidades, int espera){
@@ -598,7 +610,6 @@ void desvioObjeto() {
   }
 }
 
-
 static bool estavaDesalinhado = true;
 
 void andarReto() {
@@ -872,6 +883,50 @@ void andarReto() {
 
 //******************************************************************************
 //*                                                                            *
+//*                              Funções GARRA                                 *
+//*                                                                            *
+//******************************************************************************
+
+void ligarGarra(){
+  motorG.attach(motorGpin);
+  motorEsqG.attach(motorEsqGpin);
+  motorDirG.attach(motorDirGpin);
+}
+
+void desligarGarra(){
+  motorG.detach();
+  motorEsqG.detach();
+  motorDirG.detach();
+}
+
+void descerGarra() {
+  Serial.println("Descendo Garra");
+  motorG.write(180); // Posição de descida
+  delay(1000); // Tempo para descer
+}
+
+void subirGarra() {
+  Serial.println("Subindo Garra");
+  motorG.write(0); // Posição de subida
+  delay(1000); // Tempo para subir
+}
+
+void abrirGarra() {
+  Serial.println("Abrindo Garra");
+  motorEsqG.write(0); // Posição de abertura
+  motorDirG.write(180); // Posição de abertura
+  delay(1000); // Tempo para abrir
+}
+
+void fecharGarra() {
+  Serial.println("Fechando Garra");
+  motorEsqG.write(85); // Posição de fechamento
+  motorDirG.write(85); // Posição de fechamento
+  delay(1000); // Tempo para fechar
+}
+
+//******************************************************************************
+//*                                                                            *
 //*                              Funções DEBUG                                 *
 //*                                                                            *
 //******************************************************************************
@@ -1106,16 +1161,13 @@ void setup() {
 
   motorE.attach(motorEpin);
   motorD.attach(motorDpin);
+  
   motorE.write(90);
   motorD.write(90);
 
-  //motorG.attach(motorGpin);
-  //motorEsqG.attach(motorEsqGpin);
-  //motorDirG.attach(motorDirGpin);
-
-  //motorG.write(0);
-  //motorEsqG.write(90);
-  //motorDirG.write(90);
+  // motorG.write(0);
+  // motorEsqG.write(90);
+  // motorDirG.write(90);
 
   anguloDoReto = retornoAnguloY();
   anguloRampaSubida = anguloDoReto - 10;
@@ -1145,8 +1197,19 @@ void loop() {
   //delay(1000);
   //andarReto();
 
-  processarComandoSerial(); // Sempre verifica comandos seriais
-  if (!modoConfig) {
-    andarReto(); // Executa lógica normal do robô apenas se não estiver no modo de configuração
-  }
+  // processarComandoSerial(); // Sempre verifica comandos seriais
+  // if (!modoConfig) {
+  //   andarReto(); // Executa lógica normal do robô apenas se não estiver no modo de configuração
+  // }
+
+  //motorG.write(90);
+  
+  ligarGarra();
+  descerGarra();
+  abrirGarra();
+  delay(5000);
+  fecharGarra();
+  subirGarra();
+  delay(10000);
+  desligarGarra();
 }
