@@ -35,8 +35,8 @@ boolean modoConfig = false;
 #define buzzer 32
 
 #define SIF A4
-#define SID A2
-#define SIE A0
+#define SID A0
+#define SIE A2
 
 #define model1 1080
 #define model2 1080
@@ -118,10 +118,10 @@ int maxLuxPreto = 150;
 int maxCPreto = 400;
 
 // Cinza
-int minLuxCinza = 300;
-int maxLuxCinza = 550;
-int minCNoCinza = 1000;
-int maxCNoCinza = 1350;
+int minLuxCinza = 110;
+int maxLuxCinza = 200;
+int minCNoCinza = 550;
+int maxCNoCinza = 650;
 
 // Vermelho
 int minLuxVermelho = 100;
@@ -271,15 +271,18 @@ bool lerVerde1() {
   return false;
 }
 
-void lerCinza() { //Atualizar
+void lerCinza() { //
   int cc1 = (int)c1;
   int cc2 = (int)c2;
   int luu1 = (int)lux1;
   int luu2 = (int)lux2;
 
-  if ((luu1 >= minLuxCinza && luu1 <= maxLuxCinza) && (luu2 >= minLuxCinza && luu2 <= maxLuxCinza) && 
-      (cc1 >= minCNoCinza && cc1 <= maxCNoCinza) && (cc2 >= minCNoCinza && cc2 <= maxCNoCinza)) {
-      Serial.println("CINZAAAAA");
+  if((cc1 >= minCNoCinza && cc1 <= maxCNoCinza && luu1 >= minLuxCinza && luu1 <= maxLuxCinza) ||
+     (cc2 >= minCNoCinza && cc2 <= maxCNoCinza && luu2 >= minLuxCinza && luu2 <= maxLuxCinza)) {
+    Serial.println("Cinza detectado!");
+    while (true){
+      tocar_buzzer(1000, 1, 100);
+    }
   } else {
     Serial.println("Não é cinza!");
   }
@@ -938,12 +941,12 @@ void retornoSensoresLinha(){
 
 void lerInfravermelho(){
   int d1 = SI_Frente.distance();
-  int d2 = SI_Esquerda.distance();
-  int d3 = SI_Direita.distance();
+  // int d2 = SI_Esquerda.distance();
+  // int d3 = SI_Direita.distance();
 
   Serial.print("Distancia Frente: "); Serial.print(d1); Serial.print("cm - ");
-  Serial.print("Distancia Esquerda: "); Serial.print(d2); Serial.print("cm - ");
-  Serial.print("Distancia Direita: "); Serial.print(d3); Serial.print("cm - ");
+  //Serial.print("Distancia Esquerda: "); Serial.print(d2); Serial.print("cm - ");
+  //Serial.print("Distancia Direita: "); Serial.print(d3); Serial.print("cm - ");
   Serial.println(" ");
 }
 
@@ -1080,6 +1083,18 @@ void exibirMenu() {
 //*                                                                            *
 //******************************************************************************
 
+float lerDistancia() {
+  int numLeituras = 10;
+  float soma = 0;
+  for (int i = 0; i < numLeituras; i++) {
+    soma += analogRead(A4); // Pino correto: A4
+    delay(10);
+  }
+  float media = soma / numLeituras;
+  float voltage = media * (5.0 / 1023.0); // Converte para tensão
+  return 27.86 * pow(voltage, -1.15); // Fórmula para GP2Y0A21
+}
+
 void setup() {
   Serial.begin(115200);
 
@@ -1124,7 +1139,7 @@ void setup() {
   EEPROM.get(EEPROM_MAX_C_VERDE, maxCVerde);
   EEPROM.get(EEPROM_DIFERENCA_CORES, diferencaDasCores);
   
-  tocar_buzzer(750, 2, 125);
+  tocar_buzzer(750, 3, 125);
 }
 
 //******************************************************************************
@@ -1136,7 +1151,7 @@ void setup() {
 void loop() {
   //verificaVermelho();
   //retornoSensoresCor();
-  //lerInfravermelho();
+  lerInfravermelho();
   //delay(1000);
   //andarReto();
 
@@ -1144,15 +1159,13 @@ void loop() {
   // if (!modoConfig) {
   //   andarReto(); // Executa lógica normal do robô apenas se não estiver no modo de configuração
   // }
-
-  //motorG.write(90);
   
-  ligarGarra();
-  descerGarra();
-  abrirGarra();
-  delay(5000);
-  fecharGarra();
-  subirGarra();
-  delay(10000);
-  desligarGarra();
+  // ligarGarra();
+  // descerGarra();
+  // abrirGarra();
+  // delay(5000);
+  // fecharGarra();
+  // subirGarra();
+  // delay(10000);
+  // desligarGarra();
 }
