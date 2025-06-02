@@ -280,12 +280,118 @@ void lerCinza() { //
   if((cc1 >= minCNoCinza && cc1 <= maxCNoCinza && luu1 >= minLuxCinza && luu1 <= maxLuxCinza) ||
      (cc2 >= minCNoCinza && cc2 <= maxCNoCinza && luu2 >= minLuxCinza && luu2 <= maxLuxCinza)) {
     Serial.println("Cinza detectado!");
-    while (true){
-      tocar_buzzer(1000, 1, 100);
-    }
+    resgate();
   } else {
     Serial.println("Não é cinza!");
   }
+}
+
+void resgate(){
+  int d1 = SI_Frente.distance();
+
+  int meio = d1/2;
+
+  Serial.println("Resgate iniciado!");
+  motorE.write(90);
+  motorD.write(90);
+  tocar_buzzer(500, 2, 100);
+
+  ligarGarra();
+  descerGarra();
+  abrirGarra();
+  delay(1500);
+
+  Serial.print("Angulo Reto: "); Serial.print(anguloReto); Serial.print(" | Angulo Atual: "); Serial.println(retornoAnguloZ());
+
+  while(d1 >= meio){
+    d1 = SI_Frente.distance();
+    Serial.print("Distância atual: "); Serial.print(d1); Serial.print(" | Meio: "); Serial.println(meio); 
+    correcaoObjeto();
+    delay(100);
+  }
+
+  motorD.write(90);
+  motorE.write(90);
+
+  int d2 = SI_Esquerda.distance();
+  int d3 = SI_Direita.distance();
+  
+  int altura = 0; 
+  
+  bool virarEsquerda = d2 > d3;
+  bool virarDireita = d3 > d2;
+
+  if(virarEsquerda){
+    altura = d2;
+    Serial.println("Esquerda!");
+    motorE.write(veloBaseEsq);
+    motorD.write(veloBaseEsq);
+    while (((anguloReto + grausCurva90) >= retornoAnguloZ())) {
+      giro.update();
+      sl = lerSensoresLinha();
+      Serial.print("Fazendo curva para a esquerda | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto + 90);
+    }
+    anguloReto = anguloReto + grausCurva90;
+    motorD.write(90);
+    motorE.write(90);
+
+  } else if(virarDireita){
+    altura = d3;
+    Serial.println("Direita!");
+    motorE.write(veloBaseDir);
+    motorD.write(veloBaseDir);
+    while (((anguloReto - grausCurva90) <= retornoAnguloZ())) {
+      giro.update();
+      sl = lerSensoresLinha();
+      Serial.print("Fazendo curva para a direita | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - 90);
+    }
+    anguloReto = anguloReto - grausCurva90;
+    motorD.write(90);
+    motorE.write(90);
+  }
+
+  fecharGarra();
+  delay(1000);
+  garraMeio();
+  delay(1000);
+  desligarMotoresGarra();
+  
+  //Alinhando pra trás
+
+  motorD.write(veloBaseEsq);
+  motorE.write(veloBaseDir);
+
+  delay(3000);
+
+  anguloReto = retornoAnguloZ();
+
+  // int d1_inicial = SI_Frente.distance();
+  // int d2_inicial = SI_Esquerda.distance();
+  // int d3_inicial = SI_Direita.distance();
+
+  // while(d1 < (altura - 5)){
+  //   d1 = SI_Frente.distance();
+  //   d2 = SI_Esquerda.distance();
+  //   d3 = SI_Direita.distance();
+  //   Serial.print("Procurando bolinha");
+  //   correcaoObjeto();
+    
+  //   if(d2 < d2_inicial){
+  //     Serial.println("Bolinha encontrada!");
+  //     tocar_buzzer(1000, 2, 500);
+  //   }else if(d3 < d3_inicial){
+  //     Serial.println("Bolinha encontrada!");
+  //     tocar_buzzer(1000, 2, 500);
+  //   }
+  // }
+
+  while (true)
+  {
+    motorD.write(90);
+    motorE.write(90);
+    tocar_buzzer(1000, 1, 500);
+  }
+  
 }
 
 int retornoAnguloZ(){
@@ -845,16 +951,25 @@ void desligarGarra(){
   motorDirG.detach();
 }
 
+void desligarMotorPrincipal() {
+  motorG.detach();
+}
+
+void desligarMotoresGarra() {
+  motorEsqG.detach();
+  motorDirG.detach();
+}
+
 void descerGarra() {
   Serial.println("Descendo Garra");
   motorG.write(180); // Posição de descida
-  delay(1000); // Tempo para descer
+  delay(3000); // Tempo para descer
 }
 
 void garraMeio(){
   Serial.println("Garra Meio");
   motorG.write(90); // Posição de meio
-  delay(1000); // Tempo para meio
+  delay(2000); // Tempo para meio
 }
 
 void subirGarra() {
@@ -947,12 +1062,12 @@ void retornoSensoresLinha(){
 
 void lerInfravermelho(){
   int d1 = SI_Frente.distance();
-  // int d2 = SI_Esquerda.distance();
-  // int d3 = SI_Direita.distance();
+  int d2 = SI_Esquerda.distance();
+  int d3 = SI_Direita.distance();
 
   Serial.print("Distancia Frente: "); Serial.print(d1); Serial.print("cm - ");
-  //Serial.print("Distancia Esquerda: "); Serial.print(d2); Serial.print("cm - ");
-  //Serial.print("Distancia Direita: "); Serial.print(d3); Serial.print("cm - ");
+  Serial.print("Distancia Esquerda: "); Serial.print(d2); Serial.print("cm - ");
+  Serial.print("Distancia Direita: "); Serial.print(d3); Serial.print("cm - ");
   Serial.println(" ");
 }
 
@@ -1133,7 +1248,7 @@ void setup() {
   EEPROM.get(EEPROM_MAX_C_VERDE, maxCVerde);
   EEPROM.get(EEPROM_DIFERENCA_CORES, diferencaDasCores);
   
-  tocar_buzzer(750, 3, 125);
+  tocar_buzzer(750, 2, 125);
 }
 
 //******************************************************************************
@@ -1149,20 +1264,8 @@ void loop() {
   //delay(1000);
   //andarReto();
 
-  // processarComandoSerial(); // Sempre verifica comandos seriais
-  // if (!modoConfig) {
-  //   andarReto(); // Executa lógica normal do robô apenas se não estiver no modo de configuração
-  // }
-  
-  // ligarGarra();
-  // descerGarra();
-  // delay(2500);
-  // abrirGarra();
-  // delay(5000);
-  // fecharGarra();
-  // garraMeio();
-  // delay(20000);
-  // subirGarra();
-  // delay(10000);
-  // desligarGarra();
+  processarComandoSerial(); // Sempre verifica comandos seriais
+  if (!modoConfig) {
+    andarReto(); // Executa lógica normal do robô apenas se não estiver no modo de configuração
+  }
 }
