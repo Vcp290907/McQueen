@@ -189,30 +189,30 @@ void desligarGarra();
 #line 848 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void descerGarra();
 #line 854 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
-void subirGarra();
+void garraMeio();
 #line 860 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+void subirGarra();
+#line 866 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void abrirGarra();
-#line 867 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 873 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void fecharGarra();
-#line 880 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 886 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 int retornoSensoresCor();
-#line 913 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 919 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void retornoGiroscopio();
-#line 934 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 940 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void retornoSensoresLinha();
-#line 942 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 948 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void lerInfravermelho();
-#line 953 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 959 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void processarComandoSerial();
-#line 1057 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1063 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void printEEPROMValues();
-#line 1066 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1072 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void exibirMenu();
-#line 1086 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
-float lerDistancia();
-#line 1098 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1092 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void setup();
-#line 1151 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1145 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void loop();
 #line 159 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void tocar_buzzer(int freque, int unidades, int espera){
@@ -910,6 +910,12 @@ void descerGarra() {
   delay(1000); // Tempo para descer
 }
 
+void garraMeio(){
+  Serial.println("Garra Meio");
+  motorG.write(90); // Posição de meio
+  delay(1000); // Tempo para meio
+}
+
 void subirGarra() {
   Serial.println("Subindo Garra");
   motorG.write(0); // Posição de subida
@@ -1142,18 +1148,6 @@ void exibirMenu() {
 //*                                                                            *
 //******************************************************************************
 
-float lerDistancia() {
-  int numLeituras = 10;
-  float soma = 0;
-  for (int i = 0; i < numLeituras; i++) {
-    soma += analogRead(A4); // Pino correto: A4
-    delay(10);
-  }
-  float media = soma / numLeituras;
-  float voltage = media * (5.0 / 1023.0); // Converte para tensão
-  return 27.86 * pow(voltage, -1.15); // Fórmula para GP2Y0A21
-}
-
 void setup() {
   Serial.begin(115200);
 
@@ -1210,7 +1204,7 @@ void setup() {
 void loop() {
   //verificaVermelho();
   //retornoSensoresCor();
-  lerInfravermelho();
+  //lerInfravermelho();
   //delay(1000);
   //andarReto();
 
@@ -1219,11 +1213,14 @@ void loop() {
   //   andarReto(); // Executa lógica normal do robô apenas se não estiver no modo de configuração
   // }
   
-  // ligarGarra();
-  // descerGarra();
-  // abrirGarra();
-  // delay(5000);
-  // fecharGarra();
+  ligarGarra();
+  descerGarra();
+  delay(2500);
+  abrirGarra();
+  delay(5000);
+  fecharGarra();
+  garraMeio();
+  delay(20000);
   // subirGarra();
   // delay(10000);
   // desligarGarra();

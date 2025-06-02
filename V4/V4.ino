@@ -851,6 +851,12 @@ void descerGarra() {
   delay(1000); // Tempo para descer
 }
 
+void garraMeio(){
+  Serial.println("Garra Meio");
+  motorG.write(90); // Posição de meio
+  delay(1000); // Tempo para meio
+}
+
 void subirGarra() {
   Serial.println("Subindo Garra");
   motorG.write(0); // Posição de subida
@@ -1083,18 +1089,6 @@ void exibirMenu() {
 //*                                                                            *
 //******************************************************************************
 
-float lerDistancia() {
-  int numLeituras = 10;
-  float soma = 0;
-  for (int i = 0; i < numLeituras; i++) {
-    soma += analogRead(A4); // Pino correto: A4
-    delay(10);
-  }
-  float media = soma / numLeituras;
-  float voltage = media * (5.0 / 1023.0); // Converte para tensão
-  return 27.86 * pow(voltage, -1.15); // Fórmula para GP2Y0A21
-}
-
 void setup() {
   Serial.begin(115200);
 
@@ -1151,7 +1145,7 @@ void setup() {
 void loop() {
   //verificaVermelho();
   //retornoSensoresCor();
-  lerInfravermelho();
+  //lerInfravermelho();
   //delay(1000);
   //andarReto();
 
@@ -1162,9 +1156,12 @@ void loop() {
   
   // ligarGarra();
   // descerGarra();
+  // delay(2500);
   // abrirGarra();
   // delay(5000);
   // fecharGarra();
+  // garraMeio();
+  // delay(20000);
   // subirGarra();
   // delay(10000);
   // desligarGarra();
