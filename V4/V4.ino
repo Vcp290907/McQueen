@@ -173,6 +173,16 @@ int* lerSensoresLinha() {
   return valores;
 }
 
+int mediaInfravermelhoFrente(int numLeituras = 5) {
+  long soma = 0;
+  for (int i = 0; i < numLeituras; i++) {
+    soma += SI_Frente.distance();
+    delay(10); // Pequeno delay para estabilidade
+  }
+  return soma / numLeituras;
+}
+
+
 void verificaVermelho() {
   tcs1.getRawData(&r1, &g1, &b1, &c1);
   lux1 = tcs1.calculateLux(r1, g1, b1);
@@ -286,28 +296,31 @@ void lerCinza() { //
   }
 }
 
+void varreduraResgate() {
+  
+}
+
 void resgate(){
-  int d1 = SI_Frente.distance();
-
-  int meio = d1/2;
-
   Serial.println("Resgate iniciado!");
   motorE.write(90);
   motorD.write(90);
   tocar_buzzer(500, 2, 100);
+  
+  int d1 = mediaInfravermelhoFrente(10);
+  int meio = d1/2;
 
   ligarGarra();
-  descerGarra();
   abrirGarra();
+  descerGarra();
   delay(1500);
 
   Serial.print("Angulo Reto: "); Serial.print(anguloReto); Serial.print(" | Angulo Atual: "); Serial.println(retornoAnguloZ());
 
   while(d1 >= meio){
-    d1 = SI_Frente.distance();
+    d1 = mediaInfravermelhoFrente();
     Serial.print("Distância atual: "); Serial.print(d1); Serial.print(" | Meio: "); Serial.println(meio); 
     correcaoObjeto();
-    delay(100);
+    giro.update();
   }
 
   motorD.write(90);
@@ -326,9 +339,7 @@ void resgate(){
     Serial.println("Esquerda!");
     motorE.write(veloBaseEsq);
     motorD.write(veloBaseEsq);
-    while (((anguloReto + grausCurva90) >= retornoAnguloZ())) {
-      giro.update();
-      sl = lerSensoresLinha();
+    while (((anguloReto + grausCurva90) > retornoAnguloZ())) {
       Serial.print("Fazendo curva para a esquerda | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto + 90);
     }
     anguloReto = anguloReto + grausCurva90;
@@ -340,9 +351,7 @@ void resgate(){
     Serial.println("Direita!");
     motorE.write(veloBaseDir);
     motorD.write(veloBaseDir);
-    while (((anguloReto - grausCurva90) <= retornoAnguloZ())) {
-      giro.update();
-      sl = lerSensoresLinha();
+    while (((anguloReto - grausCurva90) < retornoAnguloZ())) {
       Serial.print("Fazendo curva para a direita | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - 90);
     }
     anguloReto = anguloReto - grausCurva90;
@@ -361,36 +370,11 @@ void resgate(){
   motorD.write(veloBaseEsq);
   motorE.write(veloBaseDir);
 
-  delay(3000);
+  delay(2000);
 
   anguloReto = retornoAnguloZ();
 
-  // int d1_inicial = SI_Frente.distance();
-  // int d2_inicial = SI_Esquerda.distance();
-  // int d3_inicial = SI_Direita.distance();
-
-  // while(d1 < (altura - 5)){
-  //   d1 = SI_Frente.distance();
-  //   d2 = SI_Esquerda.distance();
-  //   d3 = SI_Direita.distance();
-  //   Serial.print("Procurando bolinha");
-  //   correcaoObjeto();
-    
-  //   if(d2 < d2_inicial){
-  //     Serial.println("Bolinha encontrada!");
-  //     tocar_buzzer(1000, 2, 500);
-  //   }else if(d3 < d3_inicial){
-  //     Serial.println("Bolinha encontrada!");
-  //     tocar_buzzer(1000, 2, 500);
-  //   }
-  // }
-
-  while (true)
-  {
-    motorD.write(90);
-    motorE.write(90);
-    tocar_buzzer(1000, 1, 500);
-  }
+  varreduraResgate();
   
 }
 
@@ -522,8 +506,6 @@ void giroVerde() {
     }
   }
 }
-
-// int anguloCorrecao = 0;
 
 void correcao() {
   sl = lerSensoresLinha();
@@ -963,7 +945,7 @@ void desligarMotoresGarra() {
 void descerGarra() {
   Serial.println("Descendo Garra");
   motorG.write(180); // Posição de descida
-  delay(3000); // Tempo para descer
+  delay(2000); // Tempo para descer
 }
 
 void garraMeio(){
@@ -1248,7 +1230,7 @@ void setup() {
   EEPROM.get(EEPROM_MAX_C_VERDE, maxCVerde);
   EEPROM.get(EEPROM_DIFERENCA_CORES, diferencaDasCores);
   
-  tocar_buzzer(750, 2, 125);
+  tocar_buzzer(750, 3, 125);
 }
 
 //******************************************************************************
