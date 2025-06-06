@@ -931,6 +931,7 @@ void desligarGarra(){
   motorG.detach();
   motorEsqG.detach();
   motorDirG.detach();
+  delay(1000);
 }
 
 void desligarMotorPrincipal() {
@@ -957,7 +958,7 @@ void garraMeio(){
 void subirGarra() {
   Serial.println("Subindo Garra");
   motorG.write(0); // Posição de subida
-  delay(1000); // Tempo para subir
+  delay(2000); // Tempo para subir
 }
 
 void abrirGarra() {
@@ -969,8 +970,8 @@ void abrirGarra() {
 
 void fecharGarra() {
   Serial.println("Fechando Garra");
-  motorEsqG.write(85); // Posição de fechamento
-  motorDirG.write(85); // Posição de fechamento
+  motorEsqG.write(90); // Posição de fechamento
+  motorDirG.write(90); // Posição de fechamento
   delay(1000); // Tempo para fechar
 }
 
@@ -1210,13 +1211,10 @@ void setup() {
 
   motorE.attach(motorEpin);
   motorD.attach(motorDpin);
+  motorG.attach(motorGpin);
   
   motorE.write(90);
   motorD.write(90);
-
-  // motorG.write(0);
-  // motorEsqG.write(90);
-  // motorDirG.write(90);
 
   anguloDoReto = retornoAnguloY();
   anguloRampaSubida = anguloDoReto - 10;
@@ -1230,7 +1228,12 @@ void setup() {
   EEPROM.get(EEPROM_MAX_C_VERDE, maxCVerde);
   EEPROM.get(EEPROM_DIFERENCA_CORES, diferencaDasCores);
   
-  tocar_buzzer(750, 3, 125);
+  ligarGarra();
+  fecharGarra();
+  subirGarra();
+  desligarGarra();
+
+  tocar_buzzer(750, 2, 125);
 }
 
 //******************************************************************************
@@ -1245,6 +1248,8 @@ void loop() {
   //lerInfravermelho();
   //delay(1000);
   //andarReto();
+
+  // Serial.print("Garra: "); Serial.println(motorG.read());
 
   processarComandoSerial(); // Sempre verifica comandos seriais
   if (!modoConfig) {
