@@ -85,7 +85,7 @@ static int valores[5];
 uint16_t r1, g1, b1, c1, lux1, r2, g2, b2, c2, lux2;
 long duration1, distance1, duration2, distance2;
 
-int erro = 0;
+int erro = 1;
 int anguloRampaSubida, anguloRampaDescida, anguloDoReto, anguloReto;
 int* sl;
 boolean trava = false;
@@ -100,6 +100,7 @@ int veloCurva90 = 40;
 
 int grausCurva90 = 90;
 int graqusCurva180 = 175;
+int grausCurva45 = 45;
 
 int anguloAtual = 0;
 
@@ -310,8 +311,43 @@ void lerCinza() { //
   }
 }
 
-void varreduraResgate() {
-  
+int amplitudeSensor(SharpIR &sensor, int numLeituras = 20) {
+  int minValor = 10000;
+  int maxValor = 0;
+  for (int i = 0; i < numLeituras; i++) {
+    int leitura = sensor.distance(); 
+    if (leitura < minValor) minValor = leitura;
+    if (leitura > maxValor) maxValor = leitura;
+    delay(10); // Pequeno delay para estabilidade
+  }
+  return maxValor - minValor;
+}
+
+void testarAmplitudeSensores() {
+  int ampFrente = amplitudeSensor(SI_Frente);
+  int ampEsquerda = amplitudeSensor(SI_Esquerda);
+  int ampDireita = amplitudeSensor(SI_Direita);
+
+  Serial.print("Amplitude Frente: "); Serial.println(ampFrente);
+  Serial.print("Amplitude Esquerda: "); Serial.println(ampEsquerda);
+  Serial.print("Amplitude Direita: "); Serial.println(ampDireita);
+
+  // Se amplitude for maior que um limiar (ex: 20 cm), provavelmente está "no vazio"
+  if (ampFrente > 17) Serial.println("Sensor da frente está no vazio!");
+  if (ampEsquerda > 17) Serial.println("Sensor da esquerda está no vazio!");
+  if (ampDireita > 17) Serial.println("Sensor da direita está no vazio!");
+
+  Serial.println("---------------------");
+}
+
+bool vazioFrente = false;
+bool vazioEsquerda = false;
+bool vazioDireita = false;
+
+void sensoresNoVazio (int limiar = 17) {
+  vazioFrente   = amplitudeSensor(SI_Frente)   > limiar;
+  vazioEsquerda = amplitudeSensor(SI_Esquerda) > limiar;
+  vazioDireita  = amplitudeSensor(SI_Direita)  > limiar;
 }
 
 void resgate(){
@@ -319,20 +355,16 @@ void resgate(){
   motorE.write(90);
   motorD.write(90);
   tocar_buzzer(500, 2, 100);
-  
-  int d1 = mediaInfravermelhoFrente(10);
-  int meio = d1/2;
 
   ligarGarra();
   abrirGarra();
   descerGarra();
-  delay(1500);
+  delay(500);
 
   Serial.print("Angulo Reto: "); Serial.print(anguloReto); Serial.print(" | Angulo Atual: "); Serial.println(retornoAnguloZ());
 
-  while(d1 >= meio){
-    d1 = mediaInfravermelhoFrente();
-    Serial.print("Distância atual: "); Serial.print(d1); Serial.print(" | Meio: "); Serial.println(meio); 
+  unsigned long startTime = millis();
+  while(startTime + 4 * 1000 > millis()) {
     correcaoObjeto();
     giro.update();
   }
@@ -340,56 +372,54 @@ void resgate(){
   motorD.write(90);
   motorE.write(90);
 
-  int d2 = SI_Esquerda.distance();
-  int d3 = SI_Direita.distance();
-  
-  int altura = 0; 
-  
-  bool virarEsquerda = d2 > d3;
-  bool virarDireita = d3 > d2;
+  sensoresNoVazio();
 
-  if(virarEsquerda){
-    altura = d2;
-    Serial.println("Esquerda!");
-    motorE.write(veloBaseEsq);
-    motorD.write(veloBaseEsq);
-    while (((anguloReto + grausCurva90) > retornoAnguloZ())) {
-      Serial.print("Fazendo curva para a esquerda | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto + 90);
-    }
-    anguloReto = anguloReto + grausCurva90;
-    motorD.write(90);
-    motorE.write(90);
+  if (!vazioEsquerda && !vazioDireita) {
+    int distEsq = SI_Esquerda.distance();
+    int distDir = SI_Direita.distance();
 
-  } else if(virarDireita){
-    altura = d3;
-    Serial.println("Direita!");
-    motorE.write(veloBaseDir);
-    motorD.write(veloBaseDir);
-    while (((anguloReto - grausCurva90) < retornoAnguloZ())) {
-      Serial.print("Fazendo curva para a direita | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - 90);
+    Serial.print("Distância Esquerda: "); Serial.println(distEsq);
+    Serial.print("Distância Direita: "); Serial.println(distDir);
+
+    if (distEsq < distDir) {
+      motorE.write(veloBaseDir);
+      motorD.write(veloBaseDir);
+      while (((anguloReto - grausCurva90) > retornoAnguloZ())) {
+        giro.update();
+        sl = lerSensoresLinha();
+        Serial.print("Fazendo curva para a esquerda | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - 90);
+      }
+      anguloReto = anguloReto - grausCurva90;
+
+    } else {
+      motorE.write(veloBaseEsq);
+      motorD.write(veloBaseEsq);
+      while (((anguloReto + grausCurva90) > retornoAnguloZ())) {
+        giro.update();
+        sl = lerSensoresLinha();
+        Serial.print("Fazendo curva para a esquerda | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto + 90);
+      }
+      anguloReto = anguloReto + grausCurva90;
+
     }
-    anguloReto = anguloReto - grausCurva90;
-    motorD.write(90);
-    motorE.write(90);
+  } else {
+    Serial.println("Um dos lados está no vazio, lógica a definir...");
   }
-
-  fecharGarra();
-  delay(1000);
-  garraMeio();
-  delay(1000);
-  desligarMotoresGarra();
-  
-  //Alinhando pra trás
 
   motorD.write(veloBaseEsq);
   motorE.write(veloBaseDir);
-
   delay(2000);
 
   anguloReto = retornoAnguloZ();
-
-  varreduraResgate();
+  Serial.print("Angulo Reto atualizado: "); Serial.println(anguloReto);
   
+  while (true)
+  {
+    motorD.write(90);
+    motorE.write(90);
+  }
+  
+
 }
 
 int retornoAnguloZ(){
@@ -950,7 +980,7 @@ void desligarGarra(){
   motorG.detach();
   motorEsqG.detach();
   motorDirG.detach();
-  delay(1000);
+  delay(250);
 }
 
 void desligarMotorPrincipal() {
@@ -964,7 +994,7 @@ void desligarMotoresGarra() {
 
 void descerGarra() {
   Serial.println("Descendo Garra");
-  motorG.write(180); // Posição de descida
+  motorG.write(175); // Posição de descida
   delay(2000); // Tempo para descer
 }
 
@@ -976,7 +1006,7 @@ void garraMeio(){
 
 void subirGarra() {
   Serial.println("Subindo Garra");
-  motorG.write(0); // Posição de subida
+  motorG.write(15); // Posição de subida
   delay(2000); // Tempo para subir
 }
 
@@ -989,8 +1019,8 @@ void abrirGarra() {
 
 void fecharGarra() {
   Serial.println("Fechando Garra");
-  motorEsqG.write(90); // Posição de fechamento
-  motorDirG.write(90); // Posição de fechamento
+  motorEsqG.write(110); // Posição de fechamento
+  motorDirG.write(70); // Posição de fechamento
   delay(1000); // Tempo para fechar
 }
 
@@ -1703,7 +1733,7 @@ void setup() {
   subirGarra();
   desligarGarra();
 
-  tocar_buzzer(750, 3, 125);
+  tocar_buzzer(750, 2, 125);
 }
 
 //******************************************************************************
@@ -1719,10 +1749,21 @@ void loop() {
   // delay(1000);
   //andarReto();
 
+  // testarAmplitudeSensores();
+
   // Serial.print("Garra: "); Serial.println(motorG.read());
 
-  processarComandoSerial(); // Sempre verifica comandos seriais
-  if (!modoConfig) {
-    andarReto(); // Executa lógica normal do robô apenas se não estiver no modo de configuração
-  }
+  // processarComandoSerial(); // Sempre verifica comandos seriais
+  // if (!modoConfig) {
+  //   andarReto(); // Executa lógica normal do robô apenas se não estiver no modo de configuração
+  // }
+
+  ligarGarra();
+  descerGarra();
+  delay(1000);
+  abrirGarra();
+  delay(3000);
+  fecharGarra();
+  subirGarra();
+  delay(3000);
 }
