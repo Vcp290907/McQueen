@@ -67,85 +67,11 @@
    "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\Wire\\src",
    "-IC:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\MPU6050_light\\src",
    "-IC:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\SharpIR-master",
-   "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\renesas\\Servo.cpp",
+   "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\sam\\Servo.cpp",
    "-o",
-   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\libraries\\Servo\\renesas\\Servo.cpp.o"
+   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\libraries\\Servo\\sam\\Servo.cpp.o"
   ],
-  "file": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\renesas\\Servo.cpp"
- },
- {
-  "directory": "D:\\Microsoft VS Code",
-  "arguments": [
-   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\tools\\avr-gcc\\7.3.0-atmel3.6.1-arduino7/bin/avr-g++",
-   "-c",
-   "-g",
-   "-Os",
-   "-w",
-   "-std=gnu++11",
-   "-fpermissive",
-   "-fno-exceptions",
-   "-ffunction-sections",
-   "-fdata-sections",
-   "-fno-threadsafe-statics",
-   "-Wno-error=narrowing",
-   "-MMD",
-   "-flto",
-   "-mmcu=atmega2560",
-   "-DF_CPU=16000000L",
-   "-DARDUINO=10607",
-   "-DARDUINO_AVR_MEGA2560",
-   "-DARDUINO_ARCH_AVR",
-   "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino",
-   "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\mega",
-   "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\EEPROM\\src",
-   "-IC:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src",
-   "-IC:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Adafruit_TCS34725_Soft_i2c",
-   "-IC:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\SoftwareWire",
-   "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\Wire\\src",
-   "-IC:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\MPU6050_light\\src",
-   "-IC:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\SharpIR-master",
-   "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\nrf52\\Servo.cpp",
-   "-o",
-   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\libraries\\Servo\\nrf52\\Servo.cpp.o"
-  ],
-  "file": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\nrf52\\Servo.cpp"
- },
- {
-  "directory": "D:\\Microsoft VS Code",
-  "arguments": [
-   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\tools\\avr-gcc\\7.3.0-atmel3.6.1-arduino7/bin/avr-g++",
-   "-c",
-   "-g",
-   "-Os",
-   "-w",
-   "-std=gnu++11",
-   "-fpermissive",
-   "-fno-exceptions",
-   "-ffunction-sections",
-   "-fdata-sections",
-   "-fno-threadsafe-statics",
-   "-Wno-error=narrowing",
-   "-MMD",
-   "-flto",
-   "-mmcu=atmega2560",
-   "-DF_CPU=16000000L",
-   "-DARDUINO=10607",
-   "-DARDUINO_AVR_MEGA2560",
-   "-DARDUINO_ARCH_AVR",
-   "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino",
-   "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\mega",
-   "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\EEPROM\\src",
-   "-IC:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src",
-   "-IC:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Adafruit_TCS34725_Soft_i2c",
-   "-IC:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\SoftwareWire",
-   "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\Wire\\src",
-   "-IC:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\MPU6050_light\\src",
-   "-IC:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\SharpIR-master",
-   "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\mbed\\Servo.cpp",
-   "-o",
-   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\libraries\\Servo\\mbed\\Servo.cpp.o"
-  ],
-  "file": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\mbed\\Servo.cpp"
+  "file": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\sam\\Servo.cpp"
  },
  {
   "directory": "D:\\Microsoft VS Code",
@@ -215,11 +141,11 @@
    "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\Wire\\src",
    "-IC:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\MPU6050_light\\src",
    "-IC:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\SharpIR-master",
-   "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\sam\\Servo.cpp",
+   "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\mbed\\Servo.cpp",
    "-o",
-   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\libraries\\Servo\\sam\\Servo.cpp.o"
+   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\libraries\\Servo\\mbed\\Servo.cpp.o"
   ],
-  "file": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\sam\\Servo.cpp"
+  "file": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\mbed\\Servo.cpp"
  },
  {
   "directory": "D:\\Microsoft VS Code",
@@ -257,6 +183,43 @@
    "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\libraries\\Servo\\stm32f4\\Servo.cpp.o"
   ],
   "file": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\stm32f4\\Servo.cpp"
+ },
+ {
+  "directory": "D:\\Microsoft VS Code",
+  "arguments": [
+   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\tools\\avr-gcc\\7.3.0-atmel3.6.1-arduino7/bin/avr-g++",
+   "-c",
+   "-g",
+   "-Os",
+   "-w",
+   "-std=gnu++11",
+   "-fpermissive",
+   "-fno-exceptions",
+   "-ffunction-sections",
+   "-fdata-sections",
+   "-fno-threadsafe-statics",
+   "-Wno-error=narrowing",
+   "-MMD",
+   "-flto",
+   "-mmcu=atmega2560",
+   "-DF_CPU=16000000L",
+   "-DARDUINO=10607",
+   "-DARDUINO_AVR_MEGA2560",
+   "-DARDUINO_ARCH_AVR",
+   "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino",
+   "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\mega",
+   "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\EEPROM\\src",
+   "-IC:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src",
+   "-IC:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Adafruit_TCS34725_Soft_i2c",
+   "-IC:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\SoftwareWire",
+   "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\Wire\\src",
+   "-IC:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\MPU6050_light\\src",
+   "-IC:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\SharpIR-master",
+   "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\nrf52\\Servo.cpp",
+   "-o",
+   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\libraries\\Servo\\nrf52\\Servo.cpp.o"
+  ],
+  "file": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\nrf52\\Servo.cpp"
  },
  {
   "directory": "D:\\Microsoft VS Code",
@@ -331,6 +294,43 @@
    "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\libraries\\Servo\\xmc\\Servo.cpp.o"
   ],
   "file": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\xmc\\Servo.cpp"
+ },
+ {
+  "directory": "D:\\Microsoft VS Code",
+  "arguments": [
+   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\tools\\avr-gcc\\7.3.0-atmel3.6.1-arduino7/bin/avr-g++",
+   "-c",
+   "-g",
+   "-Os",
+   "-w",
+   "-std=gnu++11",
+   "-fpermissive",
+   "-fno-exceptions",
+   "-ffunction-sections",
+   "-fdata-sections",
+   "-fno-threadsafe-statics",
+   "-Wno-error=narrowing",
+   "-MMD",
+   "-flto",
+   "-mmcu=atmega2560",
+   "-DF_CPU=16000000L",
+   "-DARDUINO=10607",
+   "-DARDUINO_AVR_MEGA2560",
+   "-DARDUINO_ARCH_AVR",
+   "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino",
+   "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\mega",
+   "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\EEPROM\\src",
+   "-IC:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src",
+   "-IC:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Adafruit_TCS34725_Soft_i2c",
+   "-IC:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\SoftwareWire",
+   "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\libraries\\Wire\\src",
+   "-IC:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\MPU6050_light\\src",
+   "-IC:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\SharpIR-master",
+   "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\renesas\\Servo.cpp",
+   "-o",
+   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\libraries\\Servo\\renesas\\Servo.cpp.o"
+  ],
+  "file": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Servo\\src\\renesas\\Servo.cpp"
  },
  {
   "directory": "D:\\Microsoft VS Code",
@@ -816,41 +816,11 @@
    "-DARDUINO_ARCH_AVR",
    "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino",
    "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\mega",
-   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\Stream.cpp",
+   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\USBCore.cpp",
    "-o",
-   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\core\\Stream.cpp.o"
+   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\core\\USBCore.cpp.o"
   ],
-  "file": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\Stream.cpp"
- },
- {
-  "directory": "D:\\Microsoft VS Code",
-  "arguments": [
-   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\tools\\avr-gcc\\7.3.0-atmel3.6.1-arduino7/bin/avr-g++",
-   "-c",
-   "-g",
-   "-Os",
-   "-w",
-   "-std=gnu++11",
-   "-fpermissive",
-   "-fno-exceptions",
-   "-ffunction-sections",
-   "-fdata-sections",
-   "-fno-threadsafe-statics",
-   "-Wno-error=narrowing",
-   "-MMD",
-   "-flto",
-   "-mmcu=atmega2560",
-   "-DF_CPU=16000000L",
-   "-DARDUINO=10607",
-   "-DARDUINO_AVR_MEGA2560",
-   "-DARDUINO_ARCH_AVR",
-   "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino",
-   "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\mega",
-   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\HardwareSerial.cpp",
-   "-o",
-   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\core\\HardwareSerial.cpp.o"
-  ],
-  "file": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\HardwareSerial.cpp"
+  "file": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\USBCore.cpp"
  },
  {
   "directory": "D:\\Microsoft VS Code",
@@ -906,11 +876,11 @@
    "-DARDUINO_ARCH_AVR",
    "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino",
    "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\mega",
-   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\Tone.cpp",
+   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\Stream.cpp",
    "-o",
-   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\core\\Tone.cpp.o"
+   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\core\\Stream.cpp.o"
   ],
-  "file": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\Tone.cpp"
+  "file": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\Stream.cpp"
  },
  {
   "directory": "D:\\Microsoft VS Code",
@@ -966,11 +936,11 @@
    "-DARDUINO_ARCH_AVR",
    "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino",
    "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\mega",
-   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\IPAddress.cpp",
+   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\HardwareSerial.cpp",
    "-o",
-   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\core\\IPAddress.cpp.o"
+   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\core\\HardwareSerial.cpp.o"
   ],
-  "file": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\IPAddress.cpp"
+  "file": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\HardwareSerial.cpp"
  },
  {
   "directory": "D:\\Microsoft VS Code",
@@ -996,11 +966,11 @@
    "-DARDUINO_ARCH_AVR",
    "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino",
    "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\mega",
-   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\USBCore.cpp",
+   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\Tone.cpp",
    "-o",
-   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\core\\USBCore.cpp.o"
+   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\core\\Tone.cpp.o"
   ],
-  "file": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\USBCore.cpp"
+  "file": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\Tone.cpp"
  },
  {
   "directory": "D:\\Microsoft VS Code",
@@ -1026,11 +996,11 @@
    "-DARDUINO_ARCH_AVR",
    "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino",
    "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\mega",
-   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\HardwareSerial3.cpp",
+   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\new.cpp",
    "-o",
-   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\core\\HardwareSerial3.cpp.o"
+   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\core\\new.cpp.o"
   ],
-  "file": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\HardwareSerial3.cpp"
+  "file": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\new.cpp"
  },
  {
   "directory": "D:\\Microsoft VS Code",
@@ -1116,26 +1086,29 @@
    "-DARDUINO_ARCH_AVR",
    "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino",
    "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\mega",
-   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\new.cpp",
+   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\HardwareSerial3.cpp",
    "-o",
-   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\core\\new.cpp.o"
+   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\core\\HardwareSerial3.cpp.o"
   ],
-  "file": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\new.cpp"
+  "file": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\HardwareSerial3.cpp"
  },
  {
   "directory": "D:\\Microsoft VS Code",
   "arguments": [
-   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\tools\\avr-gcc\\7.3.0-atmel3.6.1-arduino7/bin/avr-gcc",
+   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\tools\\avr-gcc\\7.3.0-atmel3.6.1-arduino7/bin/avr-g++",
    "-c",
    "-g",
    "-Os",
    "-w",
-   "-std=gnu11",
+   "-std=gnu++11",
+   "-fpermissive",
+   "-fno-exceptions",
    "-ffunction-sections",
    "-fdata-sections",
+   "-fno-threadsafe-statics",
+   "-Wno-error=narrowing",
    "-MMD",
    "-flto",
-   "-fno-fat-lto-objects",
    "-mmcu=atmega2560",
    "-DF_CPU=16000000L",
    "-DARDUINO=10607",
@@ -1143,11 +1116,11 @@
    "-DARDUINO_ARCH_AVR",
    "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino",
    "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\mega",
-   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\wiring.c",
+   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\IPAddress.cpp",
    "-o",
-   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\core\\wiring.c.o"
+   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\core\\IPAddress.cpp.o"
   ],
-  "file": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\wiring.c"
+  "file": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\IPAddress.cpp"
  },
  {
   "directory": "D:\\Microsoft VS Code",
@@ -1193,38 +1166,11 @@
    "-DARDUINO_ARCH_AVR",
    "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino",
    "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\mega",
-   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\wiring_digital.c",
+   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\wiring.c",
    "-o",
-   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\core\\wiring_digital.c.o"
+   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\core\\wiring.c.o"
   ],
-  "file": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\wiring_digital.c"
- },
- {
-  "directory": "D:\\Microsoft VS Code",
-  "arguments": [
-   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\tools\\avr-gcc\\7.3.0-atmel3.6.1-arduino7/bin/avr-gcc",
-   "-c",
-   "-g",
-   "-Os",
-   "-w",
-   "-std=gnu11",
-   "-ffunction-sections",
-   "-fdata-sections",
-   "-MMD",
-   "-flto",
-   "-fno-fat-lto-objects",
-   "-mmcu=atmega2560",
-   "-DF_CPU=16000000L",
-   "-DARDUINO=10607",
-   "-DARDUINO_AVR_MEGA2560",
-   "-DARDUINO_ARCH_AVR",
-   "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino",
-   "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\mega",
-   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\wiring_analog.c",
-   "-o",
-   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\core\\wiring_analog.c.o"
-  ],
-  "file": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\wiring_analog.c"
+  "file": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\wiring.c"
  },
  {
   "directory": "D:\\Microsoft VS Code",
@@ -1277,11 +1223,38 @@
    "-DARDUINO_ARCH_AVR",
    "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino",
    "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\mega",
-   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\wiring_pulse.c",
+   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\wiring_analog.c",
    "-o",
-   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\core\\wiring_pulse.c.o"
+   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\core\\wiring_analog.c.o"
   ],
-  "file": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\wiring_pulse.c"
+  "file": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\wiring_analog.c"
+ },
+ {
+  "directory": "D:\\Microsoft VS Code",
+  "arguments": [
+   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\tools\\avr-gcc\\7.3.0-atmel3.6.1-arduino7/bin/avr-gcc",
+   "-c",
+   "-g",
+   "-Os",
+   "-w",
+   "-std=gnu11",
+   "-ffunction-sections",
+   "-fdata-sections",
+   "-MMD",
+   "-flto",
+   "-fno-fat-lto-objects",
+   "-mmcu=atmega2560",
+   "-DF_CPU=16000000L",
+   "-DARDUINO=10607",
+   "-DARDUINO_AVR_MEGA2560",
+   "-DARDUINO_ARCH_AVR",
+   "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino",
+   "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\mega",
+   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\wiring_digital.c",
+   "-o",
+   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\core\\wiring_digital.c.o"
+  ],
+  "file": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\wiring_digital.c"
  },
  {
   "directory": "D:\\Microsoft VS Code",
@@ -1309,5 +1282,32 @@
    "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\core\\wiring_shift.c.o"
   ],
   "file": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\wiring_shift.c"
+ },
+ {
+  "directory": "D:\\Microsoft VS Code",
+  "arguments": [
+   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\tools\\avr-gcc\\7.3.0-atmel3.6.1-arduino7/bin/avr-gcc",
+   "-c",
+   "-g",
+   "-Os",
+   "-w",
+   "-std=gnu11",
+   "-ffunction-sections",
+   "-fdata-sections",
+   "-MMD",
+   "-flto",
+   "-fno-fat-lto-objects",
+   "-mmcu=atmega2560",
+   "-DF_CPU=16000000L",
+   "-DARDUINO=10607",
+   "-DARDUINO_AVR_MEGA2560",
+   "-DARDUINO_ARCH_AVR",
+   "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino",
+   "-IC:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\variants\\mega",
+   "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\wiring_pulse.c",
+   "-o",
+   "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\core\\wiring_pulse.c.o"
+  ],
+  "file": "C:\\Users\\VCP2909\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.6\\cores\\arduino\\wiring_pulse.c"
  }
 ]

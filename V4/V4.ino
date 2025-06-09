@@ -92,8 +92,8 @@ boolean trava = false;
 
 // Parâmetros gerais
 
-int veloBaseEsq = 120;
-int veloBaseDir = 60;
+int veloBaseEsq = 120; //120
+int veloBaseDir = 60; //60
 int pequenaCurvaLadoC = 10;
 int pequenaCurvaLadoR = 5;
 int veloCurva90 = 40;
@@ -106,7 +106,8 @@ int anguloAtual = 0;
 
 int verificacaoCurvaVerde = 150; //Pulinho para ver se é curva verde
 int erroGiro = 0;
-int erroRampa = 3;
+int erroRampa = 3; // 3
+int erroRampaDescida = 5; // 5
 int tempoDepoisDoVerde90 = 2000;
 int delayCurvasverde = 0; //Verificar esse valor e onde ele é usado
 int tempoAntesCurva90 = 0;
@@ -801,8 +802,16 @@ void andarReto() {
 
   int combinacaoSensores = sl[0] * 16 + sl[1] * 8 + sl[2] * 4 + sl[3] * 2 + sl[4];
 
-  switch (combinacaoSensores) {
+  if(retornoAnguloY() > anguloDoReto + erroRampaDescida) {
+    while (retornoAnguloY() > anguloDoReto + erroRampaDescida)
+    {
+      Serial.println("Descida detectada!");
+      motorD.write(veloBaseDir - veloCurva90);
+      motorE.write(veloBaseEsq + veloCurva90);
+    }
+  }
 
+  switch (combinacaoSensores) {
     case 0b11011:
       anguloAtual = retornoAnguloZ();
       erroP = anguloAtual - anguloReto;
