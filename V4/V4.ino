@@ -106,6 +106,7 @@ int anguloAtual = 0;
 
 int verificacaoCurvaVerde = 150; //Pulinho para ver se é curva verde
 int erroGiro = 0;
+int erroRampa = 3;
 int tempoDepoisDoVerde90 = 2000;
 int delayCurvasverde = 0; //Verificar esse valor e onde ele é usado
 int tempoAntesCurva90 = 0;
@@ -162,7 +163,7 @@ float erroD = 0;
 int ajuste = 0;
 
 //Desvio OBJETO
-int distanciaDesvio = 7;
+int distanciaDesvio = 9;
 int delayCurva1 = 3;
 int delayCurva2 = 7;
 int delayMeio = 1;
@@ -682,7 +683,27 @@ void correcaoObjeto() {
 }
 
 void desvioObjeto() {
-  if (SI_Frente.distance() < distanciaDesvio) {
+  if (SI_Frente.distance() <= distanciaDesvio) {
+    int distaciaInicial = mediaInfravermelhoFrente();
+    motorD.write(veloBaseDir);
+    motorE.write(veloBaseEsq);
+    tocar_buzzer(1000, 2, 500);
+    int distaciaAtual = mediaInfravermelhoFrente();
+    Serial.print("Distância Inicial: "); Serial.print(distaciaInicial);
+    Serial.print(" | Distância Atual: "); Serial.println(distaciaAtual);
+    Serial.print("retornoAnguloY: "); Serial.print(retornoAnguloY());Serial.print(" | anguloDoReto: "); Serial.println(anguloReto);
+
+    if ((distaciaInicial < distaciaAtual) &&
+        ((retornoAnguloY() < anguloDoReto) || (retornoAnguloY() < anguloDoReto - erroRampa))) {
+        Serial.println("Rampa detectada!");
+        tocar_buzzer(1000, 1, 500);
+        motorE.write(90);
+        motorD.write(90);
+        ligarGarra();
+        subirGarraRapido();
+        desligarGarra();
+        return;
+    }
 
     //*************************/
     // Curva para a esquerda 1
@@ -1093,6 +1114,12 @@ void subirGarra() {
   delay(2000); // Tempo para subir
 }
 
+void subirGarraRapido() {
+  Serial.println("Subindo Garra Rápido");
+  motorG.write(0);
+  delay(1000);
+}
+
 void abrirGarra() {
   Serial.println("Abrindo Garra");
   motorEsqG.write(0); // Posição de abertura
@@ -1291,13 +1318,13 @@ void calibrarVerdeMedia() {
   int mediaDif = somaDif / amostras;
 
   // Calcula min/max com margem de 20% (ajuste conforme necessário)
-  int minLux = mediaLux * 0.7;
-  int maxLux = mediaLux * 1.3;
-  int minC = mediaC * 0.7;
-  int maxC = mediaC * 1.3;
+  int minLux = mediaLux * 0.6;
+  int maxLux = mediaLux * 1.4;
+  int minC = mediaC * 0.6;
+  int maxC = mediaC * 1.4;
 
   // Ajuste para diferencaDasCores ser menor que a real
-  int margem = 15; // ajuste conforme necessário
+  int margem = 20; // ajuste conforme necessário
   int diferencaAjustada = mediaDif - margem;
   if (diferencaAjustada < 1) diferencaAjustada = 1;
 
@@ -1372,7 +1399,7 @@ void calibrarVermelhoMedia() {
   int maxC = mediaC * 1.4;
 
   // Ajuste para diferencaDasCoresVermelho ser menor que a real
-  int margem = 15; // ajuste conforme necessário
+  int margem = 20; // ajuste conforme necessário
   int diferencaAjustada = mediaDif - margem;
   if (diferencaAjustada < 1) diferencaAjustada = 1;
 
@@ -1811,12 +1838,14 @@ void setup() {
   EEPROM.get(EEPROM_maxCVermelho, maxCVermelho);
   EEPROM.get(EEPROM_diferencaDasCoresVermelho, diferencaDasCoresVermelho);
 
+  tocar_buzzer(750, 1, 125);
+
   ligarGarra();
   fecharGarra();
   subirGarra();
   desligarGarra();
 
-  tocar_buzzer(750, 3, 125);
+  tocar_buzzer(750, 2, 125);
 }
 
 //******************************************************************************
@@ -1836,8 +1865,8 @@ void loop() {
 
   // Serial.print("Garra: "); Serial.println(motorG.read());
 
-  processarComandoSerial(); // Sempre verifica comandos seriais
+  processarComandoSerial();
   if (!modoConfig) {
-    andarReto(); // Executa lógica normal do robô apenas se não estiver no modo de configuração
+    andarReto();
   }
 }
