@@ -350,6 +350,82 @@ void sensoresNoVazio (int limiar = 17) {
   vazioDireita  = amplitudeSensor(SI_Direita)  > limiar;
 }
 
+bool detectaMudancaBrusca(SharpIR &sensor, int limiar = 10, int numLeituras = 7, const char* nomeSensor = "") {
+  int leituras[numLeituras];
+  int soma = 0;
+  int validas = 0;
+
+  // Coleta leituras válidas (< 50)
+  for (int i = 0; i < numLeituras; i++) {
+    int leitura = sensor.distance();
+    if (leitura < 50) {
+      leituras[i] = leitura;
+      soma += leitura;
+      validas++;
+    } else {
+      leituras[i] = 50; // Marca como inválida
+    }
+    delay(10);
+  }
+
+  if (validas < 3) return false; // Não tem leituras suficientes
+
+  float media = (float)soma / validas;
+  int consecutivas = 0;
+
+  for (int i = 0; i < numLeituras; i++) {
+    Serial.print("[");
+    Serial.print(nomeSensor);
+    Serial.print("] Leitura ");
+    Serial.print(i);
+    Serial.print(": ");
+    Serial.print(leituras[i]);
+    Serial.print(" | Média: ");
+    Serial.print(media);
+    Serial.print(" | Diferença: ");
+    Serial.println(media - leituras[i]);
+
+    if (leituras[i] < 50 && (media - leituras[i]) > limiar) {
+      consecutivas++;
+      if (consecutivas >= 2) {
+        Serial.print("Bolinha detectada no sensor ");
+        Serial.println(nomeSensor);
+        return true;
+      }
+    } else {
+      consecutivas = 0;
+    }
+  }
+  return false;
+}
+
+void monitorarLateraisComCorrecao(unsigned long tempo_ms = 3000, int limiar = 5, int numLeituras = 1) {
+  unsigned long inicio = millis();
+  bool detectouBrusca = false;
+
+  while (millis() - inicio < tempo_ms) {
+    correcaoObjeto();
+
+    // Detecta mudança brusca na esquerda
+    if (detectaMudancaBrusca(SI_Esquerda, limiar, 5, "Esquerda")) {
+      Serial.println("Mudança brusca na ESQUERDA (possível bolinha)!");
+      tocar_buzzer(1000, 1, 500);
+      detectouBrusca = true;
+      break;
+    }
+    if (detectaMudancaBrusca(SI_Direita, limiar, 5, "Direita")) {
+      Serial.println("Mudança brusca na DIREITA (possível bolinha)!");
+      tocar_buzzer(1000, 1, 500);
+      detectouBrusca = true;
+      break;
+    }
+  }
+
+  if (!detectouBrusca) {
+    Serial.println("Nenhuma mudança brusca detectada nas laterais durante o período.");
+  }
+}
+
 void resgate(){
   Serial.println("Resgate iniciado!");
   motorE.write(90);
@@ -364,7 +440,7 @@ void resgate(){
   Serial.print("Angulo Reto: "); Serial.print(anguloReto); Serial.print(" | Angulo Atual: "); Serial.println(retornoAnguloZ());
 
   unsigned long startTime = millis();
-  while(startTime + 4 * 1000 > millis()) {
+  while(startTime + 6 * 1000 > millis()) {
     correcaoObjeto();
     giro.update();
   }
@@ -404,6 +480,13 @@ void resgate(){
     }
   } else {
     Serial.println("Um dos lados está no vazio, lógica a definir...");
+    while (true)
+    {
+      motorD.write(90);
+      motorE.write(90);
+      tocar_buzzer(1000, 1, 500);
+    }
+    
   }
 
   motorD.write(veloBaseEsq);
@@ -413,13 +496,14 @@ void resgate(){
   anguloReto = retornoAnguloZ();
   Serial.print("Angulo Reto atualizado: "); Serial.println(anguloReto);
   
+  monitorarLateraisComCorrecao(10000, 4, 10);
+
   while (true)
   {
     motorD.write(90);
     motorE.write(90);
   }
   
-
 }
 
 int retornoAnguloZ(){
@@ -685,7 +769,6 @@ void desvioObjeto() {
     motorD.write(veloBaseDir);
 
     anguloReto = anguloReto + grausCurva90;
-
   }
 }
 
@@ -1733,7 +1816,7 @@ void setup() {
   subirGarra();
   desligarGarra();
 
-  tocar_buzzer(750, 2, 125);
+  tocar_buzzer(750, 3, 125);
 }
 
 //******************************************************************************
@@ -1753,17 +1836,8 @@ void loop() {
 
   // Serial.print("Garra: "); Serial.println(motorG.read());
 
-  // processarComandoSerial(); // Sempre verifica comandos seriais
-  // if (!modoConfig) {
-  //   andarReto(); // Executa lógica normal do robô apenas se não estiver no modo de configuração
-  // }
-
-  ligarGarra();
-  descerGarra();
-  delay(1000);
-  abrirGarra();
-  delay(3000);
-  fecharGarra();
-  subirGarra();
-  delay(3000);
+  processarComandoSerial(); // Sempre verifica comandos seriais
+  if (!modoConfig) {
+    andarReto(); // Executa lógica normal do robô apenas se não estiver no modo de configuração
+  }
 }
