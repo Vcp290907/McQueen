@@ -46,6 +46,11 @@
   },
   {
     "Sourcefile": "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\sketch\\V4.ino.cpp",
+    "Include": "Ultrasonic.h",
+    "Includepath": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Ultrasonic\\src"
+  },
+  {
+    "Sourcefile": "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\build\\sketch\\V4.ino.cpp",
     "Include": "",
     "Includepath": null
   },
@@ -121,6 +126,11 @@
   },
   {
     "Sourcefile": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\SharpIR-master\\SharpIR.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\VCP2909\\Documents\\Arduino\\libraries\\Ultrasonic\\src\\Ultrasonic.cpp",
     "Include": "",
     "Includepath": null
   }
