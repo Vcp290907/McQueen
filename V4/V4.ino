@@ -400,6 +400,9 @@ void resgate(){
   int valorDireita;
   int valorEsquerda;
 
+  bool vEsquerda;
+  bool vDireita;
+
   valorEsquerda = mediaInfravermelho(1);
   valorDireita = mediaInfravermelho(3);
 
@@ -2350,8 +2353,8 @@ void processarComandoSerial() {
 void setup() {
   Serial.begin(115200);
 
-  // Wire.begin();
-  // Wire.setClock(400000);
+  Wire.begin();
+  Wire.setClock(400000);
 
   byte status = giro.begin();
   Serial.print(F("MPU6050 status: "));
