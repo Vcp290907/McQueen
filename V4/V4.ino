@@ -207,6 +207,11 @@ int* lerSensoresLinha() {
   return valores;
 }
 
+int retornoAnguloZ(){
+  giro.update();
+  return (int)round(giro.getAngleZ());
+}
+
 int mediaInfravermelho(int sensor, int numLeituras = 5) { // 1 pra esquerda, 2 pra frente, 3 pra direita
   long soma = 0;
   SharpIR* sensorPtr;
@@ -278,25 +283,6 @@ void verificaVermelho() {
   }
 }
 
-void lerCinza() { //
-  tcs1.getRawData(&r1, &g1, &b1, &c1);
-  lux1 = tcs1.calculateLux(r1, g1, b1);
-  tcs2.getRawData(&r2, &g2, &b2, &c2);
-  lux2 = tcs2.calculateLux(r2, g2, b2);
-  int cc1 = (int)c1;
-  int cc2 = (int)c2;
-  int luu1 = (int)lux1;
-  int luu2 = (int)lux2;
-
-  if((cc1 >= minCNoCinza && cc1 <= maxCNoCinza && luu1 >= minLuxCinza && luu1 <= maxLuxCinza) ||
-     (cc2 >= minCNoCinza && cc2 <= maxCNoCinza && luu2 >= minLuxCinza && luu2 <= maxLuxCinza)) {
-    Serial.println("Cinza detectado!");
-    resgate();
-  } else {
-    Serial.println("Não é cinza!");
-  }
-}
-
 int amplitudeSensor(SharpIR &sensor, int numLeituras = 20) {
   int minValor = 10000;
   int maxValor = 0;
@@ -321,21 +307,19 @@ bool testarAmplitudeSensor(SharpIR &sensor, int amplitudeMaxima = 9, int numLeit
 void sairDireita(){
   tocar_buzzer(1000, 1, 500);
   Serial.println("Saida!");
+  Serial.println("Saindo a direita");
 
   motorE.write(veloBaseDir);
   motorD.write(veloBaseDir);
   while (((anguloReto - grausCurva90) < retornoAnguloZ())) {
     giro.update();
-    sl = lerSensoresLinha();
-    Serial.print("Fazendo curva para a direita | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - 90);
   }
   anguloReto = anguloReto - grausCurva90;
 
   sl = lerSensoresLinha();
-  while(sl[0] == 1 || sl[1] == 1 || sl[2] == 1 || sl[3] == 1 || sl[4] == 1) {
+  while(sl[0] == 1 && sl[1] == 1 && sl[2] == 1 && sl[3] == 1 && sl[4] == 1) {
     sl = lerSensoresLinha();
-    motorD.write(veloBaseDir);
-    motorE.write(veloBaseEsq);
+    correcaoObjeto();
   }
 }
 
@@ -345,18 +329,17 @@ void sairEsquerda(){
 
   motorE.write(veloBaseEsq);
   motorD.write(veloBaseEsq);
-  while (((anguloReto + grausCurva90) > retornoAnguloZ())) {
+  Serial.println("Fazendo curva para a esquerda da saida");
+  while(((anguloReto + grausCurva90) > retornoAnguloZ())) {
     giro.update();
     sl = lerSensoresLinha();
-    Serial.print("Fazendo curva para a esquerda | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto + 90);
   }
   anguloReto = anguloReto + grausCurva90;
 
   sl = lerSensoresLinha();
   while(sl[0] == 1 && sl[1] == 1 && sl[2] == 1 && sl[3] == 1 && sl[4] == 1) {
     sl = lerSensoresLinha();
-    motorD.write(veloBaseDir);
-    motorE.write(veloBaseEsq);
+    correcaoObjeto();
   }
 }
 
@@ -370,6 +353,16 @@ void sairFrente(){
     correcaoObjeto();
   }
   return;
+}
+
+void andarRetoPorTempo(int tempo){
+  Serial.print("Andando reto por "); Serial.print(tempo); Serial.println(" ms");
+  unsigned long startTime = millis();
+  while (millis() - startTime < tempo) {
+    correcaoObjeto();
+  }
+  motorE.write(90);
+  motorD.write(90);
 }
 
 int distanciaMaxima = 20; 
@@ -426,7 +419,6 @@ void resgate(){
     motorD.write(veloBaseDir);
     while (((anguloReto - grausCurva90) < retornoAnguloZ())) {
       giro.update();
-      //Serial.print("Fazendo curva para a direita | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - 90);
     }
     anguloReto = anguloReto - grausCurva90;
 
@@ -445,7 +437,6 @@ void resgate(){
     motorD.write(veloBaseEsq);
     while (((anguloReto + grausCurva90) > retornoAnguloZ())) {
       giro.update();
-      //Serial.print("Fazendo curva para a esquerda | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto + 90);
     }
     anguloReto = anguloReto + grausCurva90;
 
@@ -456,7 +447,6 @@ void resgate(){
     motorD.write(veloBaseEsq);
     while (((anguloReto + grausCurva90) > retornoAnguloZ())) {
       giro.update();
-      //Serial.print("Fazendo curva para a esquerda | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto + 90);
     }
     anguloReto = anguloReto + grausCurva90;
 
@@ -475,8 +465,6 @@ void resgate(){
     motorD.write(veloBaseDir);
     while (((anguloReto - grausCurva90) < retornoAnguloZ())) {
       giro.update();
-      //sl = lerSensoresLinha();
-      //Serial.print("Fazendo curva para a direita | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - 90);
     }
     anguloReto = anguloReto - grausCurva90;
 
@@ -531,7 +519,6 @@ void resgate(){
   motorD.write(90);
   motorE.write(90);
 
-  Serial.print("Media sensor infravermelho: "); Serial.println(mediaInfravermelho(2));
   Serial.print("Testando amplitude do sensor frente: "); Serial.println(testarAmplitudeSensor(SI_Frente));
   Serial.print("mediaInfravermelho(2) > 25 "); Serial.println(mediaInfravermelho(2) > 25);
 
@@ -542,7 +529,7 @@ void resgate(){
   //====================================================================================
 
   bool irMaisPraFrente = false;
-  if(mediaInfravermelho(2) > 30) {
+  if(mediaInfravermelho(2) > 28) {
     irMaisPraFrente = true;
     Serial.println("Indo pra frente ver saida!");
     startTime = millis();
@@ -552,37 +539,91 @@ void resgate(){
 
     if(esquerda){
 
-      vEsquerda = testarAmplitudeSensor(SI_Esquerda);
-      if(!vEsquerda){
+      valorEsquerda = mediaInfravermelho(1);
+      if(valorEsquerda > 30){
+        Serial.println("Tem saida na esquerda!");
         sairEsquerda();
         return;
-      }
       
     }else if(direita){
 
-      vDireita = testarAmplitudeSensor(SI_Direita);
-      if(!vDireita){
+      valorDireita = mediaInfravermelho(3);
+      if(valorDireita > 30){
+        Serial.println("Tem saida na direita!");
         sairDireita();
         return;
       }
 
     }
-  }else if(!testarAmplitudeSensor(SI_Frente)) {
+  }else if(mediaInfravermelho(2) > 25) {
     Serial.println("SAIDAAAAAA");
     tocar_buzzer(1000, 1, 500);
     sairFrente();
     return;
   }
 
-  if(irMaisPraFrente){
-    while(digitalRead(no) == HIGH){
 
+  //==================================================
+  //
+  //              Se foi mais pra frente
+  //
+  //==================================================
+
+
+  if(irMaisPraFrente){
+
+    Serial.println("bolinho de arroz");
+
+    while(digitalRead(no) == HIGH){
+      correcaoObjeto();
     }
+    tocar_buzzer(1000, 2, 250);
+    anguloReto = retornoAnguloZ();
+
     startTime = millis();
-    while(startTime + 5 * 1000 > millis()) {
+    while(startTime + 1 * 1000 > millis()) {
       correcaoRe();
     }
+
+    motorD.write(90);
+    motorE.write(90);
+
+    if(esquerda){
+      motorE.write(veloBaseDir);
+      motorD.write(veloBaseDir);
+      while (((anguloReto - grausCurva90) < retornoAnguloZ())) {
+        giro.update();
+      }
+      anguloReto = anguloReto - grausCurva90;
+
+      andarRetoPorTempo(5000);
+
+      valorEsquerda = mediaInfravermelho(1);
+      if(valorEsquerda > 25){
+        sairEsquerda();
+        return;
+      }
+
+    }else if(direita){
+      motorE.write(veloBaseEsq);
+      motorD.write(veloBaseEsq);
+      while (((anguloReto + grausCurva90) > retornoAnguloZ())) {
+        giro.update();
+      }
+      anguloReto = anguloReto + grausCurva90;
+
+      andarRetoPorTempo(5000);
+
+      valorDireita = mediaInfravermelho(3);
+      if(valorDireita > 25){
+        sairDireita();
+        return;
+      }
+
+    }
   }
+
+
 
   if(esquerda){
 
@@ -590,8 +631,6 @@ void resgate(){
     motorD.write(veloBaseDir);
     while (((anguloReto - grausCurva90) < retornoAnguloZ())) {
       giro.update();
-      //sl = lerSensoresLinha();
-      //Serial.print("Fazendo curva para a direita | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - 90);
     }
     anguloReto = anguloReto - grausCurva90;
 
@@ -795,13 +834,28 @@ void resgate(){
         correcaoObjeto();
       }
       return;
+      }
     }
   }
 }
 
-int retornoAnguloZ(){
-  giro.update();
-  return (int)round(giro.getAngleZ());
+void lerCinza() { //
+  tcs1.getRawData(&r1, &g1, &b1, &c1);
+  lux1 = tcs1.calculateLux(r1, g1, b1);
+  tcs2.getRawData(&r2, &g2, &b2, &c2);
+  lux2 = tcs2.calculateLux(r2, g2, b2);
+  int cc1 = (int)c1;
+  int cc2 = (int)c2;
+  int luu1 = (int)lux1;
+  int luu2 = (int)lux2;
+
+  if((cc1 >= minCNoCinza && cc1 <= maxCNoCinza && luu1 >= minLuxCinza && luu1 <= maxLuxCinza) ||
+     (cc2 >= minCNoCinza && cc2 <= maxCNoCinza && luu2 >= minLuxCinza && luu2 <= maxLuxCinza)) {
+    Serial.println("Cinza detectado!");
+    resgate();
+  } else {
+    Serial.println("Não é cinza!");
+  }
 }
 
 int retornoAnguloY(){
@@ -2415,7 +2469,7 @@ void setup() {
   // subirGarra();
   // desligarGarra();
 
-  tocar_buzzer(750, 2, 125);
+  tocar_buzzer(750, 3, 125);
 }
 
 //******************************************************************************
