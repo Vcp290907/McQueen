@@ -123,8 +123,8 @@ int erroGiro = 0;
 int erroRampa = 3; // 3
 int erroRampaDescida = 5; // 5
 int tempoDepoisDoVerde90 = 2000;
-int delayCurvasverde = 150;
-int tempoAntesCurva90 = 150;
+int delayCurvasverde = 0;
+int tempoAntesCurva90 = 0;
 int tempoDepoisCurva90 = 1000; //1000
 int tempoDepoisDoVerde180 = 1000; //1000
 int tempoDepoisDoVerdeFalso = 750; //1000
@@ -810,14 +810,14 @@ int retornoAnguloY(){
 }
 
 // Retorna: 0 = nenhum, 1 = direita, 2 = esquerda, 3 = ambos
-int verificaVerdeNovamente(int delayy) {
+int verificaVerdeNovamente(int delayy, int delay2=100) {
   motorE.write(70);
   motorD.write(130);
   delay(delayy);
 
   motorE.write(90);
   motorD.write(90);
-
+  delay(delay2);
   tcs1.getRawData(&r1, &g1, &b1, &c1);
   tcs2.getRawData(&r2, &g2, &b2, &c2);
   lux1 = tcs1.calculateLux(r1, g1, b1);
@@ -891,39 +891,7 @@ void giroVerde() {
 
   tocar_buzzer(1000, 1, 100);
   giro.update();
-
-  //bool parte2;
-  //int resultado;
-
-  // if(resultado1 != 0) {
-  //   int resultado2 = verificaVerdeNovamente(0);
-  //   if (resultado2 == resultado1) {
-  //     Serial.println("Resultado não mudou, é curva verde.");
-  //     parte2 = false;
-  //     resultado = resultado1;
-  //   }else{
-  //     Serial.println("Resultado mudou.");
-  //     Serial.print("Resultado 1: "); Serial.println(resultado1);
-  //     Serial.print("Resultado 2: "); Serial.println(resultado2);
-  //     parte2 = true;
-  //   }
-  // }else{
-  //   Serial.println("Nenhum verde detectado na primeira verificação.");
-  //   parte2 = true;
-  // }
-
-  // if(parte2){
-  //   motorE.write(veloBaseEsq);
-  //   motorD.write(veloBaseDir);
-  //   delay(verificacaoCurvaVerde);
-  //   motorE.write(90);
-  //   motorD.write(90);
-  //   resultado = verificaVerdeNovamente(0);
-  //   Serial.print("[DEPOIS] Resultado verificaVerdeNovamente: ");
-  //   Serial.println(resultado);
-  // }
  
-
   if (resultado1 == 3) {
     Serial.println("Verde nos dois sensores!");
     Serial.print("VERDE!! Curva 180°"); Serial.print(" | Angulo Reto: "); Serial.print(anguloReto); Serial.print(" | Angulo Atual: "); Serial.println(retornoAnguloZ());
@@ -1173,7 +1141,7 @@ void andarReto() {
       // PID
       ajuste = Kp * erroP + Ki * erroI + Kd * erroD;
       ajuste = abs(ajuste);
-      ajuste = constrain(ajuste, 0, 20);
+      ajuste = constrain(ajuste, 0, 40);
 
       if (erroP > 0) {
         motorE.write(veloBaseEsq - ajuste);
@@ -1194,7 +1162,7 @@ void andarReto() {
       Serial.print(" | D: "); Serial.println(Kd * erroD);
 
       if (estavaDesalinhado) {
-        anguloReto = (anguloAtual + anguloReto) / 2;
+        anguloReto = (anguloAtual + anguloReto*2) / 3;
         erroI = 0;
         Serial.print("Novo angulo RETO (centralizado): "); Serial.println(anguloReto);
         estavaDesalinhado = false;
@@ -1658,7 +1626,7 @@ void calibrarVerdeMedia() {
 
     motorE.write(90); // para
     motorD.write(90);
-    delay(100);
+    delay(250);
 
     tcs1.getRawData(&r1, &g1, &b1, &c1);
     lux1 = tcs1.calculateLux(r1, g1, b1);
@@ -1696,7 +1664,7 @@ void calibrarVerdeMedia() {
 
     motorE.write(90); // para
     motorD.write(90);
-    delay(100);
+    delay(250);
 
     tcs2.getRawData(&r2, &g2, &b2, &c2);
     lux2 = tcs2.calculateLux(r2, g2, b2);
@@ -1726,17 +1694,17 @@ void calibrarVerdeMedia() {
   int mediaDifEsq = somaDifEsq / amostras;
 
   // Margens (ajuste conforme necessário)
-  int minLuxDir = mediaLuxDir * 0.4;
-  int maxLuxDir = mediaLuxDir * 1.5; //1.85
-  int minCDir = mediaCDir * 0.4;
-  int maxCDir = mediaCDir * 1.5; //1.85
+  int minLuxDir = mediaLuxDir * 0.6;
+  int maxLuxDir = mediaLuxDir * 1.75; //1.85
+  int minCDir = mediaCDir * 0.6;
+  int maxCDir = mediaCDir * 1.75; //1.85
 
-  int minLuxEsq = mediaLuxEsq * 0.4;
-  int maxLuxEsq = mediaLuxEsq * 1.5; //1.85
-  int minCEsq = mediaCEsq * 0.4;
-  int maxCEsq = mediaCEsq * 1.5; //1.85
+  int minLuxEsq = mediaLuxEsq * 0.6;
+  int maxLuxEsq = mediaLuxEsq * 1.75; //1.85
+  int minCEsq = mediaCEsq * 0.6;
+  int maxCEsq = mediaCEsq * 1.75; //1.85
 
-  int margem = 35;
+  int margem = 40;
   int difCorDir = mediaDifDir - margem;
   int difCorEsq = mediaDifEsq - margem;
   if (difCorDir < 1) difCorDir = 1;
@@ -2415,7 +2383,8 @@ void setup() {
   // subirGarra();
   // desligarGarra();
 
-  tocar_buzzer(750, 2, 125);
+  // tocar_buzzer(750, 3, 125);
+  Serial.println("Inicialização concluída4!");
 }
 
 //******************************************************************************
@@ -2435,5 +2404,4 @@ void loop() {
   if (!modoConfig) {
     andarReto();
   }
-
 }
