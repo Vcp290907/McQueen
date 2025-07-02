@@ -113,7 +113,7 @@ int pequenaCurvaLadoR = 5; //5
 int veloCurva90 = 40; //40
 
 int grausCurva90 = 90;
-int graqusCurva180 = 175;
+int graqusCurva180 = 180;
 int grausCurva45 = 45;
 
 int anguloAtual = 0;
@@ -121,10 +121,10 @@ int anguloAtual = 0;
 int verificacaoCurvaVerde = 350; //Pulinho para ver se é curva verde
 int erroGiro = 0;
 int erroRampa = 3; // 3
-int erroRampaDescida = 5; // 5
+int erroRampaDescida = 8; // 5
 int tempoDepoisDoVerde90 = 2000;
-int delayCurvasverde = 0;
-int tempoAntesCurva90 = 0;
+int delayCurvasverde = 500;
+int tempoAntesCurva90 = 500;
 int tempoDepoisCurva90 = 1000; //1000
 int tempoDepoisDoVerde180 = 1000; //1000
 int tempoDepoisDoVerdeFalso = 750; //1000
@@ -365,12 +365,38 @@ void andarRetoPorTempo(int tempo){
   motorD.write(90);
 }
 
+void andarPraTrasPorTempo(int tempo){
+  Serial.print("Andando reto por "); Serial.print(tempo); Serial.println(" ms");
+  unsigned long startTime = millis();
+  while (millis() - startTime < tempo) {
+    correcaoRe();
+  }
+  motorE.write(90);
+  motorD.write(90);
+}
+
 int distanciaMaxima = 20; 
 
 void resgate(){
   Serial.println("Resgate iniciado!");
+  tocar_buzzer(500, 3, 200);
   motorE.write(90);
   motorD.write(90);
+
+  if(retornoAnguloY() > anguloDoReto + erroRampaDescida || retornoAnguloY() < anguloDoReto - erroRampaDescida) {
+    Serial.println("Não é resgate 1!");
+    motorD.write(veloBaseDir);
+    motorE.write(veloBaseEsq);
+    tocar_buzzer(500, 2, 100);
+    return;
+  }else if (mediaInfravermelho(1) >= distanciaMaxima && mediaInfravermelho(3) >= distanciaMaxima) {
+    Serial.println("Não é resgate 2!");
+    motorE.write(veloBaseEsq);
+    motorD.write(veloBaseDir);
+    tocar_buzzer(500, 2, 100);
+    return;
+  }
+  
   tocar_buzzer(500, 2, 200);
 
   Serial.print("Angulo Reto: "); Serial.print(anguloReto); Serial.print(" | Angulo Atual: "); Serial.println(retornoAnguloZ());
@@ -412,8 +438,20 @@ void resgate(){
   //
   //==================================================
 
+  ligarGarra();
+  garraMeio();
+  desligarMotoresGarra();
+  delay(500);
+  bool saidaNoMeioFrente, saidaNoMeioDireita, saidaNoMeioEsquerda;
+  //*************************************** */
+  //
+  //                PARTE 01
+  //          alinhando na parede   
+  //
+  //*************************************** */
+
   if (esquerda) { // ESQUERDA
-    Serial.println("Alinhar a direita!");
+    Serial.println("Alinhar a esquerda!");
 
     motorE.write(veloBaseDir);
     motorD.write(veloBaseDir);
@@ -441,7 +479,7 @@ void resgate(){
     anguloReto = anguloReto + grausCurva90;
 
   } else if (direita) { // DIREITA
-    Serial.println("Alinhar a esquerda!!");
+    Serial.println("Alinhar a direita!!");
 
     motorE.write(veloBaseEsq);
     motorD.write(veloBaseEsq);
@@ -468,22 +506,14 @@ void resgate(){
     }
     anguloReto = anguloReto - grausCurva90;
 
-  } else {
-
-    while (true)
-    Serial.println("Nenhuma saída detectada!");
-    {
-      motorD.write(90);
-      motorE.write(90);
-    }
-
   }
 
-  //==================================================
+  //*********************************************** */
   //
-  //                  Segunda curva
+  //                PARTE 02
+  //          alinhando na parede do meio  
   //
-  //==================================================
+  //*********************************************** */
 
   Serial.println("Alinhado!");
 
@@ -495,23 +525,24 @@ void resgate(){
   motorD.write(90);
   motorE.write(90);
 
-  if(esquerda){
+  //Verificando a saida, no meio
+  bool saidaMeioInicial = false;
 
+  if(esquerda){
     int d1 = mediaInfravermelho(1);
-    if(d1 > 25){
+    if(d1 > 30){
       tocar_buzzer(1000, 3, 500); 
-      sairEsquerda();
-      return;
+      saidaMeioInicial = true;
+      Serial.println("Tem saida no meio inicio!");
     }
     Serial.println("Sem saida!");
 
   }else if(direita){
-
     int d2 = mediaInfravermelho(3);
-    if(d2 > 25){
+    if(d2 > 30){
       tocar_buzzer(1000, 3, 500); 
-      sairDireita();
-      return;
+      saidaMeioInicial = true;
+      Serial.println("Tem saida no meio inicio!");
     }
     Serial.println("Sem saida!");
   }
@@ -519,17 +550,16 @@ void resgate(){
   motorD.write(90);
   motorE.write(90);
 
-  Serial.print("Testando amplitude do sensor frente: "); Serial.println(testarAmplitudeSensor(SI_Frente));
-  Serial.print("mediaInfravermelho(2) > 25 "); Serial.println(mediaInfravermelho(2) > 25);
-
-  //====================================================================================
+  //*********************************************** */
   //
-  //                  Vendo se ta indo pra frente, se nao triangulo
+  //                PARTE 03
+  // Estando no meio, proximo a lateral da entrada
+  //       vai ver o que tem na frente   
   //
-  //====================================================================================
+  //*********************************************** */
 
   bool irMaisPraFrente = false;
-  if(mediaInfravermelho(2) > 28) {
+  if(mediaInfravermelho(2) > 30) {
     irMaisPraFrente = true;
     Serial.println("Indo pra frente ver saida!");
     startTime = millis();
@@ -538,9 +568,8 @@ void resgate(){
     }
 
     if(esquerda){
-
       valorEsquerda = mediaInfravermelho(1);
-      if(valorEsquerda > 30){
+      if(valorEsquerda > 35){
         Serial.println("Tem saida na esquerda!");
         sairEsquerda();
         return;
@@ -548,14 +577,14 @@ void resgate(){
     }else if(direita){
 
       valorDireita = mediaInfravermelho(3);
-      if(valorDireita > 30){
+      if(valorDireita > 35){
         Serial.println("Tem saida na direita!");
         sairDireita();
         return;
       }
 
     }
-  }else if(mediaInfravermelho(2) > 25) {
+  }else if(mediaInfravermelho(2) > 30) {
     Serial.println("SAIDAAAAAA");
     tocar_buzzer(1000, 1, 500);
     sairFrente();
@@ -563,70 +592,44 @@ void resgate(){
   }
 
 
-  //==================================================
+  //*********************************************** */
   //
-  //              Se foi mais pra frente
+  //                PARTE 03.1
+  //        Se o carrinho foi mais pra frente
+  //       ele vai dar ré e voltar para o meio
+  //         e ir pra frente normalmente
   //
-  //==================================================
+  //*********************************************** */
 
 
   if(irMaisPraFrente){
-
     Serial.println("bolinho de arroz");
 
     while(digitalRead(no) == HIGH){
       correcaoObjeto();
     }
-    tocar_buzzer(1000, 2, 250);
+
+    motorD.write(veloBaseDir);
+    motorE.write(veloBaseEsq);
+    tocar_buzzer(1000, 2, 150);
     anguloReto = retornoAnguloZ();
 
     startTime = millis();
-    while(startTime + 1 * 1000 > millis()) {
+    while(startTime + 7 * 1000 > millis()) {
       correcaoRe();
-    }
-
-    motorD.write(90);
-    motorE.write(90);
-
-    if(esquerda){
-      motorE.write(veloBaseDir);
-      motorD.write(veloBaseDir);
-      while (((anguloReto - grausCurva90) < retornoAnguloZ())) {
-        giro.update();
-      }
-      anguloReto = anguloReto - grausCurva90;
-
-      andarRetoPorTempo(5000);
-
-      valorEsquerda = mediaInfravermelho(1);
-      if(valorEsquerda > 25){
-        sairEsquerda();
-        return;
-      }
-
-    }else if(direita){
-      motorE.write(veloBaseEsq);
-      motorD.write(veloBaseEsq);
-      while (((anguloReto + grausCurva90) > retornoAnguloZ())) {
-        giro.update();
-      }
-      anguloReto = anguloReto + grausCurva90;
-
-      andarRetoPorTempo(5000);
-
-      valorDireita = mediaInfravermelho(3);
-      if(valorDireita > 25){
-        sairDireita();
-        return;
-      }
-
     }
   }
 
-
+  //*********************************************** */
+  //
+  //                PARTE 04
+  //     Estando no meio, vai virar para
+  //          ir com a garra aberta
+  //             pegar bolinhas
+  //
+  //*********************************************** */
 
   if(esquerda){
-
     motorE.write(veloBaseDir);
     motorD.write(veloBaseDir);
     while (((anguloReto - grausCurva90) < retornoAnguloZ())) {
@@ -643,13 +646,10 @@ void resgate(){
     motorE.write(veloBaseEsq);
 
   }else if(direita){
-
     motorE.write(veloBaseEsq);
     motorD.write(veloBaseEsq);
     while (((anguloReto + grausCurva90) > retornoAnguloZ())) {
       giro.update();
-      //sl = lerSensoresLinha();
-      //Serial.print("Fazendo curva para a esquerda | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto + 90);
     }
     anguloReto = anguloReto + grausCurva90;
 
@@ -662,11 +662,30 @@ void resgate(){
     motorE.write(veloBaseEsq);
   }
 
-  //==================================================
+  //*********************************************** */
   //
-  //                  Indo pro meio
+  //                PARTE 04.1
+  //    Agora virado pra frente, vai abrir a garra
+  //        descer ela, e alinhar na parede
   //
-  //==================================================
+  //*********************************************** */
+
+  ligarGarra();
+  abrirGarra();
+  descerGarra();
+  delay(250);
+
+  motorD.write(veloBaseEsq);
+  motorE.write(veloBaseDir);
+  delay(500);
+  anguloReto = retornoAnguloZ();
+
+  //*********************************************** */
+  //
+  //                PARTE 05
+  //      Agora vai ir pro meio com a garra aberta
+  //
+  //*********************************************** */
 
   startTime = millis();
   while(startTime + 4 * 1000 > millis()) {
@@ -674,168 +693,151 @@ void resgate(){
     giro.update();
   }
 
-  motorD.write(90);
-  motorE.write(90);
-  delay(5000);
+  //*********************************************** */
+  //
+  //                PARTE 05.1
+  //      Verificar se tem saida na lateral, 
+  //              estando no meio
+  //
+  //*********************************************** */
 
-  if(esquerda){ //Não pode ter saida no lado direito nesse ponto
+  saidaNoMeioDireita = false;
+  saidaNoMeioEsquerda = false;
+
+  if(esquerda){ //Não pode ter saida no lado direito nesse ponto, considerando entrada no canto
     int dEsquerda = mediaInfravermelho(1);
     if(dEsquerda > 45){
-      sairEsquerda();
-      return;
+      saidaNoMeioEsquerda = true;
+      Serial.println("Tem saida no meio a esquerda!");
+      tocar_buzzer(1000, 1, 500);
     }
-  }else if(direita){ //Não pode ter saida no lado esquerdo nesse ponto
+  }else if(direita){ //Não pode ter saida no lado esquerdo nesse ponto, considerando entrada no canto
     int dDireita = mediaInfravermelho(3);
     if(dDireita > 45){
-      sairDireita();
-      return;
+      saidaNoMeioDireita = true;
+      Serial.println("Tem saida no meio a direita!");
+      tocar_buzzer(1000, 2, 250);
     }
   }
+  //*********************************************** */
+  //
+  //                PARTE 05.2
+  //      Verificar se tem saida na frente
+  // estando no meio, se não tiver, vai pra frente
+  //    por 5 segundos, pra ficar na parede
+  //
+  //*********************************************** */
 
-  int vFrente = testarAmplitudeSensor(SI_Frente);
-  if(!vFrente) {
-
+  saidaNoMeioFrente = false;
+  if(mediaInfravermelho(2) > 50) {
     Serial.println("Tem saida no meio!");
-    sl = lerSensoresLinha();
-    while(sl[0] == 1 || sl[1] == 1 || sl[2] == 1 || sl[3] == 1 || sl[4] == 1) {
-      sl = lerSensoresLinha();
-      correcaoObjeto();
-    }
-    return;
-
+    saidaNoMeioFrente = true;
+    tocar_buzzer(1000, 1, 1500);
   } else {
-
     Serial.println("Não tem saida no meio!");
-
-    while(digitalRead(no) == HIGH) {
-      correcaoObjeto();
-    }
+    
+    andarRetoPorTempo(5000);
 
     anguloReto = retornoAnguloZ();
-
+    fecharGarra();
     startTime = millis();
-    while(startTime + 1 * 750 > millis()) {
+    while(startTime + 1 * 100 > millis()) {
       correcaoRe();
     }
-  }
-
-  motorD.write(90);
-  motorE.write(90);
-
-  vEsquerda = testarAmplitudeSensor(SI_Esquerda);
-  vDireita = testarAmplitudeSensor(SI_Direita);
-
-  Serial.print("vEsquerda: "); Serial.println(vEsquerda);
-  Serial.print("vDireita: "); Serial.println(vDireita);
-
-  bool esq, dir;
-
-  if(vEsquerda && vDireita) {
-    Serial.println("Vendo qual esta mais longe");
-    int valorEsquerda = mediaInfravermelho(1);
-    int valorDireita = mediaInfravermelho(3);
-    Serial.print("Valor Esquerda: "); Serial.println(valorEsquerda);
-    Serial.print("Valor Direita: "); Serial.println(valorDireita);
-
-    if(valorEsquerda > valorDireita) {
-
-      esq = true;
-      Serial.println("Saida pra esquerda!");
-      motorE.write(veloBaseEsq);
-      motorD.write(veloBaseEsq);
-      while (((anguloReto + grausCurva90) > retornoAnguloZ())) {
-        giro.update();
-        //sl = lerSensoresLinha();
-        //Serial.print("Fazendo curva para a esquerda | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto + 90);
-      }
-      anguloReto = anguloReto + grausCurva90;
-
-    } else if(valorDireita > valorEsquerda) {
-
-      dir = true;
-      Serial.println("Saida pra direita!");
-      motorE.write(veloBaseDir);
-      motorD.write(veloBaseDir);
-      while (((anguloReto - grausCurva90) < retornoAnguloZ())) {
-        giro.update();
-        //sl = lerSensoresLinha();
-        //Serial.print("Fazendo curva para a direita | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - 90);
-      }
-      anguloReto = anguloReto - grausCurva90;
-
-    }else{
-      tocar_buzzer(1000, 5, 500);
+    garraMeio();
     }
 
-  } else if(!vEsquerda) {
-    Serial.println("Saida pra esquerda!");
-    sairEsquerda();
-    return;
-  } else if(!vDireita) {
-    Serial.println("Saida pra direita!");
+    while(digitalRead(no) == HIGH){
+      correcaoObjeto();
+    }
+    motorD.write(90);
+    motorE.write(90);
+  }
+
+  //*********************************************** */
+  //
+  //                PARTE 06
+  //     Alinhado na parede do meio da frente,
+  // vai verificar em qual lugar deixar as bolinhas
+  //        e voltar ao meio para sair
+  //
+  //*********************************************** */
+
+  bool deixarBolinha = true; //False para esquerda, True para direita
+
+  andarPraTrasPorTempo(3500);
+
+  if(deixarBolinha){
+    Serial.println("Deixar bolinha a direita!");
+    motorE.write(veloBaseDir);
+    motorD.write(veloBaseDir);
+    while (((anguloReto - 45) < retornoAnguloZ())) {
+      giro.update();
+    }
+    anguloReto = anguloReto - 45;
+    andarRetoPorTempo(3000);
+    garra90();
+    abrirGarra();
+    delay(500);
+    subirGarra();
+    fecharGarra();
+    desligarGarra();
+    delay(500);
+    andarPraTrasPorTempo(3500);
+
+    motorE.write(veloBaseEsq);
+    motorD.write(veloBaseEsq);
+    while (((anguloReto + 45) > retornoAnguloZ())) {
+      giro.update();
+    }
+    anguloReto = anguloReto + 45;
+
+  }else if(!deixarBolinha){
+    Serial.println("Deixar bolinha a esquerda!");
+    motorE.write(veloBaseEsq);
+    motorD.write(veloBaseEsq);
+    while (((anguloReto + 45) > retornoAnguloZ())) {
+      giro.update();
+    }
+    anguloReto = anguloReto + 45;
+    andarRetoPorTempo(3000);
+    garra90();
+    abrirGarra();
+    delay(500);
+    subirGarra();
+    fecharGarra();
+    desligarGarra();
+    delay(500);
+    andarPraTrasPorTempo(3500);
+
+    motorE.write(veloBaseDir);
+    motorD.write(veloBaseDir);
+    while (((anguloReto - 45) < retornoAnguloZ())) {
+      giro.update();
+    }
+    anguloReto = anguloReto - 45;
+  }
+
+  andarPraTrasPorTempo(3000);
+
+  if(saidaNoMeioDireita){
+    Serial.println("Saindo a direita do resgate!");
     sairDireita();
-    return;
+
+  }else if(saidaNoMeioEsquerda){
+    Serial.println("Saindo a esquerda do resgate!");
+    sairEsquerda();
   }
 
-  startTime = millis();
-  while(digitalRead(no) == HIGH) {
-    correcaoObjeto();
-    giro.update();
-  }
+  Serial.println("=== [DEBUG] Fim do resgate ===");
+  Serial.println("Saiadas:"); 
+  Serial.print("saidaNoMeioFrente: "); Serial.println(saidaNoMeioFrente);
+  Serial.print("saidaNoMeioEsquerda: "); Serial.println(saidaNoMeioEsquerda);
+  Serial.print("saidaNoMeioDireita: "); Serial.println(saidaNoMeioDireita);
 
-  startTime = millis();
-  while(startTime + 1 * 750 > millis()) {
-    correcaoRe();
-  }
-  
-  motorD.write(90);
-  motorE.write(90);
-
-  if(esq){
-    int mediaDir = mediaInfravermelho(3);
-
-    if(mediaDir > 40){
-      Serial.println("Tem saida");
-      tocar_buzzer(1000, 1, 500);
-
-      motorE.write(veloBaseEsq);
-      motorD.write(veloBaseEsq);
-      Serial.print("Fazendo curva para a esquerda");
-      while (((anguloReto + grausCurva90) > retornoAnguloZ())) {
-        giro.update();
-      }
-      anguloReto = anguloReto + grausCurva90;
-
-      sl = lerSensoresLinha();
-      while(sl[0] == 1 && sl[1] == 1 && sl[2] == 1 && sl[3] == 1 && sl[4] == 1) {
-        sl = lerSensoresLinha();
-        correcaoObjeto();
-      }
-      return;
-    }
-  }else if(dir){
-    int mediaEsq = mediaInfravermelho(1);
-
-    if(mediaEsq > 40){
-      Serial.println("Tem saida");
-      tocar_buzzer(1000, 1, 500);
-      sl = lerSensoresLinha();
-
-      motorE.write(veloBaseDir);
-      motorD.write(veloBaseDir);
-      Serial.print("Fazendo curva para a Direita");
-      while (((anguloReto - grausCurva90) < retornoAnguloZ())) {
-        giro.update();
-      }
-      anguloReto = anguloReto - grausCurva90;
-
-      while(sl[0] == 1 && sl[1] == 1 && sl[2] == 1 && sl[3] == 1 && sl[4] == 1) {
-        sl = lerSensoresLinha();
-        correcaoObjeto();
-      }
-      return;
-      }
-    }
+  while (true){
+    motorD.write(90);
+    motorE.write(90);
   }
 }
 
@@ -1170,8 +1172,8 @@ void andarReto() {
 
   int combinacaoSensores = sl[0] * 16 + sl[1] * 8 + sl[2] * 4 + sl[3] * 2 + sl[4];
 
-  if(retornoAnguloY() > anguloDoReto + erroRampaDescida) {
-    while (retornoAnguloY() > anguloDoReto + erroRampaDescida)
+  if(retornoAnguloY() > (anguloDoReto + erroRampaDescida)) {
+    while (retornoAnguloY() > (anguloDoReto + erroRampaDescida))
     {
       Serial.println("Descida detectada!");
       motorD.write(veloBaseDir - veloCurva90);
@@ -1460,7 +1462,6 @@ void desligarGarra(){
   motorG.detach();
   motorEsqG.detach();
   motorDirG.detach();
-  delay(250);
 }
 
 void desligarMotorPrincipal() {
@@ -1480,14 +1481,19 @@ void descerGarra() {
 
 void garraMeio(){
   Serial.println("Garra Meio");
-  motorG.write(90); // Posição de meio
+  motorG.write(55); // Posição de meio
   delay(2000); // Tempo para meio
+}
+
+void garra90(){
+  Serial.println("Garra 90°");
+  motorG.write(85);
 }
 
 void subirGarra() {
   Serial.println("Subindo Garra");
-  motorG.write(15); // Posição de subida
-  delay(2000); // Tempo para subir
+  motorG.write(0);
+  delay(1000);
 }
 
 void subirGarraRapido() {
@@ -2432,24 +2438,23 @@ void setup() {
 
   // tocar_buzzer(750, 1, 125);
 
-  // ligarGarra();
-  // fecharGarra();
-  // subirGarra();
-  // desligarGarra();
+  ligarGarra();
+  subirGarra();
+  desligarGarra(); 
 
-  tocar_buzzer(750, 2, 125);
+  tocar_buzzer(1000, 2, 125);
 }
 
 //******************************************************************************
 //*                                                                            *
 //*                                Void Loop                                   *
 //*                                                                            *
-//******************************************************'************************
+//*******************************************************************************
 
 void loop() {
   //verificaVermelho();
   //retornoSensoresCor();
-  // lerInfravermelho();
+  //lerInfravermelho();
   // delay(1000);
   //andarReto(
 
