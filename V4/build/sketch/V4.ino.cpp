@@ -72,6 +72,16 @@ boolean modoConfig = false;
 #define model2 1080
 #define model3 1080
 
+#define pinoR1 27
+#define pinoG1 29
+#define pinoB1 31
+#define pinoR2 28
+#define pinoG2 30
+#define pinoB2 18
+
+#define Hall_Esquerda A8
+#define Hall_Direita A6
+
 Ultrasonic ultrasonic(trig, echo);
 
 SharpIR SI_Frente(SIF, model1);
@@ -123,7 +133,7 @@ int anguloAtual = 0;
 int verificacaoCurvaVerde = 350; //Pulinho para ver se é curva verde
 int erroGiro = 0;
 int erroRampa = 3; // 3
-int erroRampaDescida = 8; // 5
+int erroRampaDescida = 12; // 12
 int tempoDepoisDoVerde90 = 2000;
 int delayCurvasverde = 500;
 int tempoAntesCurva90 = 500;
@@ -192,107 +202,111 @@ int delayMeio = 1;
 //*                                                                      *
 //************************************************************************
 
-#line 193 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
-void tocar_buzzer(int freque, int unidades, int espera);
 #line 203 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+void tocar_buzzer(int freque, int unidades, int espera);
+#line 213 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 int * lerSensoresLinha();
-#line 210 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 220 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+void setCorEsquerda(int vermelho,int verde, int azul);
+#line 226 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+void setCorDireita(int vermelho,int verde, int azul);
+#line 232 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 int retornoAnguloZ();
-#line 233 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 255 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void verificaVermelho();
-#line 307 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
-void sairDireita();
-#line 326 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
-void sairEsquerda();
-#line 346 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 308 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+void piscaLeds(int intervalo);
+#line 320 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void sairFrente();
-#line 358 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 336 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+void sairMeioDireita();
+#line 359 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+void sairMeioEsquerda();
+#line 382 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void andarRetoPorTempo(int tempo);
-#line 368 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 392 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void andarPraTrasPorTempo(int tempo);
-#line 380 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 406 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void resgate();
-#line 844 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 693 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void lerCinza();
-#line 863 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 712 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 int retornoAnguloY();
-#line 942 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 791 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void giroVerde();
-#line 1007 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 864 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void correcao();
-#line 1034 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 891 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void correcaoObjeto();
-#line 1053 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 907 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void correcaoRe();
-#line 1072 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 923 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void desvioObjeto();
-#line 1169 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1020 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void andarReto();
-#line 1455 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1308 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void ligarGarra();
-#line 1461 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1314 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void desligarGarra();
-#line 1467 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1320 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void desligarMotorPrincipal();
-#line 1471 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1324 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void desligarMotoresGarra();
-#line 1476 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1329 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void descerGarra();
-#line 1482 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1335 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void garraMeio();
-#line 1488 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1341 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void garra90();
-#line 1493 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1346 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void subirGarra();
-#line 1499 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
-void subirGarraRapido();
-#line 1505 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1352 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void abrirGarra();
-#line 1512 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1359 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void fecharGarra();
-#line 1525 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1371 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 int retornoSensoresCor();
-#line 1558 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1404 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void retornoGiroscopio();
-#line 1579 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1425 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void retornoSensoresLinha();
-#line 1587 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1433 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void lerInfravermelho();
-#line 1600 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1446 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void exibirMenuPrincipal();
-#line 1615 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1461 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void exibirMenuCalculos();
-#line 1624 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1470 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void exibirMenuAjusteVerde();
-#line 1638 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1484 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void exibirMenuAjusteVermelho();
-#line 1652 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1498 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void exibirMenuAjusteCinza();
-#line 1665 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1511 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void calibrarVerdeMedia();
-#line 1801 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1647 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void calibrarVermelhoMedia();
-#line 1957 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1803 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void calibrarBrancoMedia();
-#line 1991 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1837 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void calibrarCinzaMedia();
-#line 2068 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1914 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void imprimirValoresEEPROM();
-#line 2126 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1972 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void calculosVerde();
-#line 2169 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 2015 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void calculosVermelho();
-#line 2210 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 2056 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void calculosCinza();
-#line 2241 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 2087 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void alterarValorEEPROM(const char* nome, int endereco, int &variavel);
-#line 2254 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 2100 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void processarComandoSerial();
-#line 2381 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 2227 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void setup();
-#line 2454 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 2320 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void loop();
-#line 193 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 203 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void tocar_buzzer(int freque, int unidades, int espera){
   int i = 0;
   for (i; i < unidades; i++) {
@@ -308,6 +322,18 @@ int* lerSensoresLinha() {
     valores[i] = digitalRead(sensores[i]);
   }
   return valores;
+}
+
+void setCorEsquerda(int vermelho,int verde, int azul){
+  digitalWrite(pinoR1, vermelho);
+  digitalWrite(pinoG1, verde);
+  digitalWrite(pinoB1, azul);
+}
+
+void setCorDireita(int vermelho,int verde, int azul){
+  digitalWrite(pinoR2, vermelho);
+  digitalWrite(pinoG2, verde);
+  digitalWrite(pinoB2, azul);
 }
 
 int retornoAnguloZ(){
@@ -327,7 +353,7 @@ int mediaInfravermelho(int sensor, int numLeituras = 5) { // 1 pra esquerda, 2 p
     int medida = sensorPtr->distance();
     soma += medida;
     Serial.print("Distancia medida: ");Serial.println(medida);
-    delay(10);
+    delay(5);
   }
   Serial.print("Media Sensor "); Serial.print(sensor); Serial.print(": "); Serial.println(soma / numLeituras);
   return soma / numLeituras;
@@ -386,74 +412,76 @@ void verificaVermelho() {
   }
 }
 
-int amplitudeSensor(SharpIR &sensor, int numLeituras = 20) {
-  int minValor = 10000;
-  int maxValor = 0;
-  for (int i = 0; i < numLeituras; i++) {
-    int leitura = sensor.distance(); 
-    if (leitura < minValor) minValor = leitura;
-    if (leitura > maxValor) maxValor = leitura;
-    delay(10); // Pequeno delay para estabilidade
+void piscaLeds(int intervalo){
+  setCorDireita(1,1,0);
+  setCorEsquerda(1,1,0);
+  delay(intervalo);
+  setCorDireita(1,0,1);
+  setCorEsquerda(1,0,1);
+  delay(intervalo);
+  setCorDireita(0,1,1);
+  setCorEsquerda(0,1,1);
+  delay(intervalo);
+}
+
+void sairFrente(){
+  sl = lerSensoresLinha();
+  while(sl[0] == 1 && sl[1] == 1 && sl[2] == 1 && sl[3] == 1 && sl[4] == 1){
+    sl = lerSensoresLinha();
+    correcaoObjeto();
   }
-  return maxValor - minValor;
+
+  while (true){
+    motorE.write(90);
+    motorD.write(90);
+    piscaLeds(250);
+  }
+  
+  return;
 }
 
-bool testarAmplitudeSensor(SharpIR &sensor, int amplitudeMaxima = 9, int numLeituras = 20) {
-  int amp = amplitudeSensor(sensor, numLeituras);
-  Serial.print("Amplitude do sensor "); Serial.println(amp);
-  bool vazio = (amp > amplitudeMaxima);
-  if (vazio) Serial.println("Sensor no vazio!");
-  Serial.println("---------------------");
-  return !vazio;
-}
-
-void sairDireita(){
-  tocar_buzzer(1000, 1, 500);
-  Serial.println("Saida!");
-  Serial.println("Saindo a direita");
-
+void sairMeioDireita(){
   motorE.write(veloBaseDir);
   motorD.write(veloBaseDir);
   while (((anguloReto - grausCurva90) < retornoAnguloZ())) {
     giro.update();
   }
   anguloReto = anguloReto - grausCurva90;
-
-  sl = lerSensoresLinha();
-  while(sl[0] == 1 && sl[1] == 1 && sl[2] == 1 && sl[3] == 1 && sl[4] == 1) {
-    sl = lerSensoresLinha();
-    correcaoObjeto();
-  }
-}
-
-void sairEsquerda(){
-  tocar_buzzer(1000, 1, 500);
-  Serial.println("Saida!");
-
-  motorE.write(veloBaseEsq);
-  motorD.write(veloBaseEsq);
-  Serial.println("Fazendo curva para a esquerda da saida");
-  while(((anguloReto + grausCurva90) > retornoAnguloZ())) {
-    giro.update();
-    sl = lerSensoresLinha();
-  }
-  anguloReto = anguloReto + grausCurva90;
-
-  sl = lerSensoresLinha();
-  while(sl[0] == 1 && sl[1] == 1 && sl[2] == 1 && sl[3] == 1 && sl[4] == 1) {
-    sl = lerSensoresLinha();
-    correcaoObjeto();
-  }
-}
-
-void sairFrente(){
-  tocar_buzzer(1000, 2, 250);
-  Serial.println("Saindo pra frente");
-  sl = lerSensoresLinha();
+  motorE.write(90);
+  motorD.write(90);
 
   while(sl[0] == 1 && sl[1] == 1 && sl[2] == 1 && sl[3] == 1 && sl[4] == 1){
     sl = lerSensoresLinha();
     correcaoObjeto();
+  }
+
+  while(true) {
+    motorE.write(90);
+    motorD.write(90);
+    piscaLeds(250);
+  }
+  return;
+}
+
+void sairMeioEsquerda(){
+  motorE.write(veloBaseEsq);
+  motorD.write(veloBaseEsq);
+  while (((anguloReto + grausCurva90) > retornoAnguloZ())) {
+    giro.update();
+  }
+  anguloReto = anguloReto + grausCurva90;
+  motorE.write(90);
+  motorD.write(90);
+
+  while(sl[0] == 1 && sl[1] == 1 && sl[2] == 1 && sl[3] == 1 && sl[4] == 1){
+    sl = lerSensoresLinha();
+    correcaoObjeto();
+  }
+
+  while(true) {
+    motorE.write(90);
+    motorD.write(90);
+    piscaLeds(250);
   }
   return;
 }
@@ -469,7 +497,7 @@ void andarRetoPorTempo(int tempo){
 }
 
 void andarPraTrasPorTempo(int tempo){
-  Serial.print("Andando reto por "); Serial.print(tempo); Serial.println(" ms");
+  Serial.print("Andando reto pra tras por "); Serial.print(tempo); Serial.println(" ms");
   unsigned long startTime = millis();
   while (millis() - startTime < tempo) {
     correcaoRe();
@@ -478,11 +506,13 @@ void andarPraTrasPorTempo(int tempo){
   motorD.write(90);
 }
 
-int distanciaMaxima = 20; 
+int distanciaMaxima = 25; //25
+int distanciaParede = 50; //50
+int distanciaSaida = 60; //60
 
 void resgate(){
   Serial.println("Resgate iniciado!");
-  tocar_buzzer(500, 3, 200);
+  tocar_buzzer(500, 2, 200);
   motorE.write(90);
   motorD.write(90);
 
@@ -499,34 +529,15 @@ void resgate(){
     tocar_buzzer(500, 2, 100);
     return;
   }
-  
+
+  setCorDireita(1,1,0);
+  setCorEsquerda(1,1,0);
   tocar_buzzer(500, 2, 200);
+  setCorDireita(1,1,1);
+  setCorEsquerda(1,1,1);
 
-  Serial.print("Angulo Reto: "); Serial.print(anguloReto); Serial.print(" | Angulo Atual: "); Serial.println(retornoAnguloZ());
-
-  unsigned long startTime = millis();
-  while(startTime + 2 * 1000 > millis()) {
-    correcaoObjeto();
-    giro.update();
-  }
-
-  motorE.write(90);
-  motorD.write(90);
-
-  //==================================================
-  //
-  // Verificando se tem saida antes da primiera curva
-  //
-  //==================================================
-
-  int valorDireita;
-  int valorEsquerda;
-
-  bool vEsquerda;
-  bool vDireita;
-
-  valorEsquerda = mediaInfravermelho(1);
-  valorDireita = mediaInfravermelho(3);
+  int valorEsquerda = mediaInfravermelho(1);
+  int valorDireita = mediaInfravermelho(3);
 
   Serial.print("Valor Sensor Direita: "); Serial.println(valorDireita);
   Serial.print("Valor Sensor Esquerda: "); Serial.println(valorEsquerda);
@@ -535,220 +546,59 @@ void resgate(){
   bool direita = valorDireita <= distanciaMaxima;
   bool esquerda = valorEsquerda <= distanciaMaxima;
 
-  //==================================================
-  //
-  //                  Primeira curva
-  //
-  //==================================================
-
   ligarGarra();
   garraMeio();
   desligarMotoresGarra();
-  delay(500);
-  bool saidaNoMeioFrente, saidaNoMeioDireita, saidaNoMeioEsquerda;
+  delay(250);
+
+  //*************************************** */
+  //
+  //                PARTE 00
+  //        Alinha na parede lateral
+  //    
+  //************************************** */
+
+  andarRetoPorTempo(2750);
+
+  if(esquerda){
+    motorE.write(veloBaseDir);
+    motorD.write(veloBaseDir);
+    while (((anguloReto - grausCurva90) < retornoAnguloZ())) {
+      giro.update();
+    }
+    anguloReto = anguloReto - grausCurva90;
+    andarPraTrasPorTempo(1500);
+    anguloReto = retornoAnguloZ();
+
+  }else if(direita){
+    motorE.write(veloBaseEsq);
+    motorD.write(veloBaseEsq);
+    while (((anguloReto + grausCurva90) > retornoAnguloZ())) {
+      giro.update();
+    }
+    anguloReto = anguloReto + grausCurva90;
+    andarPraTrasPorTempo(1500);
+    anguloReto = retornoAnguloZ();
+  }
+
   //*************************************** */
   //
   //                PARTE 01
-  //          alinhando na parede   
+  //  Vai até o meio para alinhar novamente  
   //
   //*************************************** */
 
-  if (esquerda) { // ESQUERDA
-    Serial.println("Alinhar a esquerda!");
-
-    motorE.write(veloBaseDir);
-    motorD.write(veloBaseDir);
-    while (((anguloReto - grausCurva90) < retornoAnguloZ())) {
-      giro.update();
-    }
-    anguloReto = anguloReto - grausCurva90;
-
-    motorD.write(veloBaseEsq);
-    motorE.write(veloBaseDir);
-    delay(paredeResgate);
-    anguloReto = retornoAnguloZ();
-
-    Serial.print("Angulo Reto: "); Serial.print(anguloReto);
-
-    motorD.write(veloBaseDir);
-    motorE.write(veloBaseEsq);
-    delay(paredeResgateSaida);
-    
-    motorE.write(veloBaseEsq);
-    motorD.write(veloBaseEsq);
-    while (((anguloReto + grausCurva90) > retornoAnguloZ())) {
-      giro.update();
-    }
-    anguloReto = anguloReto + grausCurva90;
-
-  } else if (direita) { // DIREITA
-    Serial.println("Alinhar a direita!!");
-
-    motorE.write(veloBaseEsq);
-    motorD.write(veloBaseEsq);
-    while (((anguloReto + grausCurva90) > retornoAnguloZ())) {
-      giro.update();
-    }
-    anguloReto = anguloReto + grausCurva90;
-
-    motorD.write(veloBaseEsq);
-    motorE.write(veloBaseDir);
-    delay(paredeResgate);
-    anguloReto = retornoAnguloZ();
-
-    Serial.print("Angulo Reto: "); Serial.print(anguloReto);
-
-    motorD.write(veloBaseDir);
-    motorE.write(veloBaseEsq);
-    delay(paredeResgateSaida);
-
-    motorE.write(veloBaseDir);
-    motorD.write(veloBaseDir);
-    while (((anguloReto - grausCurva90) < retornoAnguloZ())) {
-      giro.update();
-    }
-    anguloReto = anguloReto - grausCurva90;
-
-  }
-
-  //*********************************************** */
+  andarRetoPorTempo(6500);
+  
+  //*************************************** */
   //
   //                PARTE 02
-  //          alinhando na parede do meio  
+  //    Verifica se tem o triângulo na frente
+  //           e alinha na parede
   //
-  //*********************************************** */
-
-  Serial.println("Alinhado!");
-
-  startTime = millis();
-  while(startTime + 5 * 1000 > millis()) {
-    correcaoObjeto();
-  }
-
-  motorD.write(90);
-  motorE.write(90);
-
-  //Verificando a saida, no meio
-  bool saidaMeioInicial = false;
+  //*************************************** */
 
   if(esquerda){
-    int d1 = mediaInfravermelho(1);
-    if(d1 > 30){
-      tocar_buzzer(1000, 3, 500); 
-      saidaMeioInicial = true;
-      Serial.println("Tem saida no meio inicio!");
-    }
-    Serial.println("Sem saida!");
-
-  }else if(direita){
-    int d2 = mediaInfravermelho(3);
-    if(d2 > 30){
-      tocar_buzzer(1000, 3, 500); 
-      saidaMeioInicial = true;
-      Serial.println("Tem saida no meio inicio!");
-    }
-    Serial.println("Sem saida!");
-  }
-
-  motorD.write(90);
-  motorE.write(90);
-
-  //*********************************************** */
-  //
-  //                PARTE 03
-  // Estando no meio, proximo a lateral da entrada
-  //       vai ver o que tem na frente   
-  //
-  //*********************************************** */
-
-  bool irMaisPraFrente = false;
-  if(mediaInfravermelho(2) > 30) {
-    irMaisPraFrente = true;
-    Serial.println("Indo pra frente ver saida!");
-    startTime = millis();
-    while(startTime + 4 * 1000 > millis()) {
-      correcaoObjeto();
-    }
-
-    if(esquerda){
-      valorEsquerda = mediaInfravermelho(1);
-      if(valorEsquerda > 35){
-        Serial.println("Tem saida na esquerda!");
-        sairEsquerda();
-        return;
-      
-    }else if(direita){
-
-      valorDireita = mediaInfravermelho(3);
-      if(valorDireita > 35){
-        Serial.println("Tem saida na direita!");
-        sairDireita();
-        return;
-      }
-
-    }
-  }else if(mediaInfravermelho(2) > 30) {
-    Serial.println("SAIDAAAAAA");
-    tocar_buzzer(1000, 1, 500);
-    sairFrente();
-    return;
-  }
-
-
-  //*********************************************** */
-  //
-  //                PARTE 03.1
-  //        Se o carrinho foi mais pra frente
-  //       ele vai dar ré e voltar para o meio
-  //         e ir pra frente normalmente
-  //
-  //*********************************************** */
-
-
-  if(irMaisPraFrente){
-    Serial.println("bolinho de arroz");
-
-    while(digitalRead(no) == HIGH){
-      correcaoObjeto();
-    }
-
-    motorD.write(veloBaseDir);
-    motorE.write(veloBaseEsq);
-    tocar_buzzer(1000, 2, 150);
-    anguloReto = retornoAnguloZ();
-
-    startTime = millis();
-    while(startTime + 7 * 1000 > millis()) {
-      correcaoRe();
-    }
-  }
-
-  //*********************************************** */
-  //
-  //                PARTE 04
-  //     Estando no meio, vai virar para
-  //          ir com a garra aberta
-  //             pegar bolinhas
-  //
-  //*********************************************** */
-
-  if(esquerda){
-    motorE.write(veloBaseDir);
-    motorD.write(veloBaseDir);
-    while (((anguloReto - grausCurva90) < retornoAnguloZ())) {
-      giro.update();
-    }
-    anguloReto = anguloReto - grausCurva90;
-
-    motorE.write(veloBaseDir);
-    motorD.write(veloBaseEsq);
-    delay(paredeResgate);
-    anguloReto = retornoAnguloZ();
-    Serial.print("Angulo Reto: "); Serial.print(anguloReto);
-    motorD.write(veloBaseDir);
-    motorE.write(veloBaseEsq);
-
-  }else if(direita){
     motorE.write(veloBaseEsq);
     motorD.write(veloBaseEsq);
     while (((anguloReto + grausCurva90) > retornoAnguloZ())) {
@@ -756,191 +606,194 @@ void resgate(){
     }
     anguloReto = anguloReto + grausCurva90;
 
+  }else if(direita){
     motorE.write(veloBaseDir);
-    motorD.write(veloBaseEsq);
-    delay(paredeResgate);
-    anguloReto = retornoAnguloZ();
-    Serial.print("Angulo Reto: "); Serial.print(anguloReto);
     motorD.write(veloBaseDir);
-    motorE.write(veloBaseEsq);
+    while (((anguloReto - grausCurva90) < retornoAnguloZ())) {
+      giro.update();
+    }
+    anguloReto = anguloReto - grausCurva90;
+
   }
 
-  //*********************************************** */
-  //
-  //                PARTE 04.1
-  //    Agora virado pra frente, vai abrir a garra
-  //        descer ela, e alinhar na parede
-  //
-  //*********************************************** */
+  andarPraTrasPorTempo(2750);
+  anguloReto = retornoAnguloZ();
+
+  bool paredeNaFrenteInicio, saidaFrenteInicio;
+
+  if(esquerda){
+    paredeNaFrenteInicio = mediaInfravermelho(3) <= distanciaParede;
+    saidaFrenteInicio = mediaInfravermelho(3) >= distanciaSaida;
+  }else if(direita){
+    paredeNaFrenteInicio = mediaInfravermelho(1) <= distanciaParede;
+    saidaFrenteInicio = mediaInfravermelho(1) >= distanciaSaida;
+  }
+
+  Serial.print("Parede na frente: "); Serial.println(paredeNaFrenteInicio);
+  Serial.print("Saída na frente: "); Serial.println(saidaFrenteInicio);
 
   ligarGarra();
   abrirGarra();
   descerGarra();
-  delay(250);
-
-  motorD.write(veloBaseEsq);
-  motorE.write(veloBaseDir);
   delay(500);
-  anguloReto = retornoAnguloZ();
 
-  //*********************************************** */
+  //*************************************** */
   //
-  //                PARTE 05
-  //      Agora vai ir pro meio com a garra aberta
+  //                PARTE 03
+  //    Vai pro meio com a garra aberta
+  // fecha, perto da borda, via mais pra frente
+  //      e verifica as saidas pros cantos
   //
-  //*********************************************** */
+  //*************************************** */
 
-  startTime = millis();
-  while(startTime + 4 * 1000 > millis()) {
-    correcaoObjeto();
-    giro.update();
+  andarRetoPorTempo(5500);
+  delay(500);
+  bool saidaEsquerdaMeio = mediaInfravermelho(1) > 65; 
+  bool saidaDireitaMeio = mediaInfravermelho(3) > 65;
+
+  if(saidaDireitaMeio){
+    setCorDireita(1,1,0);
+    delay(1000);
+    setCorDireita(1,1,1);
+  }else if (saidaEsquerdaMeio){
+    setCorEsquerda(1,1,0);
+    delay(1000);
+    setCorEsquerda(1,1,1);
+  }else if(saidaDireitaMeio && saidaEsquerdaMeio){
+    setCorDireita(1,1,0);
+    setCorEsquerda(1,1,0);
+    tocar_buzzer(1000, 3, 500);
+    setCorDireita(1,1,1);
+    setCorEsquerda(1,1,1);
+  }
+  
+  andarRetoPorTempo(3000);
+
+  fecharGarra();
+  garraMeio();
+  delay(500);
+  andarRetoPorTempo(3000);
+
+  //Carrinho está la na frente
+
+  bool saidaFrente = mediaInfravermelho(2) > distanciaMaxima;
+  bool trianguloEsquerda = mediaInfravermelho(1) <= distanciaMaxima;
+  bool trianguloDireita = mediaInfravermelho(3) <= distanciaMaxima;
+
+  Serial.print("Triângulo Esquerda: "); Serial.println(trianguloEsquerda);
+  Serial.print("Triângulo Direita: "); Serial.println(trianguloDireita);
+
+  if(trianguloDireita && trianguloEsquerda){
+    trianguloEsquerda == false;
   }
 
-  //*********************************************** */
-  //
-  //                PARTE 05.1
-  //      Verificar se tem saida na lateral, 
-  //              estando no meio
-  //
-  //*********************************************** */
+  if(trianguloDireita || trianguloEsquerda){
+    andarPraTrasPorTempo(5000);
 
-  saidaNoMeioDireita = false;
-  saidaNoMeioEsquerda = false;
+    if(trianguloDireita){
 
-  if(esquerda){ //Não pode ter saida no lado direito nesse ponto, considerando entrada no canto
-    int dEsquerda = mediaInfravermelho(1);
-    if(dEsquerda > 45){
-      saidaNoMeioEsquerda = true;
-      Serial.println("Tem saida no meio a esquerda!");
-      tocar_buzzer(1000, 1, 500);
+      motorE.write(veloBaseDir);
+      motorD.write(veloBaseDir);
+      setCorDireita(1,1,0);
+      while (((anguloReto - grausCurva45) < retornoAnguloZ())) {
+        giro.update();
+      } 
+      setCorDireita(1,1,1);
+      anguloReto = anguloReto - grausCurva45;
+
+    }else if(trianguloEsquerda){
+
+      motorE.write(veloBaseEsq);
+      motorD.write(veloBaseEsq);   
+      setCorEsquerda(1,1,0);
+      while (((anguloReto + grausCurva45) > retornoAnguloZ())) {
+        giro.update();
+      }
+      setCorEsquerda(1,1,1);
+      anguloReto = anguloReto + grausCurva45;
+
     }
-  }else if(direita){ //Não pode ter saida no lado esquerdo nesse ponto, considerando entrada no canto
-    int dDireita = mediaInfravermelho(3);
-    if(dDireita > 45){
-      saidaNoMeioDireita = true;
-      Serial.println("Tem saida no meio a direita!");
-      tocar_buzzer(1000, 2, 250);
-    }
-  }
-  //*********************************************** */
-  //
-  //                PARTE 05.2
-  //      Verificar se tem saida na frente
-  // estando no meio, se não tiver, vai pra frente
-  //    por 5 segundos, pra ficar na parede
-  //
-  //*********************************************** */
-
-  saidaNoMeioFrente = false;
-  if(mediaInfravermelho(2) > 50) {
-    Serial.println("Tem saida no meio!");
-    saidaNoMeioFrente = true;
-    tocar_buzzer(1000, 1, 1500);
-  } else {
-    Serial.println("Não tem saida no meio!");
     
-    andarRetoPorTempo(5000);
-
-    anguloReto = retornoAnguloZ();
-    fecharGarra();
-    startTime = millis();
-    while(startTime + 1 * 250 > millis()) {
-      correcaoRe();
-    }
-    garraMeio();
-    }
-
+    unsigned long startTime = millis();
     while(digitalRead(no) == HIGH){
-      correcaoObjeto();
+      andarRetoPorTempo(100);
     }
-    motorD.write(90);
-    motorE.write(90);
-  }
+    long totalTime = millis() - startTime - 500;
 
-  //*********************************************** */
-  //
-  //                PARTE 06
-  //     Alinhado na parede do meio da frente,
-  // vai verificar em qual lugar deixar as bolinhas
-  //        e voltar ao meio para sair
-  //
-  //*********************************************** */
-
-  bool deixarBolinha = true; //False para esquerda, True para direita
-
-  andarPraTrasPorTempo(3500);
-
-  if(deixarBolinha){
-    Serial.println("Deixar bolinha a direita!");
-    motorE.write(veloBaseDir);
-    motorD.write(veloBaseDir);
-    while (((anguloReto - 45) < retornoAnguloZ())) {
-      giro.update();
-    }
-    anguloReto = anguloReto - 45;
-    andarRetoPorTempo(3000);
     garra90();
     abrirGarra();
-    delay(500);
-    subirGarra();
+    delay(1000);
     fecharGarra();
-    desligarGarra();
-    delay(500);
-    andarPraTrasPorTempo(3500);
-
-    motorE.write(veloBaseEsq);
-    motorD.write(veloBaseEsq);
-    while (((anguloReto + 45) > retornoAnguloZ())) {
-      giro.update();
-    }
-    anguloReto = anguloReto + 45;
-
-  }else if(!deixarBolinha){
-    Serial.println("Deixar bolinha a esquerda!");
-    motorE.write(veloBaseEsq);
-    motorD.write(veloBaseEsq);
-    while (((anguloReto + 45) > retornoAnguloZ())) {
-      giro.update();
-    }
-    anguloReto = anguloReto + 45;
-    andarRetoPorTempo(3000);
-    garra90();
-    abrirGarra();
-    delay(500);
     subirGarra();
-    fecharGarra();
-    desligarGarra();
     delay(500);
-    andarPraTrasPorTempo(3500);
+    desligarGarra();
+  
+    andarPraTrasPorTempo(totalTime);
 
-    motorE.write(veloBaseDir);
-    motorD.write(veloBaseDir);
-    while (((anguloReto - 45) < retornoAnguloZ())) {
-      giro.update();
+    if(trianguloDireita){
+      motorE.write(veloBaseEsq);
+      motorD.write(veloBaseEsq);
+      setCorEsquerda(1,1,0);
+      while (((anguloReto + grausCurva45) > retornoAnguloZ())) {
+        giro.update();
+      }
+      motorD.write(90);
+      motorE.write(90);
+      setCorEsquerda(1,1,1);
+      anguloReto = anguloReto + grausCurva45;
+
+    }else if(trianguloEsquerda){
+      motorE.write(veloBaseDir);
+      motorD.write(veloBaseDir);
+      setCorDireita(1,1,0);
+      while (((anguloReto - grausCurva45) < retornoAnguloZ())) {
+        giro.update();
+      }
+      motorD.write(90);
+      motorE.write(90);
+      setCorDireita(1,1,1);
+      anguloReto = anguloReto - grausCurva45;
+
     }
-    anguloReto = anguloReto - 45;
+  }else{
+    tocar_buzzer(1000, 5, 500);
   }
+  
+  //**************************************** */
+  //
+  //                PARTE 04
+  //          Vai atrás da saida
+  //
+  //**************************************** */
 
-  andarPraTrasPorTempo(3000);
+  Serial.println("=== [DEBUG] Iniciando busca pela saída ===");
+  Serial.print("Saida na frente em cima: "); Serial.println(saidaFrente);
+  Serial.print("Saida na direita meio: "); Serial.println(saidaDireitaMeio);
+  Serial.print("Saida na esquerda meio: "); Serial.println(saidaEsquerdaMeio);
+  Serial.print("Saida na frente no inicio: "); Serial.println(saidaFrenteInicio);
 
-  if(saidaNoMeioDireita){
-    Serial.println("Saindo a direita do resgate!");
-    sairDireita();
+  if(saidaFrente){
+    Serial.println("Saindo pela frente");
+    sairFrente();
+    return;
+  }else if(saidaDireitaMeio){
+    Serial.println("Saindo pela direita meio");
+    sairMeioDireita(); 
+    return;
+  }else if(saidaEsquerdaMeio){
+    Serial.println("Saindo pela esquerda meio");
+    sairMeioEsquerda();
+    return;
+  }else if(saidaFrenteInicio){
+    tocar_buzzer(1000, 5, 500);
 
-  }else if(saidaNoMeioEsquerda){
-    Serial.println("Saindo a esquerda do resgate!");
-    sairEsquerda();
-  }
+    while(true){
+      motorD.write(90);
+      motorE.write(90);
+      piscaLeds(500);
+    };
 
-  Serial.println("=== [DEBUG] Fim do resgate ===");
-  Serial.println("Saiadas:"); 
-  Serial.print("saidaNoMeioFrente: "); Serial.println(saidaNoMeioFrente);
-  Serial.print("saidaNoMeioEsquerda: "); Serial.println(saidaNoMeioEsquerda);
-  Serial.print("saidaNoMeioDireita: "); Serial.println(saidaNoMeioDireita);
-
-  while (true){
-    motorD.write(90);
-    motorE.write(90);
+    return;
   }
 }
 
@@ -1057,10 +910,14 @@ void giroVerde() {
     motorE.write(veloBaseDir - pequenaCurvaLadoC);
     motorD.write(veloBaseDir - pequenaCurvaLadoC);
     tocar_buzzer(1000, 3, 100);
+    setCorDireita(1,0,1);
+    setCorEsquerda(1,0,1);
     while (anguloReto - graqusCurva180 < retornoAnguloZ()) {
       giro.update();
       Serial.print("VERDE!! Fazendo curva 180° | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - graqusCurva180);
     }
+    setCorDireita(1,1,1);
+    setCorEsquerda(1,1,1);
     motorE.write(veloBaseEsq);
     motorD.write(veloBaseDir);
     delay(tempoDepoisDoVerde180);
@@ -1073,10 +930,12 @@ void giroVerde() {
     delay(delayCurvasverde);
     motorE.write(veloBaseDir);
     motorD.write(veloBaseDir);
+    setCorDireita(1,0,1);
     while (anguloReto - grausCurva90 < retornoAnguloZ()) {
       giro.update();
       Serial.print("VERDE!! Fazendo curva para a direita | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - 90);
     }
+    setCorDireita(1,1,1);
     motorE.write(veloBaseEsq);
     motorD.write(veloBaseDir);
     delay(tempoDepoisDoVerde90);
@@ -1090,10 +949,12 @@ void giroVerde() {
     anguloReto = retornoAnguloZ();
     motorE.write(veloBaseEsq);
     motorD.write(veloBaseEsq);
+    setCorEsquerda(1,0,1);
     while (anguloReto + grausCurva90 > retornoAnguloZ()) {
       giro.update();
       Serial.print("VERDE!! Fazendo curva para a esquerda | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto + 90);
     }
+    setCorEsquerda(1,1,1);
     motorE.write(veloBaseEsq);
     motorD.write(veloBaseDir);
     delay(tempoDepoisDoVerde90);
@@ -1137,38 +998,32 @@ void correcao() {
 void correcaoObjeto() {
   anguloAtual = retornoAnguloZ();
   if (anguloReto - erro > anguloAtual) {
-    motorE.write(130);
-    motorD.write(80);
-    // Serial.println("Objeto Correção1");
+    motorE.write(160);
+    motorD.write(50);
   }
   else if (anguloReto + erro < anguloAtual) {
-    motorE.write(100);
-    motorD.write(50);
-    // Serial.println("Objeto Correção2");
+    motorE.write(120);
+    motorD.write(20);
   }
   else if (abs(anguloReto - anguloAtual) <= erro) {
     motorE.write(veloBaseEsq + veloCurva90);
     motorD.write(veloBaseDir - veloCurva90);
-    // Serial.println("Objeto Correção3");
   }
 }
 
 void correcaoRe(){
   anguloAtual = retornoAnguloZ();
   if (anguloReto - erro > anguloAtual) {
-    motorE.write(80);
-    motorD.write(130);
-    //Serial.println("Objeto Correção1");
+    motorE.write(50);
+    motorD.write(160);
   }
   else if (anguloReto + erro < anguloAtual) {
-    motorE.write(50);
-    motorD.write(100);
-    //Serial.println("Objeto Correção2");
+    motorE.write(20);
+    motorD.write(120);
   }
   else if (abs(anguloReto - anguloAtual) <= erro) {
     motorE.write(veloBaseDir - veloCurva90);
     motorD.write(veloBaseEsq + veloCurva90);
-    //Serial.println("Objeto Correção3");
   }
 }
 
@@ -1361,8 +1216,9 @@ void andarReto() {
         giro.update();
         sl = lerSensoresLinha();
         Serial.print("Fazendo curva para a esquerda | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto + 90);
+        setCorEsquerda(1,1,0);
       }
-
+      setCorEsquerda(1,1,1);
       motorE.write(veloBaseEsq);
       motorD.write(veloBaseDir);
 
@@ -1402,8 +1258,9 @@ void andarReto() {
         giro.update();
         sl = lerSensoresLinha();
         Serial.print("Fazendo curva para a direita | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - 90);
-      }
-
+        setCorDireita(1,1,0);
+      } 
+      setCorDireita(1,1,1);
       motorE.write(veloBaseEsq);
       motorD.write(veloBaseDir);
 
@@ -1578,19 +1435,19 @@ void desligarMotoresGarra() {
 
 void descerGarra() {
   Serial.println("Descendo Garra");
-  motorG.write(175); // Posição de descida
-  delay(2000); // Tempo para descer
+  motorG.write(180);
+  delay(1000);
 }
 
 void garraMeio(){
   Serial.println("Garra Meio");
-  motorG.write(55); // Posição de meio
-  delay(2000); // Tempo para meio
+  motorG.write(55);
+  delay(1000);
 }
 
 void garra90(){
   Serial.println("Garra 90°");
-  motorG.write(85);
+  motorG.write(90);
 }
 
 void subirGarra() {
@@ -1599,24 +1456,17 @@ void subirGarra() {
   delay(1000);
 }
 
-void subirGarraRapido() {
-  Serial.println("Subindo Garra Rápido");
-  motorG.write(0);
-  delay(1000);
-}
-
 void abrirGarra() {
   Serial.println("Abrindo Garra");
-  motorEsqG.write(0); // Posição de abertura
-  motorDirG.write(180); // Posição de abertura
-  delay(1000); // Tempo para abrir
+  motorEsqG.write(0);
+  motorDirG.write(180);
+  delay(1000);
 }
 
 void fecharGarra() {
   Serial.println("Fechando Garra");
-  motorEsqG.write(110); // Posição de fechamento
-  motorDirG.write(70); // Posição de fechamento
-  delay(1000); // Tempo para fechar
+  motorEsqG.write(110);
+  motorDirG.write(70);
 }
 
 //******************************************************************************
@@ -1692,9 +1542,9 @@ void lerInfravermelho(){
   int d2 = SI_Esquerda.distance();
   int d3 = SI_Direita.distance();
 
-  Serial.print("Distancia Frente: "); Serial.print(d1); Serial.print("cm - ");
-  Serial.print("Distancia Esquerda: "); Serial.print(d2); Serial.print("cm - ");
-  Serial.print("Distancia Direita: "); Serial.print(d3); Serial.print("cm - ");
+  Serial.print("Esquerda: "); Serial.print(d2); Serial.print("cm - ");
+  Serial.print("Frente  : "); Serial.print(d1); Serial.print("cm - ");
+  Serial.print("Direita : "); Serial.print(d3); Serial.print("cm - ");
   Serial.println(" ");
 }
 
@@ -2499,6 +2349,16 @@ void setup() {
     pinMode(sensores[i], INPUT);
   }
 
+  pinMode(pinoR1, OUTPUT); 
+  pinMode(pinoG1, OUTPUT); 
+  pinMode(pinoB1, OUTPUT);
+  pinMode(pinoR2, OUTPUT); 
+  pinMode(pinoG2, OUTPUT); 
+  pinMode(pinoB2, OUTPUT);
+  
+  pinMode(Hall_Esquerda, INPUT);
+  pinMode(Hall_Direita, INPUT);
+
   pinMode(buzzer, OUTPUT);
   pinMode(no, INPUT_PULLUP);
 
@@ -2539,12 +2399,15 @@ void setup() {
   EEPROM.get(EEPROM_maxCVermelho, maxCVermelho);
   EEPROM.get(EEPROM_diferencaDasCoresVermelho, diferencaDasCoresVermelho);
 
-  // tocar_buzzer(750, 1, 125);
+
+  setCorDireita(1,1,1);
+  setCorEsquerda(1,1,1);
 
   ligarGarra();
   subirGarra();
-  desligarGarra(); 
-
+  delay(500);
+  desligarGarra();
+  delay(500); 
   tocar_buzzer(1000, 2, 125);
 }
 
@@ -2554,15 +2417,41 @@ void setup() {
 //*                                                                            *
 //*******************************************************************************
 
-void loop() {
-  //verificaVermelho();
-  //retornoSensoresCor();
-  //lerInfravermelho();
-  // delay(1000);
-  //andarReto(
+const float distanciaPorPulso = 1.8; 
+volatile int pulsosEsquerda = 0;
+volatile int pulsosDireita = 0;
+const int pulsosAlvo = 6; // ~ 10cm
+int ultimaLeituraE = 0;
+int ultimaLeituraD = 0;
 
-  processarComandoSerial();
-  if (!modoConfig) {
-    andarReto();
+void loop() {
+  // processarComandoSerial();
+  // if (!modoConfig) {
+  //   andarReto();
+  // }
+
+  int leituraE, leituraD;
+  motorD.write(veloBaseDir);
+  motorE.write(veloBaseDir);
+
+  while(pulsosEsquerda < 8){
+    leituraE = analogRead(Hall_Esquerda);
+    leituraD = analogRead(Hall_Direita);
+    if (leituraE < 500 && ultimaLeituraE >= 500) {
+      pulsosEsquerda++;
+    }
+    ultimaLeituraE = leituraE;
+    
+    delay(50);
   }
+
+  motorD.write(90);
+  motorE.write(90);
+
+  Serial.print("Voltagem Hall Esquerda: "); Serial.print(leituraE);
+  Serial.print(" | Pulsos Esquerda: "); Serial.print(pulsosEsquerda);
+  Serial.print(" | Distancia Esquerda: "); Serial.print(pulsosEsquerda * distanciaPorPulso); Serial.print(" cm | ");
+
+  while(true);
 }
+
