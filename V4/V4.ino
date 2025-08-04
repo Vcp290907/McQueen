@@ -36,15 +36,15 @@
 #define EEPROM_maxCVermelho 30
 #define EEPROM_diferencaDasCoresVermelho 32
 
-boolean modoConfig = false;
+bool modoConfig = false;
 
 #define SDApin1 2 //Sensor Esquerda
 #define SCLpin1 3 //Sensor Esquerda
 #define SDApin2 4 //Sensor Direita
 #define SCLpin2 5 //Sensor Direita 
 
-#define motorEpin 6 //Servo Esquerdo
-#define motorDpin 7 //Servo Direito
+#define motorEpin 7 //Servo Esquerdo
+#define motorDpin 6 //Servo Direito
 
 #define motorGpin 8 //Servo Garra
 #define motorEsqGpin 10 //Servo Garra Esquerdo
@@ -102,73 +102,64 @@ MPU6050 giro(Wire);
 unsigned long timer = 0;
 
 //Matriz para os valores dos sensores de linha
-int sensores[] = {SE,SME,SM,SMD,SD};
+const int sensores[] PROGMEM = {SE,SME,SM,SMD,SD};
 static int valores[5];
 
-// Variáveis para os sensores de cor
+// Variáveis para os sensores de cor - otimizadas
 uint16_t r1, g1, b1, c1, lux1, r2, g2, b2, c2, lux2;
-long duration1, distance1, duration2, distance2;
 
-int erro = 1;
+byte erro = 1;
 int anguloRampaSubida, anguloRampaDescida, anguloDoReto, anguloReto;
 int* sl;
-boolean trava = false;
+bool trava = false;
 
 // Parâmetros gerais
+const byte veloBaseEsq = 40; //40
+const byte veloBaseDir = 138; //138
+const byte pequenaCurvaLadoC = 7;//7
+const byte pequenaCurvaLadoR = 5; //5
+const int veloCurva90 = 40; //40
 
-int veloBaseEsq = 140; //140
-int veloBaseDir = 40; //40
-int pequenaCurvaLadoC = 15;//15
-int pequenaCurvaLadoR = 5; //5
-int veloCurva90 = 40; //40
+const int grausCurva90 = 90;
+const int graqusCurva180 = 180;
+const int grausCurva45 = 45;
 
-int grausCurva90 = 90;
-int graqusCurva180 = 180;
-int grausCurva45 = 45;
+byte anguloAtual = 0;
 
-int anguloAtual = 0;
-
-int verificacaoCurvaVerde = 350; //Pulinho para ver se é curva verde
-int erroGiro = 0;
-int erroRampa = 3; // 3
-int erroRampaDescida = 12; // 12
-int tempoDepoisDoVerde90 = 2000;
-int delayCurvasverde = 500;
-int tempoAntesCurva90 = 500;
-int tempoDepoisCurva90 = 1000; //1000
-int tempoDepoisDoVerde180 = 1000; //1000
-int tempoDepoisDoVerdeFalso = 750; //1000
-int paredeResgate = 2000; //2000
-int paredeResgateSaida = 1000; //1000
+const int verificacaoCurvaVerde = 350; //Pulinho para ver se é curva verde
+byte erroGiro = 0;
+const byte erroRampa = 3; // 3
+const byte erroRampaDescida = 12; // 12
+const int tempoDepoisDoVerde90 = 500;
+const byte delayCurvasverde = 250;
+const int tempoAntesCurva90 = 350;
+const int tempoDepoisCurva90 = 250; //1000
+const int tempoDepoisDoVerde180 = 1000; //1000
+const int tempoDepoisDoVerdeFalso = 750; //1000
+const int paredeResgate = 2000; //2000
+const int paredeResgateSaida = 1000; //1000
 
 //Branco
 int valorCnoBranco = 1000; 
 
-// Verde mais claro
+// Verde - variáveis de calibração (mantidas como int)
 int minLuxVerdeDir, minLuxVerdeEsq;
 int maxLuxVerdeDir, maxLuxVerdeEsq;
 int minCVerdeDir, minCVerdeEsq;
 int maxCVerdeDir, maxCVerdeEsq;
 int diferencaDasCoresDir, diferencaDasCoresEsq;
 
-//Verde mais escuro
-// minLuxVerde: 40
-// maxLuxVerde: 100
-// minCVerde: 130
-// maxCVerde: 250
-// diferencaDasCores: 2
-
-// Preto
+// Preto - otimizado
 int maxLuxPreto = 150;
 int maxCPreto = 400;
 
-// Cinza
+// Cinza - otimizado  
 int minLuxCinza = 110;
 int maxLuxCinza = 200;
 int minCNoCinza = 550;
 int maxCNoCinza = 650;
 
-// Vermelho
+// Vermelho - otimizado
 int minLuxVermelho = 100;
 int maxLuxVermelho = 150;
 int minCVermelho = 400;
@@ -176,24 +167,23 @@ int maxCVermelho = 650;
 int diferencaDasCoresVermelho = 40;
 
 // Outros
-int subtracaoSensoresCor = 100;
+const byte subtracaoSensoresCor = 100;
 
-//PID
-
-float Kp = 2.0;
-float Ki = 0.2;
-float Kd = 1.5;
+//PID - otimizado com tipos menores
+const float Kp = 2.0;
+const float Ki = 0.2;
+const float Kd = 1.5;
 int erroP = 0;
 int erroAnterior = 0;
 float erroI = 0;
 float erroD = 0;
-int ajuste = 0;
+byte ajuste;
 
-//Desvio OBJETO
-int distanciaDesvio = 0; //6
-int delayCurva1 = 3;
-int delayCurva2 = 7;
-int delayMeio = 1;
+//Desvio OBJETO - otimizado
+const byte distanciaDesvio = 0; //6
+const int delayCurva1 = 3;
+const int delayCurva2 = 7;
+const byte delayMeio = 1;
 //************************************************************************
 //*                                                                      *
 //*                              Funções                                 *
@@ -212,7 +202,7 @@ void tocar_buzzer(int freque, int unidades, int espera){
 
 int* lerSensoresLinha() {
   for (byte i = 0; i < 5; i++) {
-    valores[i] = digitalRead(sensores[i]);
+    valores[i] = digitalRead(pgm_read_word(&sensores[i]));
   }
   return valores;
 }
@@ -245,10 +235,10 @@ int mediaInfravermelho(int sensor, int numLeituras = 5) { // 1 pra esquerda, 2 p
   for (int i = 0; i < numLeituras; i++) {
     int medida = sensorPtr->distance();
     soma += medida;
-    Serial.print("Distancia medida: ");Serial.println(medida);
+    Serial.print(F("Distancia medida: "));Serial.println(medida);
     delay(5);
   }
-  Serial.print("Media Sensor "); Serial.print(sensor); Serial.print(": "); Serial.println(soma / numLeituras);
+  Serial.print(F("Media Sensor ")); Serial.print(sensor); Serial.print(": "); Serial.println(soma / numLeituras);
   return soma / numLeituras;
 }
 
@@ -263,44 +253,44 @@ void verificaVermelho() {
   int luu1 = (int)lux1;
   int luu2 = (int)lux2;
 
-  Serial.println("=== [DEBUG] verificaVermelho ===");
-  Serial.print("Sensor Direita - R: "); Serial.print(r1);
-  Serial.print(" G: "); Serial.print(g1);
-  Serial.print(" B: "); Serial.print(b1);
-  Serial.print(" C: "); Serial.print(cc1);
-  Serial.print(" Lux: "); Serial.println(luu1);
+  Serial.println(F("=== [DEBUG] verificaVermelho ==="));
+  Serial.print(F("Sensor Direita - R: ")); Serial.print(r1);
+  Serial.print(F(" G: ")); Serial.print(g1);
+  Serial.print(F(" B: ")); Serial.print(b1);
+  Serial.print(F(" C: ")); Serial.print(cc1);
+  Serial.print(F(" Lux: ")); Serial.println(luu1);
 
-  Serial.print("Sensor Esquerda - R: "); Serial.print(r2);
-  Serial.print(" G: "); Serial.print(g2);
-  Serial.print(" B: "); Serial.print(b2);
-  Serial.print(" C: "); Serial.print(cc2);
-  Serial.print(" Lux: "); Serial.println(luu2);
+  Serial.print(F("Sensor Esquerda - R: ")); Serial.print(r2);
+  Serial.print(F(" G: ")); Serial.print(g2);
+  Serial.print(F(" B: ")); Serial.print(b2);
+  Serial.print(F(" C: ")); Serial.print(cc2);
+  Serial.print(F(" Lux: ")); Serial.println(luu2);
 
-  Serial.print("Limites: minCVermelho="); Serial.print(minCVermelho);
-  Serial.print(" maxCVermelho="); Serial.print(maxCVermelho);
-  Serial.print(" minLuxVermelho="); Serial.print(minLuxVermelho);
-  Serial.print(" maxLuxVermelho="); Serial.print(maxLuxVermelho);
-  Serial.print(" diferencaDasCoresVermelho="); Serial.println(diferencaDasCoresVermelho);
+  Serial.print(F("Limites: minCVermelho=")); Serial.print(minCVermelho);
+  Serial.print(F(" maxCVermelho=")); Serial.print(maxCVermelho);
+  Serial.print(F(" minLuxVermelho=")); Serial.print(minLuxVermelho);
+  Serial.print(F(" maxLuxVermelho=")); Serial.print(maxLuxVermelho);
+  Serial.print(F(" diferencaDasCoresVermelho=")); Serial.println(diferencaDasCoresVermelho);
 
   bool vermelhoDireita = (r1 > g1 && r1 > b1 && r1 - g1 > diferencaDasCoresVermelho && 
                           cc1 >= minCVermelho && cc1 <= maxCVermelho && luu1 >= minLuxVermelho && luu1 <= maxLuxVermelho);
   bool vermelhoEsquerda = (r2 > g2 && r2 > b2 && r2 - g2 > diferencaDasCoresVermelho && 
                           cc2 >= minCVermelho && cc2 <= maxCVermelho && luu2 >= minLuxVermelho && luu2 <= maxLuxVermelho);
 
-  Serial.print("vermelhoDireita: "); Serial.println(vermelhoDireita);
-  Serial.print("vermelhoEsquerda: "); Serial.println(vermelhoEsquerda);
-  Serial.print("r1 - g1: "); Serial.println(r1 - g1);
-  Serial.print("r2 - g2: "); Serial.println(r2 - g2);
+  Serial.print(F("vermelhoDireita: ")); Serial.println(vermelhoDireita);
+  Serial.print(F("vermelhoEsquerda: ")); Serial.println(vermelhoEsquerda);
+  Serial.print(F("r1 - g1: ")); Serial.println(r1 - g1);
+  Serial.print(F("r2 - g2: ")); Serial.println(r2 - g2);
 
   if (vermelhoDireita || vermelhoEsquerda) {
-    Serial.println("VERMELHO DETECTADO!");
+    Serial.println(F("VERMELHO DETECTADO!"));
     while (true) {
       motorE.write(90);
       motorD.write(90);
-      Serial.println("Parado por vermelho");
+      Serial.println(F("Parado por vermelho"));
     }
   } else {
-    Serial.println("Não é vermelho");
+    Serial.println(F("Não é vermelho"));
     lerCinza();
   }
 }
@@ -315,69 +305,6 @@ void piscaLeds(int intervalo){
   setCorDireita(0,1,1);
   setCorEsquerda(0,1,1);
   delay(intervalo);
-}
-
-const float distanciaPorPulso = 1.8; 
-volatile int pulsosEsquerda = 0;
-volatile int pulsosDireita = 0;
-const int pulsosAlvo = 6; // para 10 cm
-int ultimaLeituraE = 0;
-int ultimaLeituraD = 0;
-
-void curva90Esquerda(int pulsos = 8){ //Testando fazer cruvas de 90 com o sensor de Hall
-  int leituraE;
-
-  motorD.write(veloBaseEsq);
-  motorE.write(veloBaseEsq);
-
-  while(pulsosEsquerda < pulsos){
-    leituraE = analogRead(Hall_Esquerda);
-    if (leituraE < 500 && ultimaLeituraE >= 500) {
-      pulsosEsquerda++;
-    }
-    ultimaLeituraE = leituraE;
-    delay(50);
-  }
-
-  motorD.write(90);
-  motorE.write(90);
-}
-
-void curva90Direita(int pulsos = 8){ //Testando fazer cruvas de 90 com o sensor de Hall
-  int leituraE;
-
-  motorD.write(veloBaseDir);
-  motorE.write(veloBaseDir);
-
-  while(pulsosEsquerda < pulsos){
-    leituraE = analogRead(Hall_Esquerda);
-    if (leituraE < 500 && ultimaLeituraE >= 500) {
-      pulsosEsquerda++;
-    }
-    ultimaLeituraE = leituraE;
-    delay(50);
-  }
-
-  motorD.write(90);
-  motorE.write(90);
-}
-
-void curva180Direita(int pulsos = 16){
-  int leituraE;
-  motorD.write(veloBaseDir);
-  motorE.write(veloBaseDir);
-
-  while(pulsosEsquerda < pulsos){
-    leituraE = analogRead(Hall_Esquerda);
-    if (leituraE < 500 && ultimaLeituraE >= 500) {
-      pulsosEsquerda++;
-    }
-    ultimaLeituraE = leituraE;
-    delay(50);
-  }
-
-  motorD.write(90);
-  motorE.write(90);
 }
 
 void sairFrente(){
@@ -443,7 +370,7 @@ void sairMeioEsquerda(){
 }
 
 void andarRetoPorTempo(int tempo){
-  Serial.print("Andando reto por "); Serial.print(tempo); Serial.println(" ms");
+  Serial.print(F("Andando reto por ")); Serial.print(tempo); Serial.println(" ms");
   unsigned long startTime = millis();
   while (millis() - startTime < tempo) {
     correcaoObjeto();
@@ -453,7 +380,7 @@ void andarRetoPorTempo(int tempo){
 }
 
 void andarPraTrasPorTempo(int tempo){
-  Serial.print("Andando reto pra tras por "); Serial.print(tempo); Serial.println(" ms");
+  Serial.print(F("Andando reto pra tras por ")); Serial.print(tempo); Serial.println(" ms");
   unsigned long startTime = millis();
   while (millis() - startTime < tempo) {
     correcaoRe();
@@ -462,12 +389,29 @@ void andarPraTrasPorTempo(int tempo){
   motorD.write(90);
 }
 
-int distanciaMaxima = 25; //25
-int distanciaParede = 50; //50
-int distanciaSaida = 60; //60
+
+void curvaComHall(int direcao, int graus) {
+  
+}
+
+void curva90Direita() {
+  curvaComHall(1, 90);
+}
+
+void curva90Esquerda() {
+  curvaComHall(-1, 90);
+}
+
+void curva180Direita() {
+  curvaComHall(1, 180);
+}
+
+const int distanciaMaxima = 25; //25
+const int distanciaParede = 50; //50
+const int distanciaSaida = 60; //60
 
 void resgate(){
-  Serial.println("Resgate iniciado!");
+  Serial.println(F("Resgate iniciado!"));
   tocar_buzzer(500, 2, 200);
   motorE.write(90);
   motorD.write(90);
@@ -723,10 +667,10 @@ void resgate(){
   //**************************************** */
 
   Serial.println("=== [DEBUG] Iniciando busca pela saída ===");
-  Serial.print("Saida na frente em cima: "); Serial.println(saidaFrente);
-  Serial.print("Saida na direita meio: "); Serial.println(saidaDireitaMeio);
-  Serial.print("Saida na esquerda meio: "); Serial.println(saidaEsquerdaMeio);
-  Serial.print("Saida na frente no inicio: "); Serial.println(saidaFrenteInicio);
+  Serial.print(F("Saida na frente em cima: ")); Serial.println(saidaFrente);
+  Serial.print(F("Saida na direita meio: ")); Serial.println(saidaDireitaMeio);
+  Serial.print(F("Saida na esquerda meio: ")); Serial.println(saidaEsquerdaMeio);
+  Serial.print(F("Saida na frente no inicio: ")); Serial.println(saidaFrenteInicio);
 
   if(saidaFrente){
     Serial.println("Saindo pela frente");
@@ -796,29 +740,29 @@ int verificaVerdeNovamente(int delayy, int delay2=100) {
   int luu1 = (int)lux1;
   int luu2 = (int)lux2;
 
-  Serial.print("Direita - R: "); Serial.print(r1);
-  Serial.print(" G: "); Serial.print(g1);
-  Serial.print(" B: "); Serial.print(b1);
-  Serial.print(" C: "); Serial.print(cc1);
-  Serial.print(" Lux: "); Serial.println(luu1);
+  Serial.print(F("Direita - R: ")); Serial.print(r1);
+  Serial.print(F(" G: ")); Serial.print(g1);
+  Serial.print(F(" B: ")); Serial.print(b1);
+  Serial.print(F(" C: ")); Serial.print(cc1);
+  Serial.print(F(" Lux: ")); Serial.println(luu1);
 
-  Serial.print("Esquerda - R: "); Serial.print(r2);
-  Serial.print(" G: "); Serial.print(g2);
-  Serial.print(" B: "); Serial.print(b2);
-  Serial.print(" C: "); Serial.print(cc2);
-  Serial.print(" Lux: "); Serial.println(luu2);
+  Serial.print(F("Esquerda - R: ")); Serial.print(r2);
+  Serial.print(F(" G: ")); Serial.print(g2);
+  Serial.print(F(" B: ")); Serial.print(b2);
+  Serial.print(F(" C: ")); Serial.print(cc2);
+  Serial.print(F(" Lux: ")); Serial.println(luu2);
 
-  Serial.print("Limites Direita: minC="); Serial.print(minCVerdeDir);
-  Serial.print(" maxC="); Serial.print(maxCVerdeDir);
-  Serial.print(" minLux="); Serial.print(minLuxVerdeDir);
-  Serial.print(" maxLux="); Serial.print(maxLuxVerdeDir);
-  Serial.print(" difCor="); Serial.println(diferencaDasCoresDir);
+  Serial.print(F("Limites Direita: minC=")); Serial.print(minCVerdeDir);
+  Serial.print(F(" maxC=")); Serial.print(maxCVerdeDir);
+  Serial.print(F(" minLux=")); Serial.print(minLuxVerdeDir);
+  Serial.print(F(" maxLux=")); Serial.print(maxLuxVerdeDir);
+  Serial.print(F(" difCor=")); Serial.println(diferencaDasCoresDir);
 
-  Serial.print("Limites Esquerda: minC="); Serial.print(minCVerdeEsq);
-  Serial.print(" maxC="); Serial.print(maxCVerdeEsq);
-  Serial.print(" minLux="); Serial.print(minLuxVerdeEsq);
-  Serial.print(" maxLux="); Serial.print(maxLuxVerdeEsq);
-  Serial.print(" difCor="); Serial.println(diferencaDasCoresEsq);
+  Serial.print(F("Limites Esquerda: minC=")); Serial.print(minCVerdeEsq);
+  Serial.print(F(" maxC=")); Serial.print(maxCVerdeEsq);
+  Serial.print(F(" minLux=")); Serial.print(minLuxVerdeEsq);
+  Serial.print(F(" maxLux=")); Serial.print(maxLuxVerdeEsq);
+  Serial.print(F(" difCor=")); Serial.println(diferencaDasCoresEsq);
 
   bool verdeDireita = (
     g1 > r1 && g1 > b1 &&
@@ -861,37 +805,26 @@ void giroVerde() {
   giro.update();
  
   if (resultado1 == 3) {
-    Serial.println("Verde nos dois sensores!");
-    Serial.print("VERDE!! Curva 180°"); Serial.print(" | Angulo Reto: "); Serial.print(anguloReto); Serial.print(" | Angulo Atual: "); Serial.println(retornoAnguloZ());
-    motorE.write(veloBaseDir - pequenaCurvaLadoC);
-    motorD.write(veloBaseDir - pequenaCurvaLadoC);
+    Serial.println("VERDE!! Curva 180°");
     tocar_buzzer(1000, 3, 100);
-    setCorDireita(1,0,1);
-    setCorEsquerda(1,0,1);
-    while (anguloReto - graqusCurva180 < retornoAnguloZ()) {
-      giro.update();
-      Serial.print("VERDE!! Fazendo curva 180° | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - graqusCurva180);
-    }
-    setCorDireita(1,1,1);
-    setCorEsquerda(1,1,1);
+
+    curva180Direita();
+
     motorE.write(veloBaseEsq);
     motorD.write(veloBaseDir);
     delay(tempoDepoisDoVerde180);
     anguloReto = anguloReto - graqusCurva180;
+    Serial.print("Angulo Reto: "); Serial.println(anguloReto);
+    Serial.print("Angulo Atual: "); Serial.println(retornoAnguloZ());
     erroI = 0;
   } else if (resultado1 == 1) {
     Serial.println("Verde só na direita!");
     motorE.write(veloBaseEsq);
     motorD.write(veloBaseDir);
     delay(delayCurvasverde);
-    motorE.write(veloBaseDir);
-    motorD.write(veloBaseDir);
-    setCorDireita(1,0,1);
-    while (anguloReto - grausCurva90 < retornoAnguloZ()) {
-      giro.update();
-      Serial.print("VERDE!! Fazendo curva para a direita | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - 90);
-    }
-    setCorDireita(1,1,1);
+
+    curva90Direita();
+
     motorE.write(veloBaseEsq);
     motorD.write(veloBaseDir);
     delay(tempoDepoisDoVerde90);
@@ -902,15 +835,9 @@ void giroVerde() {
     motorE.write(veloBaseEsq);
     motorD.write(veloBaseDir);
     delay(delayCurvasverde);
-    anguloReto = retornoAnguloZ();
-    motorE.write(veloBaseEsq);
-    motorD.write(veloBaseEsq);
-    setCorEsquerda(1,0,1);
-    while (anguloReto + grausCurva90 > retornoAnguloZ()) {
-      giro.update();
-      Serial.print("VERDE!! Fazendo curva para a esquerda | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto + 90);
-    }
-    setCorEsquerda(1,1,1);
+    
+    curva90Esquerda();
+
     motorE.write(veloBaseEsq);
     motorD.write(veloBaseDir);
     delay(tempoDepoisDoVerde90);
@@ -932,14 +859,14 @@ void correcao() {
   } else {
     if (anguloReto - erro > anguloAtual) {
       verificaVermelho();
-      motorE.write(130);
-      motorD.write(80);
+      motorE.write(veloBaseEsq + pequenaCurvaLadoC); //80
+      motorD.write(veloBaseDir); //130
       Serial.println("Correção1");
     }
     else if (anguloReto + erro < anguloAtual) {
       verificaVermelho();
-      motorE.write(100);
-      motorD.write(50);
+      motorE.write(veloBaseEsq);//50
+      motorD.write(veloBaseDir - pequenaCurvaLadoC);//100
       Serial.println("Correção2");
     }
     else if (abs(anguloReto - anguloAtual) <= erro) {
@@ -1078,7 +1005,8 @@ void desvioObjeto() {
   }
 }
 
-static bool estavaDesalinhado = true;
+static bool estavaDesalinhado = false;
+static bool estavaDesalinhadoMais = false;
 
 void andarReto() {
   giro.update();
@@ -1089,7 +1017,8 @@ void andarReto() {
   if(retornoAnguloY() > (anguloDoReto + erroRampaDescida)) {
     while (retornoAnguloY() > (anguloDoReto + erroRampaDescida))
     {
-      Serial.println("Descida detectada!");
+      Serial.println(F("Descida detectada!"));
+      Serial.println(retornoAnguloY());
       motorD.write(veloBaseDir - veloCurva90);
       motorE.write(veloBaseEsq + veloCurva90);
     }
@@ -1111,7 +1040,7 @@ void andarReto() {
       // PID
       ajuste = Kp * erroP + Ki * erroI + Kd * erroD;
       ajuste = abs(ajuste);
-      ajuste = constrain(ajuste, 0, 40);
+      ajuste = constrain(ajuste, 0, 30);
 
       if (erroP > 0) {
         motorE.write(veloBaseEsq - ajuste);
@@ -1124,41 +1053,53 @@ void andarReto() {
         motorD.write(veloBaseDir);
       }
 
-      Serial.print("Andando reto | Angulo Atual: "); Serial.print(anguloAtual);
-      Serial.print(" | Angulo Reto: "); Serial.print(anguloReto);
-      Serial.print(" | Ajuste: "); Serial.print(ajuste);
-      Serial.print(" | P: "); Serial.print(Kp * erroP);
-      Serial.print(" | I: "); Serial.print(Ki * erroI);
-      Serial.print(" | D: "); Serial.println(Kd * erroD);
+      Serial.print(F("Angulo Atual: ")); Serial.print(anguloAtual);
+      Serial.print(F(" | Angulo Reto: ")); Serial.print(anguloReto);
+      Serial.print(F(" | Ajuste: ")); Serial.print(ajuste);
+      Serial.print(F(" | P: ")); Serial.print(Kp * erroP);
+      Serial.print(F(" | I: ")); Serial.print(Ki * erroI);
+      Serial.print(F(" | D: ")); Serial.println(Kd * erroD);
 
-      if (estavaDesalinhado) {
-        anguloReto = (anguloAtual + anguloReto*2) / 3;
+      if (estavaDesalinhado && estavaDesalinhadoMais) {
+        anguloReto = (anguloAtual + anguloReto) / 2;
         erroI = 0;
-        Serial.print("Novo angulo RETO (centralizado): "); Serial.println(anguloReto);
+        Serial.print(F("Novo angulo RETO (centralizado 1): ")); Serial.println(anguloReto);
         estavaDesalinhado = false;
+        estavaDesalinhadoMais = false;
+      }else if(estavaDesalinhado) {
+        anguloReto = (anguloAtual*2 + anguloReto) / 3;
+        erroI = 0;
+        Serial.print(F("Novo angulo RETO (centralizado 2): ")); Serial.println(anguloReto);
+        estavaDesalinhado = false;
+      }else if(estavaDesalinhadoMais) {
+        anguloReto = (anguloAtual*2 + anguloReto) / 3;
+        erroI = 0;
+        Serial.print(F("Novo angulo RETO (centralizado 3): ")); Serial.println(anguloReto);
+        estavaDesalinhadoMais = false;
+        piscaLeds(25);
       }
-      
+
       desvioObjeto();
 
       break;
 
     case 0b10011: // Pequena curva esquerda
-      motorE.write(veloBaseEsq + pequenaCurvaLadoC);
-      motorD.write(veloBaseDir);
-      Serial.println("Pequena curva esquerda");
+      motorE.write(veloBaseEsq);
+      motorD.write(veloBaseDir + pequenaCurvaLadoC);
+      Serial.println(F("Pequena curva esquerda"));
       estavaDesalinhado = true;
-      //desvioObjeto();
+      desvioObjeto();
       break;
 
     case 0b00011: // Curva falsa ou verde
-      Serial.println("Curva falsa OU verde");
+      Serial.println(F("Curva falsa OU verde"));
       giroVerde();
       motorE.write(veloBaseEsq);
       motorD.write(veloBaseDir);
       break;
 
     case 0b00111: // Curva esquerda
-      Serial.println("Curva esquerda");
+      Serial.println(F("Curva esquerda"));
       sl = lerSensoresLinha();
 
       motorE.write(veloBaseEsq);
@@ -1166,41 +1107,35 @@ void andarReto() {
 
       delay(tempoAntesCurva90);
 
-      motorE.write(veloBaseEsq);
-      motorD.write(veloBaseEsq);
-      while (((anguloReto + grausCurva90) > retornoAnguloZ())) {
-        giro.update();
-        sl = lerSensoresLinha();
-        Serial.print("Fazendo curva para a esquerda | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto + 90);
-        setCorEsquerda(1,1,0);
-      }
-      setCorEsquerda(1,1,1);
+      curva90Esquerda();
+
       motorE.write(veloBaseEsq);
       motorD.write(veloBaseDir);
 
       delay(tempoDepoisCurva90);
+
       anguloReto = anguloReto + grausCurva90;
       erroI = 0;
-      Serial.print("Novo angulo RETO : "); Serial.println(anguloReto);
+      Serial.print(F("Novo angulo RETO : ")); Serial.println(anguloReto);
       break;
 
     case 0b11001: // Pequena curva direita
-      Serial.println("Pequena curva direita");
-      motorE.write(veloBaseEsq);
-      motorD.write(veloBaseDir - pequenaCurvaLadoC);
+      Serial.println(F("Pequena curva direita"));
+      motorE.write(veloBaseEsq - pequenaCurvaLadoC);
+      motorD.write(veloBaseDir);
       estavaDesalinhado = true;
-      //desvioObjeto();
+      desvioObjeto();
       break;
 
     case 0b11000: // Curva falsa ou verde
-      Serial.println("Curva falsa OU verde");
+      Serial.println(F("Curva falsa OU verde"));
       giroVerde();
       motorE.write(veloBaseEsq);
       motorD.write(veloBaseDir);
       break;
 
     case 0b11100: // Curva direita
-      Serial.println("Curva direita");
+      Serial.println(F("Curva direita"));
       sl = lerSensoresLinha();
 
       motorE.write(veloBaseEsq);
@@ -1208,15 +1143,8 @@ void andarReto() {
 
       delay(tempoAntesCurva90);
 
-      motorE.write(veloBaseDir);
-      motorD.write(veloBaseDir);
-      while (((anguloReto - grausCurva90) < retornoAnguloZ())) {
-        giro.update();
-        sl = lerSensoresLinha();
-        Serial.print("Fazendo curva para a direita | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - 90);
-        setCorDireita(1,1,0);
-      } 
-      setCorDireita(1,1,1);
+      curva90Direita();
+
       motorE.write(veloBaseEsq);
       motorD.write(veloBaseDir);
 
@@ -1229,29 +1157,33 @@ void andarReto() {
       break;
 
     case 0b00000:
+      motorE.write(veloBaseDir);
+      motorD.write(veloBaseEsq);
+      delay(250);
       motorE.write(90);
       motorD.write(90);
       Serial.println("Início da pista, ou encruzilhada");
+
       giroVerde();
       break;
 
     case 0b10111: // Saiu do principal, esquerda
       Serial.println("Saiu do principal, esquerda");
       sl = lerSensoresLinha();
-      motorE.write(veloBaseEsq);
-      motorD.write(80);
+      motorE.write(80);
+      motorD.write(veloBaseDir);
       sl = lerSensoresLinha();
       desvioObjeto();
-      estavaDesalinhado = true;
+      estavaDesalinhadoMais = true;
       break;
 
     case 0b11101: // Saiu do principal, direita
       Serial.println("Saiu do principal, direita");
-      motorE.write(100);
-      motorD.write(veloBaseDir);
+      motorE.write(veloBaseEsq);
+      motorD.write(100);
       sl = lerSensoresLinha();
       desvioObjeto();
-      estavaDesalinhado = true;
+      estavaDesalinhadoMais = true;
       break;
 
     case 0b11111: // Branco, final ou resgate
@@ -1264,35 +1196,35 @@ void andarReto() {
       break;
 
     case 0b01111: // Recuperando a linha, esquerda
-      Serial.println("Recuperando a linha, esquerda");
+      Serial.println(F("Recuperando a linha, esquerda"));
       while(sl[2] == 1 && sl[1] == 1 && sl[0] == 0){
         sl = lerSensoresLinha();
-        motorE.write(110);
-        motorD.write(90);
+        motorE.write(90);
+        motorD.write(120);
       }
       anguloAtual = retornoAnguloZ();
       while(anguloAtual >= anguloReto){
         anguloAtual = retornoAnguloZ();
-        Serial.print("Angulo Atual: "); Serial.println(anguloAtual);
-        Serial.print("Angulo reto"); Serial.println(anguloReto);
+        Serial.print(F("Angulo atual: ")); Serial.println(anguloAtual);
+        Serial.print(F("Angulo reto: ")); Serial.println(anguloReto);
         motorE.write(90);
-        motorD.write(70);
+        motorD.write(veloBaseDir);
       }
       break;
 
     case 0b11110: // Recuperando a linha, direita
-      Serial.println("Recuperando a linha, direita");
+      Serial.println(F("Recuperando a linha, direita"));
       while(sl[4] == 0 && sl[3] == 1 && sl[2] == 1){
         sl = lerSensoresLinha();
-        motorE.write(90);
-        motorD.write(70);
+        motorE.write(60);
+        motorD.write(90);
       }
       anguloAtual = retornoAnguloZ();
       while(anguloAtual <= anguloReto){
         anguloAtual = retornoAnguloZ();
-        Serial.print("Angulo Atual: "); Serial.println(anguloAtual);
-        Serial.print("Angulo reto"); Serial.println(anguloReto);
-        motorE.write(110);
+        Serial.print(F("Angulo atual: ")); Serial.println(anguloAtual);
+        Serial.print(F("Angulo reto: ")); Serial.println(anguloReto);
+        motorE.write(veloBaseEsq);
         motorD.write(90);
       }
       break;
@@ -1306,13 +1238,7 @@ void andarReto() {
 
       delay(tempoAntesCurva90);
 
-      motorE.write(veloBaseDir);
-      motorD.write(veloBaseDir);
-      while (((anguloReto - grausCurva90) < retornoAnguloZ())) {
-        giro.update();
-        sl = lerSensoresLinha();
-        Serial.print("Fazendo curva para a direita 2 | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - 90);
-      }
+      curva90Direita();
 
       motorE.write(veloBaseEsq);
       motorD.write(veloBaseDir);
@@ -1333,13 +1259,7 @@ void andarReto() {
 
       delay(tempoAntesCurva90);
 
-      motorE.write(veloBaseEsq);
-      motorD.write(veloBaseEsq);
-      while (((anguloReto + grausCurva90) > retornoAnguloZ())) {
-        giro.update();
-        sl = lerSensoresLinha();
-        Serial.print("Fazendo curva para a esquerda 2 | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto + 90);
-      }
+      curva90Esquerda();
 
       motorE.write(veloBaseEsq);
       motorD.write(veloBaseDir);
@@ -1378,6 +1298,7 @@ void desligarGarra(){
   motorG.detach();
   motorEsqG.detach();
   motorDirG.detach();
+  delay(500);
 }
 
 void desligarMotorPrincipal() {
@@ -1408,7 +1329,7 @@ void garra90(){
 
 void subirGarra() {
   Serial.println("Subindo Garra");
-  motorG.write(0);
+  motorG.write(5);
   delay(1000);
 }
 
@@ -1507,73 +1428,73 @@ void lerInfravermelho(){
 int menuAtual = 1;
 
 void exibirMenuPrincipal() {
-  Serial.println("=== Menu 01 ===");
-  Serial.println("1 - Ler sensores de cor");
-  Serial.println("2 - Calculos");
-  Serial.println("3 - Calibrar Verde");
-  Serial.println("4 - Calibrar Vermelho");
-  Serial.println("5 - Calibrar Cinza");
-  Serial.println("6 - Ajustar Branco Manual");
-  Serial.println("7 - Ajustar Verde Manual");
-  Serial.println("8 - Ajustar Vermelho Manual");
-  Serial.println("9 - Exibir valores da EEPROM");
-  Serial.println("0 - Sair");
-  Serial.println("================");
+  Serial.println(F("=== Menu 01 ==="));
+  Serial.println(F("1 - Ler sensores de cor"));
+  Serial.println(F("2 - Calculos"));
+  Serial.println(F("3 - Calibrar Verde"));
+  Serial.println(F("4 - Calibrar Vermelho"));
+  Serial.println(F("5 - Calibrar Cinza"));
+  Serial.println(F("6 - Ajustar Branco Manual"));
+  Serial.println(F("7 - Ajustar Verde Manual"));
+  Serial.println(F("8 - Ajustar Vermelho Manual"));
+  Serial.println(F("9 - Exibir valores da EEPROM"));
+  Serial.println(F("0 - Sair"));
+  Serial.println(F("================"));
 }
 
 void exibirMenuCalculos() {
-  Serial.println("=== Menu 02 - Calculos ===");
-  Serial.println("1 - Calculos do Verde");
-  Serial.println("2 - Calculos do Vermelho");
-  Serial.println("3 - Calculos do Cinza");
-  Serial.println("4 - Voltar");
-  Serial.println("================");
+  Serial.println(F("=== Menu 02 - Calculos ==="));
+  Serial.println(F("1 - Calculos do Verde"));
+  Serial.println(F("2 - Calculos do Vermelho"));
+  Serial.println(F("3 - Calculos do Cinza"));
+  Serial.println(F("4 - Voltar"));
+  Serial.println(F("================"));
 }
 
 void exibirMenuAjusteVerde() {
-  Serial.println("=== Menu 03 - Ajustar verde manual ===");
-  Serial.println("1 - Ler sensores de cor");
-  Serial.println("2 - Calculo do verde");
-  Serial.println("3 - maxLuxVerde");
-  Serial.println("4 - minLuxVerde");
-  Serial.println("5 - maxCVerde");
-  Serial.println("6 - minCVerde");
-  Serial.println("7 - Valores EEPROM Verde");
-  Serial.println("8 - Alterar diferenca cores verde");
-  Serial.println("9 - Voltar");
-  Serial.println("================");
+  Serial.println(F("=== Menu 03 - Ajustar verde manual ==="));
+  Serial.println(F("1 - Ler sensores de cor"));
+  Serial.println(F("2 - Calculo do verde"));
+  Serial.println(F("3 - maxLuxVerde"));
+  Serial.println(F("4 - minLuxVerde"));
+  Serial.println(F("5 - maxCVerde"));
+  Serial.println(F("6 - minCVerde"));
+  Serial.println(F("7 - Valores EEPROM Verde"));
+  Serial.println(F("8 - Alterar diferenca cores verde"));
+  Serial.println(F("9 - Voltar"));
+  Serial.println(F("================"));
 }
 
 void exibirMenuAjusteVermelho() {
-  Serial.println("=== Menu 04 - Ajustar vermelho manual ===");
-  Serial.println("1 - Ler sensores de cor");
-  Serial.println("2 - Calculo do Vermelho");
-  Serial.println("3 - maxLuxVermelho");
-  Serial.println("4 - minLuxVermelho");
-  Serial.println("5 - maxCVermelho");
-  Serial.println("6 - minCVermelho");
-  Serial.println("7 - Valores EEPROM Vermelho");
-  Serial.println("8 - DiferencaDasCoresVermelho");
-  Serial.println("9 - Voltar");
-  Serial.println("================");
+  Serial.println(F("=== Menu 04 - Ajustar vermelho manual ==="));
+  Serial.println(F("1 - Ler sensores de cor"));
+  Serial.println(F("2 - Calculo do Vermelho"));
+  Serial.println(F("3 - maxLuxVermelho"));
+  Serial.println(F("4 - minLuxVermelho"));
+  Serial.println(F("5 - maxCVermelho"));
+  Serial.println(F("6 - minCVermelho"));
+  Serial.println(F("7 - Valores EEPROM Vermelho"));
+  Serial.println(F("8 - DiferencaDasCoresVermelho"));
+  Serial.println(F("9 - Voltar"));
+  Serial.println(F("================"));
 }
 
 void exibirMenuAjusteCinza() {
-  Serial.println("=== Menu 05 - Ajustar cinza manual ===");
-  Serial.println("1 - Ler sensores de cor");
-  Serial.println("2 - Calculo do Cinza");
-  Serial.println("3 - maxLuxCinza");
-  Serial.println("4 - minLuxCinza");
-  Serial.println("5 - maxCCinza");
-  Serial.println("6 - minCCinza");
-  Serial.println("7 - Valores EEPROM Cinza");
-  Serial.println("8 - Voltar");
-  Serial.println("================");
+  Serial.println(F("=== Menu 05 - Ajustar cinza manual ==="));
+  Serial.println(F("1 - Ler sensores de cor"));
+  Serial.println(F("2 - Calculo do Cinza"));
+  Serial.println(F("3 - maxLuxCinza"));
+  Serial.println(F("4 - minLuxCinza"));
+  Serial.println(F("5 - maxCCinza"));
+  Serial.println(F("6 - minCCinza"));
+  Serial.println(F("7 - Valores EEPROM Cinza"));
+  Serial.println(F("8 - Voltar"));
+  Serial.println(F("================"));
 }
 
 void calibrarVerdeMedia() {
-  Serial.println("=== Calibração do Verde (Média Individual) ===");
-  Serial.println("Coloque o sensor DIREITO sobre o VERDE e envie qualquer tecla para iniciar...");
+  Serial.println(F("=== Calibração do Verde (Média Individual) ==="));
+  Serial.println(F("Coloque o sensor DIREITO sobre o VERDE e envie qualquer tecla para iniciar..."));
   while (!Serial.available()) { delay(10); }
   Serial.read();
 
@@ -1679,13 +1600,13 @@ void calibrarVerdeMedia() {
   if (difCorDir < 1) difCorDir = 1;
   if (difCorEsq < 1) difCorEsq = 1;
 
-  Serial.println("Calibração concluída!");
-  Serial.print("mediaLuxVerdeDir: "); Serial.println(mediaLuxDir);
-  Serial.print("mediaCVerdeDir: "); Serial.println(mediaCDir);
-  Serial.print("mediaDifVerdeDir (G-R): "); Serial.println(mediaDifDir);
-  Serial.print("mediaLuxVerdeEsq: "); Serial.println(mediaLuxEsq);
-  Serial.print("mediaCVerdeEsq: "); Serial.println(mediaCEsq);
-  Serial.print("mediaDifVerdeEsq (G-R): "); Serial.println(mediaDifEsq);
+  Serial.println(F("Calibração concluída!"));
+  Serial.print(F("mediaLuxVerdeDir: ")); Serial.println(mediaLuxDir);
+  Serial.print(F("mediaCVerdeDir: ")); Serial.println(mediaCDir);
+  Serial.print(F("mediaDifVerdeDir (G-R): ")); Serial.println(mediaDifDir);
+  Serial.print(F("mediaLuxVerdeEsq: ")); Serial.println(mediaLuxEsq);
+  Serial.print(F("mediaCVerdeEsq: ")); Serial.println(mediaCEsq);
+  Serial.print(F("mediaDifVerdeEsq (G-R): ")); Serial.println(mediaDifEsq);
 
   EEPROM.put(EEPROM_MIN_LUX_VERDE_DIR, minLuxDir);
   EEPROM.put(EEPROM_MAX_LUX_VERDE_DIR, maxLuxDir);
@@ -1708,8 +1629,8 @@ void calibrarVerdeMedia() {
 }
 
 void calibrarVermelhoMedia() {
-  Serial.println("=== Calibração do Vermelho (Média) ===");
-  Serial.println("Coloque o sensor DIREITO sobre o VERMELHO e envie qualquer tecla para iniciar...");
+  Serial.println(F("=== Calibração do Vermelho (Média) ==="));
+  Serial.println(F("Coloque o sensor DIREITO sobre o VERMELHO e envie qualquer tecla para iniciar..."));
   while (!Serial.available()) { delay(10); }
   Serial.read();
 
@@ -1754,13 +1675,13 @@ void calibrarVermelhoMedia() {
     somaC2 += cVermelho2;
     somaDif2 += difVermelho2;
 
-    Serial.print("[Direita] Amostra "); Serial.print(i+1);
-    Serial.print(" | Lux1: "); Serial.print(luxVermelho1);
-    Serial.print(" | C1: "); Serial.print(cVermelho1);
-    Serial.print(" | R1-G1: "); Serial.print(difVermelho1);
-    Serial.print(" || Lux2: "); Serial.print(luxVermelho2);
-    Serial.print(" | C2: "); Serial.print(cVermelho2);
-    Serial.print(" | R2-G2: "); Serial.println(difVermelho2);
+    Serial.print(F("[Direita] Amostra ")); Serial.print(i+1);
+    Serial.print(F(" | Lux1: ")); Serial.print(luxVermelho1);
+    Serial.print(F(" | C1: ")); Serial.print(cVermelho1);
+    Serial.print(F(" | R1-G1: ")); Serial.print(difVermelho1);
+    Serial.print(F(" || Lux2: ")); Serial.print(luxVermelho2);
+    Serial.print(F(" | C2: ")); Serial.print(cVermelho2);
+    Serial.print(F(" | R2-G2: ")); Serial.println(difVermelho2);
 
     delay(150);
   }
@@ -1805,13 +1726,13 @@ void calibrarVermelhoMedia() {
     somaC2 += cVermelho2;
     somaDif2 += difVermelho2;
 
-    Serial.print("[Esquerda] Amostra "); Serial.print(i+1);
-    Serial.print(" | Lux1: "); Serial.print(luxVermelho1);
-    Serial.print(" | C1: "); Serial.print(cVermelho1);
-    Serial.print(" | R1-G1: "); Serial.print(difVermelho1);
-    Serial.print(" || Lux2: "); Serial.print(luxVermelho2);
-    Serial.print(" | C2: "); Serial.print(cVermelho2);
-    Serial.print(" | R2-G2: "); Serial.println(difVermelho2);
+    Serial.print(F("[Esquerda] Amostra ")); Serial.print(i+1);
+    Serial.print(F(" | Lux1: ")); Serial.print(luxVermelho1);
+    Serial.print(F(" | C1: ")); Serial.print(cVermelho1);
+    Serial.print(F(" | R1-G1: ")); Serial.print(difVermelho1);
+    Serial.print(F(" || Lux2: ")); Serial.print(luxVermelho2);
+    Serial.print(F(" | C2: ")); Serial.print(cVermelho2);
+    Serial.print(F(" | R2-G2: ")); Serial.println(difVermelho2);
 
     delay(150);
   }
@@ -1838,15 +1759,15 @@ int mediaLux1 = somaLux1 / (amostras * 2);
   int diferencaAjustada = mediaDif - margem;
   if (diferencaAjustada < 1) diferencaAjustada = 1;
 
-  Serial.println("Calibração concluída!");
-  Serial.print("mediaLuxVermelho: "); Serial.println(mediaLux);
-  Serial.print("mediaCVermelho: "); Serial.println(mediaC);
-  Serial.print("mediaDifVermelho (R-G): "); Serial.println(mediaDif);
-  Serial.print("diferencaDasCoresVermelho usada: "); Serial.println(diferencaAjustada);
-  Serial.print("minLuxVermelho (60%): "); Serial.println(minLux);
-  Serial.print("maxLuxVermelho (140%): "); Serial.println(maxLux);
-  Serial.print("minCVermelho (60%): "); Serial.println(minC);
-  Serial.print("maxCVermelho (140%): "); Serial.println(maxC);
+  Serial.println(F("Calibração concluída!"));
+  Serial.print(F("mediaLuxVermelho: ")); Serial.println(mediaLux);
+  Serial.print(F("mediaCVermelho: ")); Serial.println(mediaC);
+  Serial.print(F("mediaDifVermelho (R-G): ")); Serial.println(mediaDif);
+  Serial.print(F("diferencaDasCoresVermelho usada: ")); Serial.println(diferencaAjustada);
+  Serial.print(F("minLuxVermelho (60%): ")); Serial.println(minLux);
+  Serial.print(F("maxLuxVermelho (140%): ")); Serial.println(maxLux);
+  Serial.print(F("minCVermelho (60%): ")); Serial.println(minC);
+  Serial.print(F("maxCVermelho (140%): ")); Serial.println(maxC);
 
   EEPROM.put(EEPROM_minLuxVermelho, minLux);
   EEPROM.put(EEPROM_maxLuxVermelho, maxLux);
@@ -1953,13 +1874,13 @@ void calibrarCinzaMedia() {
   int minC = mediaC * 0.8;
   int maxC = mediaC * 1.2;
 
-  Serial.println("Calibração concluída!");
-  Serial.print("mediaLuxCinza: "); Serial.println(mediaLux);
-  Serial.print("mediaCCinza: "); Serial.println(mediaC);
-  Serial.print("minLuxCinza (80%): "); Serial.println(minLux);
-  Serial.print("maxLuxCinza (120%): "); Serial.println(maxLux);
-  Serial.print("minCCinza (80%): "); Serial.println(minC);
-  Serial.print("maxCCinza (120%): "); Serial.println(maxC);
+  Serial.println(F("Calibração concluída!"));
+  Serial.print(F("mediaLuxCinza: ")); Serial.println(mediaLux);
+  Serial.print(F("mediaCCinza: ")); Serial.println(mediaC);
+  Serial.print(F("minLuxCinza (80%): ")); Serial.println(minLux);
+  Serial.print(F("maxLuxCinza (120%): ")); Serial.println(maxLux);
+  Serial.print(F("minCCinza (80%): ")); Serial.println(minC);
+  Serial.print(F("maxCCinza (120%): ")); Serial.println(maxC);
 
   EEPROM.put(EEPROM_minLuxCinza, minLux);
   EEPROM.put(EEPROM_maxLuxCinza, maxLux);
@@ -1977,59 +1898,59 @@ void calibrarCinzaMedia() {
 void imprimirValoresEEPROM() {
   int valor;
 
-  Serial.println("=== Valores armazenados na EEPROM ===");
+  Serial.println(F("=== Valores armazenados na EEPROM ==="));
 
   int valor1, valor2;
 
   EEPROM.get(EEPROM_MIN_LUX_VERDE_DIR, valor1);
   EEPROM.get(EEPROM_MIN_LUX_VERDE_ESQ, valor2);
-  Serial.print("minLuxVerde: "); Serial.print(valor1); Serial.print(" / "); Serial.println(valor2);
+  Serial.print(F("minLuxVerde: ")); Serial.print(valor1); Serial.print(" / "); Serial.println(valor2);
 
   EEPROM.get(EEPROM_MAX_LUX_VERDE_DIR, valor1);
   EEPROM.get(EEPROM_MAX_LUX_VERDE_ESQ, valor2);
-  Serial.print("maxLuxVerde: "); Serial.print(valor1); Serial.print(" / "); Serial.println(valor2);
+  Serial.print(F("maxLuxVerde: ")); Serial.print(valor1); Serial.print(" / "); Serial.println(valor2);
 
   EEPROM.get(EEPROM_MIN_C_VERDE_DIR, valor1);
   EEPROM.get(EEPROM_MIN_C_VERDE_ESQ, valor2);
-  Serial.print("minCVerde: "); Serial.print(valor1); Serial.print(" / "); Serial.println(valor2);
+  Serial.print(F("minCVerde: ")); Serial.print(valor1); Serial.print(" / "); Serial.println(valor2);
 
   EEPROM.get(EEPROM_MAX_C_VERDE_DIR, valor1);
   EEPROM.get(EEPROM_MAX_C_VERDE_ESQ, valor2);
-  Serial.print("maxCVerde: "); Serial.print(valor1); Serial.print(" / "); Serial.println(valor2);
+  Serial.print(F("maxCVerde: ")); Serial.print(valor1); Serial.print(" / "); Serial.println(valor2);
 
   EEPROM.get(EEPROM_DIFERENCA_CORES_DIR, valor1);
   EEPROM.get(EEPROM_DIFERENCA_CORES_ESQ, valor2);
-  Serial.print("diferencaDasCores (Verde): "); Serial.print(valor1); Serial.print(" / "); Serial.println(valor2);
+  Serial.print(F("diferencaDasCores (Verde): ")); Serial.print(valor1); Serial.print(" / "); Serial.println(valor2);
 
   EEPROM.get(EEPROM_C_BRANCO, valor);
-  Serial.print("valorCnoBranco: "); Serial.println(valor);
+  Serial.print(F("valorCnoBranco: ")); Serial.println(valor);
 
   EEPROM.get(EEPROM_maxLuxPreto, valor);
-  Serial.print("maxLuxPreto: "); Serial.println(valor);
+  Serial.print(F("maxLuxPreto: ")); Serial.println(valor);
   EEPROM.get(EEPROM_maxCPreto, valor);
-  Serial.print("maxCPreto: "); Serial.println(valor);
+  Serial.print(F("maxCPreto: ")); Serial.println(valor);
 
   EEPROM.get(EEPROM_minLuxCinza, valor);
-  Serial.print("minLuxCinza: "); Serial.println(valor);
+  Serial.print(F("minLuxCinza: ")); Serial.println(valor);
   EEPROM.get(EEPROM_maxLuxCinza, valor);
-  Serial.print("maxLuxCinza: "); Serial.println(valor);
+  Serial.print(F("maxLuxCinza: ")); Serial.println(valor);
   EEPROM.get(EEPROM_minCNoCinza, valor);
-  Serial.print("minCNoCinza: "); Serial.println(valor);
+  Serial.print(F("minCNoCinza: ")); Serial.println(valor);
   EEPROM.get(EEPROM_maxCNoCinza, valor);
-  Serial.print("maxCNoCinza: "); Serial.println(valor);
+  Serial.print(F("maxCNoCinza: ")); Serial.println(valor);
 
   EEPROM.get(EEPROM_minLuxVermelho, valor);
-  Serial.print("minLuxVermelho: "); Serial.println(valor);
+  Serial.print(F("minLuxVermelho: ")); Serial.println(valor);
   EEPROM.get(EEPROM_maxLuxVermelho, valor);
-  Serial.print("maxLuxVermelho: "); Serial.println(valor);
+  Serial.print(F("maxLuxVermelho: ")); Serial.println(valor);
   EEPROM.get(EEPROM_minCVermelho, valor);
-  Serial.print("minCVermelho: "); Serial.println(valor);
+  Serial.print(F("minCVermelho: ")); Serial.println(valor);
   EEPROM.get(EEPROM_maxCVermelho, valor);
-  Serial.print("maxCVermelho: "); Serial.println(valor);
+  Serial.print(F("maxCVermelho: ")); Serial.println(valor);
   EEPROM.get(EEPROM_diferencaDasCoresVermelho, valor);
-  Serial.print("diferencaDasCoresVermelho: "); Serial.println(valor);
+  Serial.print(F("diferencaDasCoresVermelho: ")); Serial.println(valor);
 
-  Serial.println("======================================");
+  Serial.println(F("======================================"));
 }
 
 void calculosVerde(){
@@ -2054,25 +1975,25 @@ void calculosVerde(){
       luu2 >= minLuxVerdeEsq && luu2 <= maxLuxVerdeEsq
     );
     bool verdeAmbos = (abs(cc1 - cc2) < subtracaoSensoresCor) && verdeDireita && verdeEsquerda;
-    Serial.print("Verde Direita: "); Serial.println(verdeDireita);
-    Serial.print("Verde Esquerda: "); Serial.println(verdeEsquerda);
-    Serial.print("Verde Ambos: "); Serial.println(verdeAmbos);
-    Serial.print("cc1: "); Serial.print(cc1); Serial.print(" | cc2: "); Serial.println(cc2);
-    Serial.print("Lux1: "); Serial.print(lux1); Serial.print(" | Lux2: "); Serial.println(lux2);
-    Serial.print("R1: "); Serial.print(r1); Serial.print(" | R2: "); Serial.println(r2);
-    Serial.print("G1: "); Serial.print(g1); Serial.print(" | G2: "); Serial.println(g2);
-    Serial.print("B1: "); Serial.print(b1); Serial.print(" | B2: "); Serial.println(b2);
-    Serial.print("C1: "); Serial.print(c1); Serial.print(" | C2: "); Serial.println(c2);
-    Serial.print("Lux1: "); Serial.print(lux1); Serial.print(" | Lux2: "); Serial.println(lux2);
-    Serial.print("cc1 >= minCVerdeDir && cc1 <= maxCVerdeDir: "); Serial.println(cc1 >= minCVerdeDir && cc1 <= maxCVerdeDir);
-    Serial.print("cc2 >= minCVerdeEsq && cc2 <= maxCVerdeEsq: "); Serial.println(cc2 >= minCVerdeEsq && cc2 <= maxCVerdeEsq);
-    Serial.print("luu1 >= minLuxVerdeDir && luu1 <= maxLuxVerdeDir: "); Serial.println(luu1 >= minLuxVerdeDir && luu1 <= maxLuxVerdeDir);
-    Serial.print("luu2 >= minLuxVerdeEsq && luu2 <= maxLuxVerdeEsq: "); Serial.println(luu2 >= minLuxVerdeEsq && luu2 <= maxLuxVerdeEsq);
-    Serial.print("g1 > r1 && g1 > b1: "); Serial.println(g1 > r1 && g1 > b1);
-    Serial.print("g1 - r1 > diferencaDasCoresDir: "); Serial.println(g1 - r1 > diferencaDasCoresDir);
-    Serial.print("g2 > r2 && g2 > b2: "); Serial.println(g2 > r2 && g2 > b2);
-    Serial.print("g2 - r2 > diferencaDasCoresEsq: "); Serial.println(g2 - r2 > diferencaDasCoresEsq);
-    Serial.print("Abs(cc1 - cc2) < subtracaoSensoresCor: "); Serial.println(abs(cc1 - cc2) < subtracaoSensoresCor);
+    Serial.print(F("Verde Direita: ")); Serial.println(verdeDireita);
+    Serial.print(F("Verde Esquerda: ")); Serial.println(verdeEsquerda);
+    Serial.print(F("Verde Ambos: ")); Serial.println(verdeAmbos);
+    Serial.print(F("cc1: ")); Serial.print(cc1); Serial.print(F(" | cc2: ")); Serial.println(cc2);
+    Serial.print(F("Lux1: ")); Serial.print(lux1); Serial.print(F(" | Lux2: ")); Serial.println(lux2);
+    Serial.print(F("R1: ")); Serial.print(r1); Serial.print(F(" | R2: ")); Serial.println(r2);
+    Serial.print(F("G1: ")); Serial.print(g1); Serial.print(F(" | G2: ")); Serial.println(g2);
+    Serial.print(F("B1: ")); Serial.print(b1); Serial.print(F(" | B2: ")); Serial.println(b2);
+    Serial.print(F("C1: ")); Serial.print(c1); Serial.print(F(" | C2: ")); Serial.println(c2);
+    Serial.print(F("Lux1: ")); Serial.print(lux1); Serial.print(F(" | Lux2: ")); Serial.println(lux2);
+    Serial.print(F("cc1 >= minCVerdeDir && cc1 <= maxCVerdeDir: ")); Serial.println(cc1 >= minCVerdeDir && cc1 <= maxCVerdeDir);
+    Serial.print(F("cc2 >= minCVerdeEsq && cc2 <= maxCVerdeEsq: ")); Serial.println(cc2 >= minCVerdeEsq && cc2 <= maxCVerdeEsq);
+    Serial.print(F("luu1 >= minLuxVerdeDir && luu1 <= maxLuxVerdeDir: ")); Serial.println(luu1 >= minLuxVerdeDir && luu1 <= maxLuxVerdeDir);
+    Serial.print(F("luu2 >= minLuxVerdeEsq && luu2 <= maxLuxVerdeEsq: ")); Serial.println(luu2 >= minLuxVerdeEsq && luu2 <= maxLuxVerdeEsq);
+    Serial.print(F("g1 > r1 && g1 > b1: ")); Serial.println(g1 > r1 && g1 > b1);
+    Serial.print(F("g1 - r1 > diferencaDasCoresDir: ")); Serial.println(g1 - r1 > diferencaDasCoresDir);
+    Serial.print(F("g2 > r2 && g2 > b2: ")); Serial.println(g2 > r2 && g2 > b2);
+    Serial.print(F("g2 - r2 > diferencaDasCoresEsq: ")); Serial.println(g2 - r2 > diferencaDasCoresEsq);
+    Serial.print(F("Abs(cc1 - cc2) < subtracaoSensoresCor: ")); Serial.println(abs(cc1 - cc2) < subtracaoSensoresCor);
 }
 
 void calculosVermelho() {
@@ -2096,24 +2017,24 @@ void calculosVermelho() {
 
     bool vermelhoAmbos = vermelhoDireita && vermelhoEsquerda;
 
-    Serial.print("Vermelho Direita: "); Serial.println(vermelhoDireita);
-    Serial.print("Vermelho Esquerda: "); Serial.println(vermelhoEsquerda);
-    Serial.print("Vermelho Ambos: "); Serial.println(vermelhoAmbos);
-    Serial.print("cc1: "); Serial.print(cc1); Serial.print(" | cc2: "); Serial.println(cc2);
-    Serial.print("Lux1: "); Serial.print(lux1); Serial.print(" | Lux2: "); Serial.println(lux2);
-    Serial.print("R1: "); Serial.print(r1); Serial.print(" | R2: "); Serial.println(r2);
-    Serial.print("G1: "); Serial.print(g1); Serial.print(" | G2: "); Serial.println(g2);
-    Serial.print("B1: "); Serial.print(b1); Serial.print(" | B2: "); Serial.println(b2);
-    Serial.print("C1: "); Serial.print(c1); Serial.print(" | C2: "); Serial.println(c2);
+    Serial.print(F("Vermelho Direita: ")); Serial.println(vermelhoDireita);
+    Serial.print(F("Vermelho Esquerda: ")); Serial.println(vermelhoEsquerda);
+    Serial.print(F("Vermelho Ambos: ")); Serial.println(vermelhoAmbos);
+    Serial.print(F("cc1: ")); Serial.print(cc1); Serial.print(F(" | cc2: ")); Serial.println(cc2);
+    Serial.print(F("Lux1: ")); Serial.print(lux1); Serial.print(F(" | Lux2: ")); Serial.println(lux2);
+    Serial.print(F("R1: ")); Serial.print(r1); Serial.print(F(" | R2: ")); Serial.println(r2);
+    Serial.print(F("G1: ")); Serial.print(g1); Serial.print(F(" | G2: ")); Serial.println(g2);
+    Serial.print(F("B1: ")); Serial.print(b1); Serial.print(F(" | B2: ")); Serial.println(b2);
+    Serial.print(F("C1: ")); Serial.print(c1); Serial.print(F(" | C2: ")); Serial.println(c2);
 
-    Serial.print("cc1 >= minCVermelho && cc1 <= maxCVermelho: "); Serial.println(cc1 >= minCVermelho && cc1 <= maxCVermelho);
-    Serial.print("cc2 >= minCVermelho && cc2 <= maxCVermelho: "); Serial.println(cc2 >= minCVermelho && cc2 <= maxCVermelho);
-    Serial.print("luu1 >= minLuxVermelho && luu1 <= maxLuxVermelho: "); Serial.println(luu1 >= minLuxVermelho && luu1 <= maxLuxVermelho);
-    Serial.print("luu2 >= minLuxVermelho && luu2 <= maxLuxVermelho: "); Serial.println(luu2 >= minLuxVermelho && luu2 <= maxLuxVermelho);
-    Serial.print("r1 > g1 && r1 > b1: "); Serial.println(r1 > g1 && r1 > b1);
-    Serial.print("r1 - g1 > diferencaDasCoresVermelho: "); Serial.println(r1 - g1 > diferencaDasCoresVermelho);
-    Serial.print("r2 > g2 && r2 > b2: "); Serial.println(r2 > g2 && r2 > b2);
-    Serial.print("r2 - g2 > diferencaDasCoresVermelho: "); Serial.println(r2 - g2 > diferencaDasCoresVermelho);
+    Serial.print(F("cc1 >= minCVermelho && cc1 <= maxCVermelho: ")); Serial.println(cc1 >= minCVermelho && cc1 <= maxCVermelho);
+    Serial.print(F("cc2 >= minCVermelho && cc2 <= maxCVermelho: ")); Serial.println(cc2 >= minCVermelho && cc2 <= maxCVermelho);
+    Serial.print(F("luu1 >= minLuxVermelho && luu1 <= maxLuxVermelho: ")); Serial.println(luu1 >= minLuxVermelho && luu1 <= maxLuxVermelho);
+    Serial.print(F("luu2 >= minLuxVermelho && luu2 <= maxLuxVermelho: ")); Serial.println(luu2 >= minLuxVermelho && luu2 <= maxLuxVermelho);
+    Serial.print(F("r1 > g1 && r1 > b1: ")); Serial.println(r1 > g1 && r1 > b1);
+    Serial.print(F("r1 - g1 > diferencaDasCoresVermelho: ")); Serial.println(r1 - g1 > diferencaDasCoresVermelho);
+    Serial.print(F("r2 > g2 && r2 > b2: ")); Serial.println(r2 > g2 && r2 > b2);
+    Serial.print(F("r2 - g2 > diferencaDasCoresVermelho: ")); Serial.println(r2 - g2 > diferencaDasCoresVermelho);
 }
 
 void calculosCinza() {
@@ -2131,20 +2052,20 @@ void calculosCinza() {
     bool cinzaEsquerda = (cc2 >= minCNoCinza && cc2 <= maxCNoCinza && luu2 >= minLuxCinza && luu2 <= maxLuxCinza);
     bool cinzaAmbos = cinzaDireita && cinzaEsquerda;
 
-    Serial.print("Cinza Direita: "); Serial.println(cinzaDireita);
-    Serial.print("Cinza Esquerda: "); Serial.println(cinzaEsquerda);
-    Serial.print("Cinza Ambos: "); Serial.println(cinzaAmbos);
-    Serial.print("cc1: "); Serial.print(cc1); Serial.print(" | cc2: "); Serial.println(cc2);
-    Serial.print("Lux1: "); Serial.print(lux1); Serial.print(" | Lux2: "); Serial.println(lux2);
-    Serial.print("R1: "); Serial.print(r1); Serial.print(" | R2: "); Serial.println(r2);
-    Serial.print("G1: "); Serial.print(g1); Serial.print(" | G2: "); Serial.println(g2);
-    Serial.print("B1: "); Serial.print(b1); Serial.print(" | B2: "); Serial.println(b2);
-    Serial.print("C1: "); Serial.print(c1); Serial.print(" | C2: "); Serial.println(c2);
+    Serial.print(F("Cinza Direita: ")); Serial.println(cinzaDireita);
+    Serial.print(F("Cinza Esquerda: ")); Serial.println(cinzaEsquerda);
+    Serial.print(F("Cinza Ambos: ")); Serial.println(cinzaAmbos);
+    Serial.print(F("cc1: ")); Serial.print(cc1); Serial.print(F(" | cc2: ")); Serial.println(cc2);
+    Serial.print(F("Lux1: ")); Serial.print(lux1); Serial.print(F(" | Lux2: ")); Serial.println(lux2);
+    Serial.print(F("R1: ")); Serial.print(r1); Serial.print(F(" | R2: ")); Serial.println(r2);
+    Serial.print(F("G1: ")); Serial.print(g1); Serial.print(F(" | G2: ")); Serial.println(g2);
+    Serial.print(F("B1: ")); Serial.print(b1); Serial.print(F(" | B2: ")); Serial.println(b2);
+    Serial.print(F("C1: ")); Serial.print(c1); Serial.print(F(" | C2: ")); Serial.println(c2);
 
-    Serial.print("cc1 >= minCNoCinza && cc1 <= maxCNoCinza: "); Serial.println(cc1 >= minCNoCinza && cc1 <= maxCNoCinza);
-    Serial.print("cc2 >= minCNoCinza && cc2 <= maxCNoCinza: "); Serial.println(cc2 >= minCNoCinza && cc2 <= maxCNoCinza);
-    Serial.print("luu1 >= minLuxCinza && luu1 <= maxLuxCinza: "); Serial.println(luu1 >= minLuxCinza && luu1 <= maxLuxCinza);
-    Serial.print("luu2 >= minLuxCinza && luu2 <= maxLuxCinza: "); Serial.println(luu2 >= minLuxCinza && luu2 <= maxLuxCinza);
+    Serial.print(F("cc1 >= minCNoCinza && cc1 <= maxCNoCinza: ")); Serial.println(cc1 >= minCNoCinza && cc1 <= maxCNoCinza);
+    Serial.print(F("cc2 >= minCNoCinza && cc2 <= maxCNoCinza: ")); Serial.println(cc2 >= minCNoCinza && cc2 <= maxCNoCinza);
+    Serial.print(F("luu1 >= minLuxCinza && luu1 <= maxLuxCinza: ")); Serial.println(luu1 >= minLuxCinza && luu1 <= maxLuxCinza);
+    Serial.print(F("luu2 >= minLuxCinza && luu2 <= maxLuxCinza: ")); Serial.println(luu2 >= minLuxCinza && luu2 <= maxLuxCinza);
 }
 
 void alterarValorEEPROM(const char* nome, int endereco, int &variavel) {
@@ -2360,9 +2281,11 @@ void setup() {
 
   ligarGarra();
   subirGarra();
-  desligarGarra();
-  delay(500); 
-  tocar_buzzer(1000, 3, 125);
+  desligarMotoresGarra();
+  delay(750); 
+
+  tocar_buzzer(1000, 2, 125);
+  motorD.write(veloBaseDir);
 }
 
 //******************************************************************************
@@ -2377,3 +2300,4 @@ void loop() {
     andarReto();
   }
 }
+
