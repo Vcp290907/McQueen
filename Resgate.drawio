@@ -135,6 +135,9 @@
             </Array>
           </mxGeometry>
         </mxCell>
+        <mxCell id="Vmo0kVv--W6r2WOHqqZs-60" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="Vmo0kVv--W6r2WOHqqZs-39" target="Vmo0kVv--W6r2WOHqqZs-59">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
         <mxCell id="Vmo0kVv--W6r2WOHqqZs-39" value="Segue reto por &lt;font style=&quot;color: rgb(51, 51, 255);&quot;&gt;XX cm&lt;/font&gt; para chegar no meio e alinhar novamente&lt;br&gt;&lt;font style=&quot;color: light-dark(rgb(255, 0, 0), rgb(255, 0, 0));&quot;&gt;Define o anguloReto como o angulo atual após alinhar&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="1080" y="429" width="176" height="88" as="geometry" />
         </mxCell>
@@ -168,7 +171,7 @@
         <mxCell id="Vmo0kVv--W6r2WOHqqZs-50" value="Se dist(1) &amp;lt; 25&lt;div&gt;então: triângulo na esquerda&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="1810" y="368.5" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="Vmo0kVv--W6r2WOHqqZs-51" value="Se dist(2) &amp;lt; 25&lt;div&gt;então: saida na frente&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="Vmo0kVv--W6r2WOHqqZs-51" value="Se dist(2) &amp;lt; 25&lt;div&gt;então: saida na frente&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=light-dark(#FF0000,#FF0000);strokeWidth=2;" vertex="1" parent="1">
           <mxGeometry x="1810" y="442" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="Vmo0kVv--W6r2WOHqqZs-58" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="Vmo0kVv--W6r2WOHqqZs-52" target="Vmo0kVv--W6r2WOHqqZs-56">
@@ -178,7 +181,16 @@
           <mxGeometry x="1810" y="517" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="Vmo0kVv--W6r2WOHqqZs-56" value="Se trianguloEsquerda &amp;amp;&amp;amp; trianguloDireita então: trianguloEsquerda = false" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="1980" y="429" width="160" height="86" as="geometry" />
+          <mxGeometry x="1980" y="355.5" width="160" height="86" as="geometry" />
+        </mxCell>
+        <mxCell id="Vmo0kVv--W6r2WOHqqZs-62" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="Vmo0kVv--W6r2WOHqqZs-59" target="Vmo0kVv--W6r2WOHqqZs-61">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Vmo0kVv--W6r2WOHqqZs-59" value="Mede a distancia(1 ou 3) para saber se têm saida" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1108" y="550" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Vmo0kVv--W6r2WOHqqZs-61" value="Se dist(1 ou 3) =&amp;gt; 65&lt;div&gt;então saidaFrenteInicio&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="1096" y="630" width="144" height="80" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
