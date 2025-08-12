@@ -189,7 +189,7 @@
         <mxCell id="Vmo0kVv--W6r2WOHqqZs-59" value="Mede a distancia(1 ou 3) para saber se têm saida" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="1108" y="550" width="120" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="Vmo0kVv--W6r2WOHqqZs-61" value="Se dist(1 ou 3) =&amp;gt; 65&lt;div&gt;então saidaFrenteInicio&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+        <mxCell id="Vmo0kVv--W6r2WOHqqZs-61" value="Se dist(1 ou 3) =&amp;gt; 65&lt;div&gt;então saidaFrenteInicio&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=light-dark(#FF0000,#FF0000);strokeWidth=2;" vertex="1" parent="1">
           <mxGeometry x="1096" y="630" width="144" height="80" as="geometry" />
         </mxCell>
       </root>
