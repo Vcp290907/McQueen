@@ -4,7 +4,7 @@
   "configuration": "cpu=atmega2560",
   "output": "build",
   "board": "arduino:avr:mega",
-  "programmer": "Arduino as ISP",
+  "programmer": "arduino as isp",
   "useProgrammer": false,
   "configurationRequired": true,
   "monitorPortSettings": {
@@ -15,5 +15,6 @@
     "parity": "none",
     "stopBits": "one"
   },
-  "optimize_for_debug": false
+  "optimize_for_debug": false,
+  "sketch": "V4.ino"
 }
