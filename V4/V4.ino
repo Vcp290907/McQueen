@@ -47,8 +47,8 @@ bool modoConfig = false;
 #define motorDpin 6 //Servo Direito
 
 #define motorGpin 8 //Servo Garra
-#define motorEsqGpin 10 //Servo Garra Esquerdo
-#define motorDirGpin 12 //Servo Garra Direito
+#define motorEsqGpin 12 //Servo Garra Esquerdo
+#define motorDirGpin 10 //Servo Garra Direito
 
 #define no 11
 #define trig 15
@@ -108,7 +108,7 @@ static int valores[5];
 // Variáveis para os sensores de cor - otimizadas
 uint16_t r1, g1, b1, c1, lux1, r2, g2, b2, c2, lux2;
 
-byte erro = 1;
+int erro = 1;
 int anguloRampaSubida, anguloRampaDescida, anguloDoReto, anguloReto;
 int* sl;
 bool trava = false;
@@ -116,8 +116,8 @@ bool trava = false;
 // Parâmetros gerais
 const int veloBaseEsq = 40; //40
 const int veloBaseDir = 140; //140
-const byte pequenaCurvaLadoC = 15; //7
-const byte pequenaCurvaLadoR = 5; //5
+const int pequenaCurvaLadoC = 15; //15
+const int pequenaCurvaLadoR = 5; //5
 const int veloCurva90 = 40; //40
 
 const int grausCurva90 = 90;
@@ -127,12 +127,12 @@ const int grausCurva45 = 45;
 int anguloAtual = 0;
 
 const int verificacaoCurvaVerde = 350; //Pulinho para ver se é curva verde
-byte erroGiro = 0;
+int erroGiro = 0;
 const int erroRampa = 3; // 3
 const int erroRampaDescida = 12; // 12
 const int tempoDepoisDoVerde90 = 500;
 const int delayCurvasverde = 450;
-const int tempoAntesCurva90 = 350;
+const int tempoAntesCurva90 = 400;
 const int tempoDepoisCurva90 = 150; //1000
 const int tempoDepoisDoVerde180 = 150; //1000
 const int tempoDepoisDoVerdeFalso = 500; //1000
@@ -167,7 +167,7 @@ int maxCVermelho = 650;
 int diferencaDasCoresVermelho = 40;
 
 // Outros
-const byte subtracaoSensoresCor = 100;
+const int subtracaoSensoresCor = 100;
 
 //PID - otimizado com tipos menores
 const float Kp = 2.0;
@@ -177,7 +177,7 @@ int erroP = 0;
 int erroAnterior = 0;
 float erroI = 0;
 float erroD = 0;
-byte ajuste;
+int ajuste;
 
 // PID específico para função correcao (independente do andarReto para não interferir)
 int erroP_cor = 0;
@@ -187,10 +187,10 @@ float erroD_cor = 0;
 const int maxAjusteCorrecao = 45; // limite de ajuste (era pequenaCurvaLadoC*3 na lógica antiga)
 
 //Desvio OBJETO - otimizado
-const byte distanciaDesvio = 0; //6
+const int distanciaDesvio = 0; //6
 const int delayCurva1 = 3;
 const int delayCurva2 = 7;
-const byte delayMeio = 1;
+const int delayMeio = 1;
 //************************************************************************
 //*                                                                      *
 //*                              Funções                                 *
@@ -260,25 +260,6 @@ void verificaCores() {
   int luu1 = (int)lux1;
   int luu2 = (int)lux2;
 
-  // Serial.println(F("=== [DEBUG] verificaCores ==="));
-  // Serial.print(F("Sensor Direita - R: ")); Serial.print(r1);
-  // Serial.print(F(" G: ")); Serial.print(g1);
-  // Serial.print(F(" B: ")); Serial.print(b1);
-  // Serial.print(F(" C: ")); Serial.print(cc1);
-  // Serial.print(F(" Lux: ")); Serial.println(luu1);
-
-  // Serial.print(F("Sensor Esquerda - R: ")); Serial.print(r2);
-  // Serial.print(F(" G: ")); Serial.print(g2);
-  // Serial.print(F(" B: ")); Serial.print(b2);
-  // Serial.print(F(" C: ")); Serial.print(cc2);
-  // Serial.print(F(" Lux: ")); Serial.println(luu2);
-
-  // Serial.print(F("Limites: minCVermelho=")); Serial.print(minCVermelho);
-  // Serial.print(F(" maxCVermelho=")); Serial.print(maxCVermelho);
-  // Serial.print(F(" minLuxVermelho=")); Serial.print(minLuxVermelho);
-  // Serial.print(F(" maxLuxVermelho=")); Serial.print(maxLuxVermelho);
-  // Serial.print(F(" diferencaDasCoresVermelho=")); Serial.println(diferencaDasCoresVermelho);
-
   bool vermelho = ((r1 > g1 && r1 > b1 && r1 - g1 > diferencaDasCoresVermelho && cc1 >= minCVermelho 
                     && cc1 <= maxCVermelho && luu1 >= minLuxVermelho && luu1 <= maxLuxVermelho) || 
                     (r2 > g2 && r2 > b2 && r2 - g2 > diferencaDasCoresVermelho && cc2 >= minCVermelho 
@@ -321,13 +302,6 @@ void sairFrente(){
     sl = lerSensoresLinha();
     correcaoObjeto();
   }
-
-  while (true){
-    motorE.write(90);
-    motorD.write(90);
-    piscaLeds(250);
-  }
-  
   return;
 }
 
@@ -421,19 +395,30 @@ void curvaComHall(int direcao, int graus) {
   int leituraInicialCurva = analogRead(Hall_Direita);
   Serial.print("Leitura inicial do sensor Hall: "); Serial.println(leituraInicialCurva);
 
+  delay(50);
   leituraInicialCurva = analogRead(Hall_Direita);
+  bool leituraInicialBaixa = false;
 
+  // Ajuste da leitura inicial se necessário (MESMA LÓGICA do andarRetoComHall)
   if (leituraInicialCurva < 350) {
     Serial.println("Valor ainda baixo após rodada extra, ajustando...");
     leituraInicialCurva = 360;
-  }else if(leituraInicialCurva > 660){
+    leituraInicialBaixa = true;
+  } else if(leituraInicialCurva > 660){
+    Serial.println("Valor muito alto, ajustando...");
     leituraInicialCurva = 650;
+    leituraInicialBaixa = true;
   }
+  
+  Serial.print("Leitura inicial ajustada foi necessária: "); Serial.println(leituraInicialBaixa ? "SIM" : "NÃO");
   
   int lambdasCurvaContados = 0;
   bool lambdaCurvaDetectado = false;
   unsigned long ultimaDeteccaoCurva = 0;
   const unsigned long debounceTimeCurva = 75;
+  
+  // Flag para ignorar primeira detecção se leitura inicial foi ajustada
+  bool ignorarPrimeiraDeteccao = leituraInicialBaixa;
   
   int thresholdCurva = max(50, (int)(leituraInicialCurva * 0.20));
   
@@ -448,6 +433,7 @@ void curvaComHall(int direcao, int graus) {
   int leituraAtualCurva;
   giro.update();
   bool mudancaDetectadaCurva;
+  
   while(lambdasCurvaContados < lambdasNecessarios) {
     leituraAtualCurva = analogRead(Hall_Direita);
     Serial.println(leituraAtualCurva);
@@ -456,10 +442,22 @@ void curvaComHall(int direcao, int graus) {
     
     if (mudancaDetectadaCurva && !lambdaCurvaDetectado && 
         (millis() - ultimaDeteccaoCurva > debounceTimeCurva)) {
-      lambdaCurvaDetectado = true;
-      lambdasCurvaContados++;
-      ultimaDeteccaoCurva = millis();
+      
+      // NOVA LÓGICA: Se deve ignorar a primeira detecção (igual ao andarRetoComHall)
+      if (ignorarPrimeiraDeteccao) {
+        Serial.println("Ignorando primeira detecção de lambda curva (ajuste de leitura inicial)");
+        ignorarPrimeiraDeteccao = false; // Só ignora uma vez
+        lambdaCurvaDetectado = true;
+        ultimaDeteccaoCurva = millis();
+      } else {
+        // Contabiliza normalmente
+        lambdaCurvaDetectado = true;
+        lambdasCurvaContados++;
+        ultimaDeteccaoCurva = millis();
+        Serial.print("Lambda curva detectado: "); Serial.println(lambdasCurvaContados);
+      }
     }
+    
     giro.update();
     if (!mudancaDetectadaCurva && lambdaCurvaDetectado) {
       lambdaCurvaDetectado = false;
@@ -488,19 +486,22 @@ void curva180Direita() {
   curvaComHall(1, 180);
 }
 
-void andarRetoComHall(int distanciaCm) {
-  Serial.print("Andando reto por "); Serial.print(distanciaCm); Serial.println(" cm com correção PID");
+void andarRetoComHall(int distanciaCm, int anguloReferencia ,bool praTras = false) {
+  if (praTras) {
+    Serial.print("Andando para TRÁS por "); Serial.print(distanciaCm); Serial.println(" cm com correção PID");
+  } else {
+    Serial.print("Andando para FRENTE por "); Serial.print(distanciaCm); Serial.println(" cm com correção PID");
+  }
   
   erroI = 0;
   erroAnterior = 0;
   
-  int anguloReferencia = retornoAnguloZ();
+  //int anguloReferencia = retornoAnguloZ();
+
   Serial.print("Ângulo de referência: "); Serial.println(anguloReferencia);
   
-  // Cálculo dos lambdas necessários (baseado na lógica da curva)
-  // Assumindo que para distância reta a relação é diferente da curva
-  // Ajuste este valor conforme a calibração do seu robô
-  int lambdasNecessarios = (int)(distanciaCm * 1.05); // 2 lambdas por cm (ajustar conforme necessário)
+  // Cálculo dos lambdas necessários
+  int lambdasNecessarios = (int)(distanciaCm * 1.05); // Ajustar conforme necessário
   if (lambdasNecessarios < 1) lambdasNecessarios = 1;
   
   Serial.print("Lambdas necessários para "); Serial.print(distanciaCm); 
@@ -512,14 +513,20 @@ void andarRetoComHall(int distanciaCm) {
   
   delay(50);
   leituraInicial = analogRead(Hall_Direita);
+  bool leituraInicialBaixa = false;
   
   // Ajuste da leitura inicial se necessário
   if (leituraInicial < 350) {
     Serial.println("Valor ainda baixo, ajustando...");
     leituraInicial = 360;
+    leituraInicialBaixa = true;
   } else if (leituraInicial > 660) {
+    Serial.println("Valor muito alto, ajustando...");
     leituraInicial = 650;
+    leituraInicialBaixa = true;
   }
+  
+  Serial.print("Leitura inicial ajustada foi necessária: "); Serial.println(leituraInicialBaixa ? "SIM" : "NÃO");
   
   // Variáveis para contagem de lambdas
   int lambdasContados = 0;
@@ -527,21 +534,33 @@ void andarRetoComHall(int distanciaCm) {
   unsigned long ultimaDeteccao = 0;
   const unsigned long debounceTime = 75;
   
+  // Flag para ignorar primeira detecção se leitura inicial foi ajustada
+  bool ignorarPrimeiraDeteccao = leituraInicialBaixa;
+  
   int threshold = max(50, (int)(leituraInicial * 0.20));
   
-  // Inicia movimento para frente
-  int velE = veloBaseEsq;
-  int velD = veloBaseDir;
+  // Inicia movimento
+  int velE, velD;
+  if (praTras) {
+    // Velocidades invertidas para andar para trás
+    velE = veloBaseDir; 
+    velD = veloBaseEsq; 
+  } else {
+    // Velocidades normais para andar para frente
+    velE = veloBaseEsq;
+    velD = veloBaseDir;
+  }
+  
   motorE.write(velE);
   motorD.write(velD);
   
   int leituraAtual;
   bool mudancaDetectada;
   unsigned long ultimaCorrecao = 0;
-  const unsigned long intervaloCorrecao = 25; // Correção PID a cada 50ms
+  const unsigned long intervaloCorrecao = 25; // Correção PID a cada 25ms
   
   while(lambdasContados < lambdasNecessarios) {
-    // Leitura do sensor Hall para distância
+    giro.update();
     leituraAtual = analogRead(Hall_Direita);
     
     // Detecção de lambda (mudança magnética)
@@ -550,10 +569,20 @@ void andarRetoComHall(int distanciaCm) {
     
     if (mudancaDetectada && !lambdaDetectado && 
         (millis() - ultimaDeteccao > debounceTime)) {
-      lambdaDetectado = true;
-      lambdasContados++;
-      ultimaDeteccao = millis();
-      Serial.print("Lambda detectado: "); Serial.println(lambdasContados);
+      
+      // Se deve ignorar a primeira detecção
+      if (ignorarPrimeiraDeteccao) {
+        Serial.println("Ignorando primeira detecção de lambda (ajuste de leitura inicial)");
+        ignorarPrimeiraDeteccao = false; // Só ignora uma vez
+        lambdaDetectado = true;
+        ultimaDeteccao = millis();
+      } else {
+        // Contabiliza normalmente
+        lambdaDetectado = true;
+        lambdasContados++;
+        ultimaDeteccao = millis();
+        Serial.print("Lambda detectado: "); Serial.println(lambdasContados);
+      }
     }
     
     if (!mudancaDetectada && lambdaDetectado) {
@@ -575,18 +604,32 @@ void andarRetoComHall(int distanciaCm) {
       // Saída PID
       ajuste = Kp * erroP + Ki * erroI + Kd * erroD;
       ajuste = abs(ajuste);
-      ajuste = constrain(ajuste, 0, 30);
+      ajuste = constrain(ajuste, 0, 40);
       
-      // Aplicação da correção
-      if (erroP > 1) { // Desviou para a direita, corrigir para esquerda
-        velE = veloBaseEsq - ajuste;
-        velD = veloBaseDir;
-      } else if (erroP < -1) { // Desviou para a esquerda, corrigir para direita
-        velE = veloBaseEsq;
-        velD = veloBaseDir + ajuste;
-      } else { // Está alinhado
-        velE = veloBaseEsq;
-        velD = veloBaseDir;
+      if (praTras) {
+        // Lógica invertida para movimento para trás
+        if (erroP > 1) { // Desviou para a direita, corrigir para esquerda
+          velE = veloBaseDir; 
+          velD = veloBaseEsq - ajuste;
+        } else if (erroP < -1) { // Desviou para a esquerda, corrigir para direita
+          velE = veloBaseDir + ajuste;
+          velD = veloBaseEsq; 
+        } else { // Está alinhado
+          velE = veloBaseDir;
+          velD = veloBaseEsq;
+        }
+      } else {
+        // Lógica normal para movimento para frente
+        if (erroP > 1) { // Desviou para a direita, corrigir para esquerda
+          velE = veloBaseEsq - ajuste;
+          velD = veloBaseDir;
+        } else if (erroP < -1) { // Desviou para a esquerda, corrigir para direita
+          velE = veloBaseEsq;
+          velD = veloBaseDir + ajuste;
+        } else { // Está alinhado
+          velE = veloBaseEsq;
+          velD = veloBaseDir;
+        }
       }
       
       // Constrain das velocidades
@@ -599,18 +642,14 @@ void andarRetoComHall(int distanciaCm) {
       
       ultimaCorrecao = millis();
       
-      // Debug
-      if (lambdasContados % 5 == 0 || abs(erroP) > 3) { // Print debug a cada 5 lambdas ou erro significativo
-        Serial.print("Hall: "); Serial.print(leituraAtual);
-        Serial.print(" | Lambdas: "); Serial.print(lambdasContados);
-        Serial.print("/"); Serial.print(lambdasNecessarios);
-        Serial.print(" | Ang: "); Serial.print(anguloAtual);
-        Serial.print(" | Ref: "); Serial.print(anguloReferencia);
-        Serial.print(" | Erro: "); Serial.print(erroP);
-        Serial.print(" | Ajuste: "); Serial.print(ajuste);
-        Serial.print(" | VelE: "); Serial.print(velE);
-        Serial.print(" | VelD: "); Serial.println(velD);
-      }
+      // Debug opcional
+      // if (lambdasContados % 5 == 0 || abs(erroP) > 3) { 
+      //   Serial.print("Hall: "); Serial.print(leituraAtual);
+      //   Serial.print(" | Lambdas: "); Serial.print(lambdasContados);
+      //   Serial.print("/"); Serial.print(lambdasNecessarios);
+      //   Serial.print(" | Ignorar próxima: "); Serial.print(ignorarPrimeiraDeteccao ? "SIM" : "NÃO");
+      //   Serial.print(" | Direção: "); Serial.println(praTras ? "TRÁS" : "FRENTE");
+      // }
     }
     
     delay(10); // Pequeno delay para não sobrecarregar
@@ -621,16 +660,17 @@ void andarRetoComHall(int distanciaCm) {
   motorD.write(90);
   delay(100);
   
-  Serial.print("Movimento reto de "); Serial.print(distanciaCm); 
+  Serial.print("Movimento "); Serial.print(praTras ? "para TRÁS" : "para FRENTE");
+  Serial.print(" de "); Serial.print(distanciaCm); 
   Serial.println(" cm concluído com correção PID!");
 }
 
-const int distanciaMaxima = 25; //25
+const int distanciaMaxima = 30; //25
 const int distanciaParede = 50; //50
 const int distanciaSaida = 60; //60
 
 void resgate(){
-  Serial.println(F("Resgate iniciado!"));
+  Serial.println(F("Resgate detectado!"));
   tocar_buzzer(500, 2, 25);
   
   motorE.write(90);
@@ -668,28 +708,17 @@ void resgate(){
   //    
   //************************************** */
 
-  andarRetoPorTempo(2750);
+  andarRetoComHall(12, anguloReto);
 
   if(esquerda){
-    motorE.write(veloBaseDir);
-    motorD.write(veloBaseDir);
-    while (((anguloReto - grausCurva90) < retornoAnguloZ())) {
-      giro.update();
-    }
-    anguloReto = anguloReto - grausCurva90;
-    andarPraTrasPorTempo(1500);
-    anguloReto = retornoAnguloZ();
-
+    curva90Direita();
   }else if(direita){
-    motorE.write(veloBaseEsq);
-    motorD.write(veloBaseEsq);
-    while (((anguloReto + grausCurva90) > retornoAnguloZ())) {
-      giro.update();
-    }
-    anguloReto = anguloReto + grausCurva90;
-    andarPraTrasPorTempo(1500);
-    anguloReto = retornoAnguloZ();
+    curva90Esquerda();
   }
+
+  andarPraTrasPorTempo(2000);
+  delay(100);
+  anguloReto = retornoAnguloZ();
 
   //*************************************** */
   //
@@ -698,7 +727,7 @@ void resgate(){
   //
   //*************************************** */
 
-  andarRetoPorTempo(6500);
+  andarRetoComHall(30, anguloReto);
   
   //*************************************** */
   //
@@ -709,25 +738,14 @@ void resgate(){
   //*************************************** */
 
   if(esquerda){
-    motorE.write(veloBaseEsq);
-    motorD.write(veloBaseEsq);
-    while (((anguloReto + grausCurva90) > retornoAnguloZ())) {
-      giro.update();
-    }
-    anguloReto = anguloReto + grausCurva90;
-
+    curva90Esquerda();
   }else if(direita){
-    motorE.write(veloBaseDir);
-    motorD.write(veloBaseDir);
-    while (((anguloReto - grausCurva90) < retornoAnguloZ())) {
-      giro.update();
-    }
-    anguloReto = anguloReto - grausCurva90;
-
+    curva90Direita();
   }
 
-  andarPraTrasPorTempo(2750);
+  andarPraTrasPorTempo(2500);
   anguloReto = retornoAnguloZ();
+  delay(250);
 
   bool paredeNaFrenteInicio, saidaFrenteInicio;
 
@@ -745,7 +763,7 @@ void resgate(){
   ligarGarra();
   abrirGarra();
   descerGarra();
-  delay(500);
+  delay(250);
 
   //*************************************** */
   //
@@ -756,33 +774,17 @@ void resgate(){
   //
   //*************************************** */
 
-  andarRetoPorTempo(5500);
-  delay(500);
+  andarRetoComHall(25, anguloReto);
   bool saidaEsquerdaMeio = mediaInfravermelho(1) > 65; 
   bool saidaDireitaMeio = mediaInfravermelho(3) > 65;
-
-  if(saidaDireitaMeio){
-    setCorDireita(1,1,0);
-    delay(1000);
-    setCorDireita(1,1,1);
-  }else if (saidaEsquerdaMeio){
-    setCorEsquerda(1,1,0);
-    delay(1000);
-    setCorEsquerda(1,1,1);
-  }else if(saidaDireitaMeio && saidaEsquerdaMeio){
-    setCorDireita(1,1,0);
-    setCorEsquerda(1,1,0);
-    tocar_buzzer(1000, 3, 500);
-    setCorDireita(1,1,1);
-    setCorEsquerda(1,1,1);
-  }
+  tocar_buzzer(1000, 1, 100);
   
-  andarRetoPorTempo(3000);
-
+  andarRetoComHall(20, anguloReto);
   fecharGarra();
   garraMeio();
-  delay(500);
-  andarRetoPorTempo(3000);
+  //desligarMotoresGarra();
+  delay(250);
+  andarRetoComHall(13, anguloReto);
 
   //Carrinho está la na frente
 
@@ -798,73 +800,44 @@ void resgate(){
   }
 
   if(trianguloDireita || trianguloEsquerda){
-    andarPraTrasPorTempo(5000);
+    andarRetoComHall(30, anguloReto, true);
 
     if(trianguloDireita){
-
-      motorE.write(veloBaseDir);
-      motorD.write(veloBaseDir);
-      setCorDireita(1,1,0);
-      while (((anguloReto - grausCurva45) < retornoAnguloZ())) {
-        giro.update();
-      } 
-      setCorDireita(1,1,1);
-      anguloReto = anguloReto - grausCurva45;
-
+      curvaComHall(1, 45);
     }else if(trianguloEsquerda){
-
-      motorE.write(veloBaseEsq);
-      motorD.write(veloBaseEsq);   
-      setCorEsquerda(1,1,0);
-      while (((anguloReto + grausCurva45) > retornoAnguloZ())) {
-        giro.update();
-      }
-      setCorEsquerda(1,1,1);
-      anguloReto = anguloReto + grausCurva45;
-
+      curvaComHall(-1, 45);
     }
-    
+
+    anguloReto = retornoAnguloZ();
+
     unsigned long startTime = millis();
     while(digitalRead(no) == HIGH){
-      andarRetoPorTempo(100);
+      andarRetoPorTempo(50);
     }
-    long totalTime = millis() - startTime - 500;
 
+    //ligarGarra();
     garra90();
     abrirGarra();
-    delay(1000);
+    delay(2500);
     fecharGarra();
     subirGarra();
     delay(500);
     desligarGarra();
-  
-    andarPraTrasPorTempo(totalTime);
+    delay(500);
+
+    andarRetoComHall(25, anguloReto, true);
+    delay(500);
 
     if(trianguloDireita){
-      motorE.write(veloBaseEsq);
-      motorD.write(veloBaseEsq);
-      setCorEsquerda(1,1,0);
-      while (((anguloReto + grausCurva45) > retornoAnguloZ())) {
-        giro.update();
-      }
-      motorD.write(90);
-      motorE.write(90);
-      setCorEsquerda(1,1,1);
-      anguloReto = anguloReto + grausCurva45;
+      curvaComHall(-1, 45);
 
     }else if(trianguloEsquerda){
-      motorE.write(veloBaseDir);
-      motorD.write(veloBaseDir);
-      setCorDireita(1,1,0);
-      while (((anguloReto - grausCurva45) < retornoAnguloZ())) {
-        giro.update();
-      }
-      motorD.write(90);
-      motorE.write(90);
-      setCorDireita(1,1,1);
-      anguloReto = anguloReto - grausCurva45;
+      curvaComHall(1, 45);
 
     }
+
+    anguloReto = retornoAnguloZ();
+
   }else{
     tocar_buzzer(1000, 5, 500);
   }
@@ -885,6 +858,7 @@ void resgate(){
   if(saidaFrente){
     Serial.println("Saindo pela frente");
     sairFrente();
+    andarRetoComHall(3, anguloReto);
     return;
   }else if(saidaDireitaMeio){
     Serial.println("Saindo pela direita meio");
@@ -895,13 +869,7 @@ void resgate(){
     sairMeioEsquerda();
     return;
   }else if(saidaFrenteInicio){
-    tocar_buzzer(1000, 5, 500);
-
-    while(true){
-      motorD.write(90);
-      motorE.write(90);
-      piscaLeds(500);
-    };
+    Serial.println("Saindo pela frente no inicio");
 
     return;
   }
@@ -1096,6 +1064,22 @@ void correcao() {
 void correcaoObjeto() {
   anguloAtual = retornoAnguloZ();
   if (anguloReto - erro > anguloAtual) {
+    motorE.write(50);
+    motorD.write(160);
+  }
+  else if (anguloReto + erro < anguloAtual) {
+    motorE.write(20);
+    motorD.write(130);
+  }
+  else if (abs(anguloReto - anguloAtual) <= erro) {
+    motorE.write(veloBaseEsq);
+    motorD.write(veloBaseDir);
+  }
+}
+
+void correcaoRe(){
+  anguloAtual = retornoAnguloZ();
+  if (anguloReto - erro > anguloAtual) {
     motorE.write(160);
     motorD.write(50);
   }
@@ -1104,24 +1088,8 @@ void correcaoObjeto() {
     motorD.write(20);
   }
   else if (abs(anguloReto - anguloAtual) <= erro) {
-    motorE.write(veloBaseEsq + veloCurva90);
-    motorD.write(veloBaseDir - veloCurva90);
-  }
-}
-
-void correcaoRe(){
-  anguloAtual = retornoAnguloZ();
-  if (anguloReto - erro > anguloAtual) {
-    motorE.write(50);
-    motorD.write(160);
-  }
-  else if (anguloReto + erro < anguloAtual) {
-    motorE.write(20);
-    motorD.write(120);
-  }
-  else if (abs(anguloReto - anguloAtual) <= erro) {
-    motorE.write(veloBaseDir - veloCurva90);
-    motorD.write(veloBaseEsq + veloCurva90);
+    motorE.write(veloBaseDir);
+    motorD.write(veloBaseEsq);
   }
 }
 
@@ -1538,6 +1506,7 @@ void ligarGarra(){
   motorG.attach(motorGpin);
   motorEsqG.attach(motorEsqGpin);
   motorDirG.attach(motorDirGpin);
+  delay(500);
 }
 
 void desligarGarra(){
@@ -1549,16 +1518,18 @@ void desligarGarra(){
 
 void desligarMotorPrincipal() {
   motorG.detach();
+  delay(500);
 }
 
 void desligarMotoresGarra() {
   motorEsqG.detach();
   motorDirG.detach();
+  delay(500);
 }
 
 void descerGarra() {
   Serial.println("Descendo Garra");
-  motorG.write(180);
+  motorG.write(170);
   delay(1000);
 }
 
@@ -1575,22 +1546,50 @@ void garra90(){
 
 void subirGarra() {
   Serial.println("Subindo Garra");
-  motorG.write(5);
+  motorG.write(10);
   delay(1000);
 }
 
 void abrirGarra() {
   Serial.println("Abrindo Garra");
-  motorEsqG.write(0);
-  motorDirG.write(180);
-  delay(1000);
+  motorEsqG.write(175);
+  motorDirG.write(0);
+  delay(250);
 }
 
 void fecharGarra() {
   Serial.println("Fechando Garra");
-  motorEsqG.write(110);
-  motorDirG.write(70);
+  motorEsqG.write(90);
+  motorDirG.write(90);
+  delay(250);
 }
+
+void fechar_bolinha(){
+  motorG.write(170);
+  delay(100);
+  motorEsqG.write(160);
+  motorDirG.write(40);
+  delay(100);
+  motorEsqG.write(140);
+  motorDirG.write(60);
+  delay(100);
+  motorEsqG.write(120);
+  motorDirG.write(80);
+  delay(100);
+  motorEsqG.write(120);
+  motorDirG.write(110);
+  delay(100);
+  motorEsqG.write(100);
+  motorDirG.write(100);
+  delay(100);
+  motorG.write(165);
+  delay(100);
+  motorG.write(160);
+  delay(100);
+  motorG.write(155);
+  delay(100);
+}
+
 
 //******************************************************************************
 //*                                                                            *
@@ -1787,7 +1786,7 @@ void calibrarVerdeMedia() {
   Serial.read();
 
   // Sensor ESQUERDO
-  for (int i = 0; i < amostras; i++) {
+  for ( int i = 0; i < amostras; i++) {
     // Movimento para frente e para trás alternado
     if (i % 2 == 0) {
       motorE.write(110); // frente
@@ -1983,7 +1982,7 @@ void calibrarVermelhoMedia() {
     delay(150);
   }
 
-int mediaLux1 = somaLux1 / (amostras * 2);
+  int mediaLux1 = somaLux1 / (amostras * 2);
   int mediaC1   = somaC1   / (amostras * 2);
   int mediaDif1 = somaDif1 / (amostras * 2);
 
@@ -2307,11 +2306,6 @@ void calculosCinza() {
     Serial.print(F("G1: ")); Serial.print(g1); Serial.print(F(" | G2: ")); Serial.println(g2);
     Serial.print(F("B1: ")); Serial.print(b1); Serial.print(F(" | B2: ")); Serial.println(b2);
     Serial.print(F("C1: ")); Serial.print(c1); Serial.print(F(" | C2: ")); Serial.println(c2);
-
-    Serial.print(F("cc1 >= minCNoCinza && cc1 <= maxCNoCinza: ")); Serial.println(cc1 >= minCNoCinza && cc1 <= maxCNoCinza);
-    Serial.print(F("cc2 >= minCNoCinza && cc2 <= maxCNoCinza: ")); Serial.println(cc2 >= minCNoCinza && cc2 <= maxCNoCinza);
-    Serial.print(F("luu1 >= minLuxCinza && luu1 <= maxLuxCinza: ")); Serial.println(luu1 >= minLuxCinza && luu1 <= maxLuxCinza);
-    Serial.print(F("luu2 >= minLuxCinza && luu2 <= maxLuxCinza: ")); Serial.println(luu2 >= minLuxCinza && luu2 <= maxLuxCinza);
 }
 
 void alterarValorEEPROM(const char* nome, int endereco, int &variavel) {
@@ -2530,10 +2524,10 @@ void setup() {
 
   ligarGarra();
   subirGarra();
+  fecharGarra();
   desligarMotoresGarra();
-  delay(750); 
 
-  tocar_buzzer(1000, 3, 125);
+  //tocar_buzzer(1000, 3, 125);
 }
 
 //******************************************************************************
@@ -2543,11 +2537,9 @@ void setup() {
 //*******************************************************************************
 
 void loop() {
-  // processarComandoSerial();
-  // if (!modoConfig) {
-  //   andarReto();
-  // }
-
-  lerInfravermelho();
+  processarComandoSerial();
+  if (!modoConfig) {
+    andarReto();
+  }
 }
 
