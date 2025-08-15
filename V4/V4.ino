@@ -187,10 +187,13 @@ float erroD_cor = 0;
 const int maxAjusteCorrecao = 45; // limite de ajuste (era pequenaCurvaLadoC*3 na lógica antiga)
 
 //Desvio OBJETO - otimizado
-const int distanciaDesvio = 0; //6
+const int distanciaDesvio = 6; //6
 const int delayCurva1 = 3;
 const int delayCurva2 = 7;
 const int delayMeio = 1;
+
+static bool estavaDesalinhadoMais = false;
+
 //************************************************************************
 //*                                                                      *
 //*                              Funções                                 *
@@ -347,7 +350,7 @@ void curvaComHall(int direcao, int graus) {
   
   if (leituraInicialCurva < 350) {
     Serial.println("Valor ainda baixo após rodada extra, ajustando...");
-    leituraInicialCurva = 360;
+    leituraInicialCurva = 350;
     leituraInicialBaixa = true;
   } else if(leituraInicialCurva > 660){
     Serial.println("Valor muito alto, ajustando...");
@@ -419,12 +422,12 @@ void curvaComHall(int direcao, int graus) {
   Serial.println(" graus concluída com precisão do sensor Hall!");
 }
 
-void curva90Direita() {
-  curvaComHall(1, 90);
+void curva90Direita(int angulo = 90) {
+  curvaComHall(1, angulo);
 }
 
-void curva90Esquerda() {
-  curvaComHall(-1, 90);
+void curva90Esquerda(int angulo = 90) {
+  curvaComHall(-1, angulo);
 }
 
 void curva180Direita() {
@@ -552,12 +555,12 @@ void andarRetoComHall(int distanciaCm, int anguloReferencia ,bool praTras = fals
         if (praTras) {
           // Lógica invertida para movimento para trás
         if (erroP > 1) { // Desviou para a direita, corrigir para esquerda
-          velE = veloBaseDir - (ajuste); 
+          velE = veloBaseDir - int(ajuste*1.5); 
           velD = veloBaseEsq - ajuste;
           Serial.println("erroP > 1");
         } else if (erroP < -1) { // Desviou para a esquerda, corrigir para direita
           velE = veloBaseDir + ajuste;
-          velD = veloBaseEsq + (ajuste);
+          velD = veloBaseEsq + int(ajuste*1.5);
           Serial.println("erroP < -1");
         } else { // Está alinhado
           velE = veloBaseDir;
@@ -568,10 +571,10 @@ void andarRetoComHall(int distanciaCm, int anguloReferencia ,bool praTras = fals
         // Lógica normal para movimento para frente
         if (erroP > 1) { // Desviou para a direita, corrigir para esquerda
           velE = veloBaseEsq - ajuste;
-          velD = veloBaseDir - ajuste;
+          velD = veloBaseDir - int(ajuste*1.5);
           Serial.println("erroP > 1");
         } else if (erroP < -1) { // Desviou para a esquerda, corrigir para direita
-          velE = veloBaseEsq + ajuste;
+          velE = veloBaseEsq + int(ajuste*1.5);
           velD = veloBaseDir + ajuste;
           Serial.println("erroP < -1");
         } else { // Está alinhado
@@ -590,15 +593,6 @@ void andarRetoComHall(int distanciaCm, int anguloReferencia ,bool praTras = fals
       motorD.write(velD);
       
       ultimaCorrecao = millis();
-      
-      // Debug opcional
-      // if (lambdasContados % 5 == 0 || abs(erroP) > 3) { 
-      //   Serial.print("Hall: "); Serial.print(leituraAtual);
-      //   Serial.print(" | Lambdas: "); Serial.print(lambdasContados);
-      //   Serial.print("/"); Serial.print(lambdasNecessarios);
-      //   Serial.print(" | Ignorar próxima: "); Serial.print(ignorarPrimeiraDeteccao ? "SIM" : "NÃO");
-      //   Serial.print(" | Direção: "); Serial.println(praTras ? "TRÁS" : "FRENTE");
-      // }
     }
     
     delay(10); // Pequeno delay para não sobrecarregar
@@ -624,24 +618,10 @@ void sairFrente(){
 }
 
 void sairMeioDireita(){
-  motorE.write(veloBaseDir);
-  motorD.write(veloBaseDir);
-  while (((anguloReto - grausCurva90) < retornoAnguloZ())) {
-    giro.update();
-  }
-  anguloReto = anguloReto - grausCurva90;
-  motorE.write(90);
-  motorD.write(90);
-
-  while(sl[0] == 1 && sl[1] == 1 && sl[2] == 1 && sl[3] == 1 && sl[4] == 1){
+  sl = lerSensoresLinha();
+  while (sl[0] == 1 && sl[1] == 1 && sl[2] == 1 && sl[3] == 1 && sl[4] == 1) {
     sl = lerSensoresLinha();
-    correcaoObjeto();
-  }
-
-  while(true) {
-    motorE.write(90);
-    motorD.write(90);
-    piscaLeds(250);
+    andarRetoComHall(2, anguloReto);
   }
   return;
 }
@@ -669,7 +649,7 @@ void sairMeioEsquerda(){
   return;
 }
 
-const int distanciaMaxima = 25; //25
+const int distanciaMaxima = 30; //25
 const int distanciaParede = 50; //50
 const int distanciaSaida = 60; //60
 
@@ -701,7 +681,7 @@ void resgate(){
   bool esquerda = valorEsquerda <= distanciaMaxima;
 
   ligarGarra();
-  garraMeioDevagar();
+  garraMeio();
   desligarMotoresGarra();
   delay(250);
 
@@ -766,7 +746,7 @@ void resgate(){
 
   ligarGarra();
   abrirGarra();
-  descerGarraDevagar();
+  descerGarra();
   delay(250);
 
   //*************************************** */
@@ -786,9 +766,9 @@ void resgate(){
   
   andarRetoComHall(18, anguloReto);
   fecharGarraV2();
-  garraMeioDevagar();
+  garraMeio();
   delay(250);
-  andarRetoComHall(13, anguloReto);
+  andarRetoComHall(15, anguloReto);
 
   //Carrinho está la na frente
 
@@ -824,8 +804,7 @@ void resgate(){
     abrirGarra();
     delay(2000);
     fecharGarra();
-    garraMeioDevagar();
-    desligarGarra();
+    garraMeio();
     delay(500);
 
     anguloReto = retornoAnguloZ();
@@ -857,6 +836,31 @@ void resgate(){
       anguloReto = retornoAnguloZ();
       andarRetoComHall(65, anguloReto);
 
+      subirGarra();
+    }else if(saidaEsquerdaMeio || saidaDireitaMeio){
+      Serial.print("Saindo pelo meio: "); Serial.println(saidaEsquerdaMeio ? "Esquerda" : "Direita");
+      
+      if(trianguloDireita){
+        curvaComHall(-1, 45);
+      }else if(trianguloEsquerda){
+        curvaComHall(1, 45);
+      }
+      anguloReto = retornoAnguloZ();
+      andarRetoComHall(45, anguloReto, true);
+      anguloReto = retornoAnguloZ();
+      andarRetoComHall(26, anguloReto);
+
+      if(saidaEsquerdaMeio){
+        curva90Esquerda();
+      }else if(saidaDireitaMeio){
+        curva90Direita();
+      }
+      anguloReto = retornoAnguloZ();
+      andarRetoComHall(45, anguloReto, true);
+      anguloReto = retornoAnguloZ();
+      andarRetoComHall(65, anguloReto);
+      
+      subirGarra();
     }
   }else{
     tocar_buzzer(1000, 5, 500);
@@ -882,15 +886,15 @@ void resgate(){
     return;
   }else if(saidaDireitaMeio){
     Serial.println("Saindo pela direita meio");
-    sairMeioDireita(); 
+    sairFrente();
+    andarRetoComHall(3, anguloReto);
     return;
   }else if(saidaEsquerdaMeio){
-    Serial.println("Saindo pela esquerda meio");
-    sairMeioEsquerda();
+    sairFrente();
+    andarRetoComHall(3, anguloReto);
     return;
   }else if(saidaFrenteInicio){
     Serial.println("Saindo pela frente no inicio");
-
     return;
   }
 }
@@ -1050,6 +1054,9 @@ void correcao() {
   sl = lerSensoresLinha();
   anguloAtual = retornoAnguloZ();
   
+  int veloCorrecaoEsq = veloBaseEsq + 20;
+  int veloCorrecaoDir = veloBaseDir + 20;
+
   if (sl[0] == 0 || sl[1] == 0 || sl[2] == 0 || sl[3] == 0 || sl[4] == 0) {
     return;
   } else {    
@@ -1070,14 +1077,14 @@ void correcao() {
     ajuste = constrain(ajuste, 0, 30);
 
     if (erroP > 0) {
-      motorE.write(veloBaseEsq - ajuste);
-      motorD.write(veloBaseDir);
+      motorE.write(veloCorrecaoEsq - ajuste);
+      motorD.write(veloCorrecaoDir);
     } else if (erroP < 0) {
-      motorE.write(veloBaseEsq);
-      motorD.write(veloBaseDir + ajuste);
+      motorE.write(veloCorrecaoEsq);
+      motorD.write(veloCorrecaoDir + ajuste);
     } else {
-      motorE.write(veloBaseEsq);
-      motorD.write(veloBaseDir);
+      motorE.write(veloCorrecaoEsq);
+      motorD.write(veloCorrecaoDir);
     }
     verificaCores();
   }
@@ -1115,103 +1122,105 @@ void correcaoRe(){
   }
 }
 
-void desvioObjeto() {
-  if (SI_Frente.distance() <= distanciaDesvio) {
-    int distaciaInicial; // Alterar para o ultrassonico
-    motorD.write(veloBaseDir + veloCurva90);
-    motorE.write(veloBaseEsq - veloCurva90);
-    tocar_buzzer(500, 1, 100);    
+void desvioObjeto(bool estavaDesalinhado = false, bool direita = true, bool esquerda = false) { // serve para indicar qual lado é para desviar
+  if (ultrasonic.read() <= distanciaDesvio) {
+    motorD.write(90);
+    motorE.write(90);
+    delay(50);
+    
+    Serial.println(F("Desvio de objeto detectado!"));
+
+    tocar_buzzer(500, 2, 100);    
 
     //*************************/
-    // Curva para a esquerda 1
+    //        Curva 1
     //*************************/
-
-    motorE.write(veloBaseEsq);
-    motorD.write(veloBaseEsq);
-
-    while (((anguloReto + grausCurva90) > retornoAnguloZ())) {
-      giro.update();
-      Serial.print("OBJETO 1 Fazendo curva para a esquerda | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto + 90);
+    if(estavaDesalinhado){
+      if(esquerda){
+        curva90Esquerda(85);
+      }else{
+        curva90Direita(85);
+      }
+    }else if(estavaDesalinhadoMais){
+      if(esquerda){
+        curva90Esquerda(80);
+      }else{
+        curva90Direita(80);
+      }
     }
-    motorE.write(veloBaseEsq + veloCurva90);
-    motorD.write(veloBaseDir - veloCurva90);
-
-    anguloReto = anguloReto + grausCurva90;
-    
-    unsigned long startTime = millis();
-    while (millis() - startTime < delayCurva1 * 1000) {
-      Serial.print("Aguardando curva 1 | Tempo decorrido: "); Serial.println(millis() - startTime);
-      Serial.print("Tempo restante: "); Serial.println((delayCurva1 * 1000) - (millis() - startTime));
-      correcaoObjeto();
+    else{
+      if(esquerda){
+        curva90Esquerda();
+      }else{
+        curva90Direita();
+      }
     }
+
+    anguloReto = retornoAnguloZ();
+
+    //**************************/
+    //     Saindo da linha
+    //**************************/
+
+    andarRetoComHall(20, anguloReto);
 
     //************************/
-    // Curva para a direita 1
+    //        Curva 2
     //************************/
 
-    Serial.println("Curva para a direita 1");
-
-    motorE.write(veloBaseDir);
-    motorD.write(veloBaseDir);
-    while (((anguloReto - grausCurva90) < retornoAnguloZ())) {
-      giro.update();
-      Serial.print("OBJETO 2 Fazendo curva para a direita | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - 90);
-    }
-    motorE.write(veloBaseEsq + veloCurva90);
-    motorD.write(veloBaseDir - veloCurva90);
-
-    anguloReto = anguloReto - grausCurva90;
-
-    startTime = millis();
-    while (millis() - startTime < delayCurva2 * 1000) {
-      correcaoObjeto();
+    if(esquerda){
+      curva90Direita();
+    } else {
+      curva90Esquerda();
     }
 
-    //************************/
-    // Curva para a direita 2
-    //************************/
+    anguloReto = retornoAnguloZ();
 
-    motorE.write(veloBaseDir);
-    motorD.write(veloBaseDir);
-    while (((anguloReto - grausCurva90) < retornoAnguloZ())) {
-      giro.update();
-      Serial.print("OBJETO 3 Fazendo curva para a direita | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto - 90);
+    //**************************/
+    // Andando 30 Cm pra frente
+    //**************************/
+
+    andarRetoComHall(40, anguloReto);
+
+    if(esquerda){
+      curva90Direita();
+    } else {
+      curva90Esquerda();
     }
-    motorE.write(veloBaseEsq + veloCurva90);
-    motorD.write(veloBaseDir - veloCurva90);
 
-    anguloReto = anguloReto - grausCurva90;
-    
+    anguloReto = retornoAnguloZ();
+
+    //**************************/
+    //  Andando até achar linha
+    //**************************/
+
     sl = lerSensoresLinha();
-    while (sl[2] == 1) {
-      correcaoObjeto();
+    while (sl[0] == 1 && sl[1] == 1 && sl[2] == 1 && sl[3] == 1 && sl[4] == 1) {
+      andarRetoPorTempo(50);
       sl = lerSensoresLinha();
     }
-    motorE.write(veloBaseEsq);
+
+    //**************************/
+    //  Virando pra ficar reto
+    //**************************/
+
     motorD.write(veloBaseDir);
-
-    delay(delayMeio*1000);
-
-    //************************/
-    // Curva para a esquerda 2
-    //************************/
-
     motorE.write(veloBaseEsq);
-    motorD.write(veloBaseEsq);
+    delay(550);
 
-    while (((anguloReto + grausCurva90) > retornoAnguloZ())) {
-      giro.update();
-      Serial.print("OBJETO 4 Fazendo curva para a esquerda | Angulo Atual: "); Serial.print(retornoAnguloZ()); Serial.print(" Objetivo: "); Serial.println(anguloReto + 90);
+    if (esquerda){
+      curva90Esquerda();
+    }else{
+      curva90Direita();
     }
-    motorE.write(veloBaseEsq);
+    anguloReto = retornoAnguloZ();
     motorD.write(veloBaseDir);
-
-    anguloReto = anguloReto + grausCurva90;
+    motorE.write(veloBaseEsq);
+    delay(250);
+    return;
   }
 }
-
 static bool estavaDesalinhado = false;
-static bool estavaDesalinhadoMais = false;
 int combinacaoSensores;
 
 void andarReto() {
@@ -1228,6 +1237,15 @@ void andarReto() {
       motorD.write(veloBaseDir - veloCurva90);
       motorE.write(veloBaseEsq + veloCurva90);
     }
+  }else if(retornoAnguloY() < (anguloDoReto - 7)) {
+    while (retornoAnguloY() < (anguloDoReto - 7))
+    {
+      Serial.println(F("Subida detectada!"));
+      Serial.println(retornoAnguloY());
+      motorD.write(veloBaseDir + 30);
+      motorE.write(veloBaseEsq - 30);
+    }
+    delay(1500);
   }
 
   switch (combinacaoSensores) {
@@ -1265,6 +1283,7 @@ void andarReto() {
       Serial.print(F(" | P: ")); Serial.print(Kp * erroP);
       Serial.print(F(" | I: ")); Serial.print(Ki * erroI);
       Serial.print(F(" | D: ")); Serial.println(Kd * erroD);
+      Serial.print("Angulo subida/descida:"); Serial.println(retornoAnguloY());
 
       if (estavaDesalinhado && estavaDesalinhadoMais) {
         anguloReto = (anguloAtual + anguloReto) / 2;
@@ -1273,12 +1292,12 @@ void andarReto() {
         estavaDesalinhado = false;
         estavaDesalinhadoMais = false;
       }else if(estavaDesalinhado) {
-        anguloReto = (anguloAtual + anguloReto);
+        anguloReto = (anguloAtual + (anguloReto*2))/3;
         erroI = 0;
         Serial.print(F("Novo angulo RETO (centralizado 2): ")); Serial.println(anguloReto);
         estavaDesalinhado = false;
       }else if(estavaDesalinhadoMais) {
-        anguloReto = (anguloAtual + anguloReto);
+        anguloReto = (anguloAtual + (anguloReto*2))/3;
         erroI = 0;
         Serial.print(F("Novo angulo RETO (centralizado 3): ")); Serial.println(anguloReto);
         estavaDesalinhadoMais = false;
@@ -1294,7 +1313,7 @@ void andarReto() {
       Serial.println(F("Pequena curva esquerda"));
       estavaDesalinhado = true;
       giro.update();
-      desvioObjeto();
+      desvioObjeto(true);
       break;
 
     case 0b00011: // Curva falsa ou verde
@@ -1338,8 +1357,8 @@ void andarReto() {
       motorE.write(veloBaseEsq - pequenaCurvaLadoC);
       motorD.write(veloBaseDir);
       estavaDesalinhado = true;
-      desvioObjeto();
       giro.update();
+      desvioObjeto(true);
       break;
 
     case 0b11000: // Curva falsa ou verde
@@ -1394,18 +1413,18 @@ void andarReto() {
       Serial.println("Saiu do principal, esquerda");
       motorE.write(80);
       motorD.write(veloBaseDir);
-      desvioObjeto();
-      giro.update();
       estavaDesalinhadoMais = true;
+      giro.update();
+      desvioObjeto();
       break;
 
     case 0b11101: // Saiu do principal, direita
       Serial.println("Saiu do principal, direita");
       motorE.write(veloBaseEsq);
       motorD.write(100);
-      desvioObjeto();
       giro.update();
       estavaDesalinhadoMais = true;
+      desvioObjeto();
       break;
 
     case 0b11111: // Branco, final ou resgate
@@ -1520,7 +1539,7 @@ void andarReto() {
       for (int i = 4; i >= 0; i--) {
         Serial.print((combinacaoSensores >> i) & 1);
       }
-      tocar_buzzer(1000, 2, 50);
+      tocar_buzzer(1000, 2, 25);
       motorE.write(veloBaseEsq + 55);
       motorD.write(veloBaseDir - 55);
       break;
@@ -1560,7 +1579,7 @@ void desligarMotoresGarra() {
 
 void descerGarra() {
   Serial.println("Descendo Garra");
-  motorG.write(170);
+  motorG.write(180);
   delay(2000);
 }
 
@@ -1577,7 +1596,7 @@ void garra90(){
 
 void subirGarra() {
   Serial.println("Subindo Garra");
-  motorG.write(8);
+  motorG.write(12);
   delay(500);
 }
 
@@ -1597,7 +1616,6 @@ void fecharGarra() {
 
 void fecharGarraV2() {
   Serial.println("Fechando Garra V2");
-  motorG.write(165);
   motorEsqG.write(90);
   motorDirG.write(90);
   delay(250);
