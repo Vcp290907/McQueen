@@ -22,6 +22,16 @@
 #define EEPROM_MAX_C_VERDE_ESQ 40
 #define EEPROM_DIFERENCA_CORES_ESQ 42
 
+#define EEPROM_minLuxCinzaDir 44
+#define EEPROM_maxLuxCinzaDir 46
+#define EEPROM_minCCinzaDir 48
+#define EEPROM_maxCCinzaDir 50
+  
+#define EEPROM_minLuxCinzaEsq 52
+#define EEPROM_maxLuxCinzaEsq 54
+#define EEPROM_minCCinzaEsq 56
+#define EEPROM_maxCCinzaEsq 58
+
 #define EEPROM_C_BRANCO 10
 
 #define EEPROM_maxLuxPreto 12
@@ -116,8 +126,8 @@ int* sl;
 bool trava = false;
 
 // Parâmetros gerais
-const int veloBaseEsq = 30; //30
-const int veloBaseDir = 150; //150
+const int veloBaseEsq = 25; //27
+const int veloBaseDir = 145; //145
 const int pequenaCurvaLadoC = 25; //15
 const int pequenaCurvaLadoR = 7; //5
 const int veloCurva90 = 40; //40
@@ -150,6 +160,10 @@ int maxLuxVerdeDir, maxLuxVerdeEsq;
 int minCVerdeDir, minCVerdeEsq;
 int maxCVerdeDir, maxCVerdeEsq;
 int diferencaDasCoresDir, diferencaDasCoresEsq;
+int minLuxCinzaDir, maxLuxCinzaDir;
+int minCCinzaDir, maxCCinzaDir;
+int minLuxCinzaEsq, maxLuxCinzaEsq;
+int minCCinzaEsq, maxCCinzaEsq;
 
 // Preto - otimizado
 int maxLuxPreto = 150;
@@ -195,6 +209,7 @@ const int delayCurva2 = 7;
 const int delayMeio = 1;
 
 static bool estavaDesalinhadoMais = false;
+static bool estavaDesalinhado = false;
 
 //************************************************************************
 //*                                                                      *
@@ -202,117 +217,109 @@ static bool estavaDesalinhadoMais = false;
 //*                                                                      *
 //************************************************************************
 
-#line 203 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 218 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void tocar_buzzer(int freque, int unidades, int espera);
-#line 213 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 228 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 int * lerSensoresLinha();
-#line 220 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 235 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void setCorEsquerda(int vermelho,int verde, int azul);
-#line 226 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 241 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void setCorDireita(int vermelho,int verde, int azul);
-#line 232 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 247 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 int retornoAnguloZ();
-#line 255 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 270 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void verificaCores();
-#line 290 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 321 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void piscaLeds(int intervalo);
-#line 303 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 334 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void andarRetoPorTempo(int tempo);
-#line 313 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 344 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void andarPraTrasPorTempo(int tempo);
-#line 323 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 354 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void curvaComHall(int direcao, int graus);
-#line 433 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
-void curva180Direita();
-#line 611 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 701 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void sairFrente();
-#line 620 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 710 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void sairMeioDireita();
-#line 629 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 719 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void sairMeioEsquerda();
-#line 656 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 746 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void resgate();
-#line 902 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1179 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 int retornoAnguloY();
-#line 1053 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1335 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void correcao();
-#line 1093 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1375 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void correcaoObjeto();
-#line 1109 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1391 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void correcaoRe();
-#line 1226 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1508 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void andarReto();
-#line 1555 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1837 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void ligarGarra();
-#line 1562 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1844 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void desligarGarra();
-#line 1569 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1851 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void desligarMotorPrincipal();
-#line 1574 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1856 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void desligarMotoresGarra();
-#line 1580 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1862 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void descerGarra();
-#line 1586 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1868 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void garraMeio();
-#line 1592 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1874 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void garra90();
-#line 1597 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1879 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void subirGarra();
-#line 1603 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1885 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void abrirGarra();
-#line 1610 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1892 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void fecharGarra();
-#line 1617 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1899 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void fecharGarraV2();
-#line 1624 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
-void descerGarraDevagar();
-#line 1638 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
-void subirGarraDevagar();
-#line 1652 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
-void garraMeioDevagar();
-#line 1682 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1939 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 int retornoSensoresCor();
-#line 1715 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1972 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void retornoGiroscopio();
-#line 1736 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 1993 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void retornoSensoresLinha();
-#line 1744 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 2001 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void lerInfravermelho();
-#line 1757 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 2014 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void exibirMenuPrincipal();
-#line 1772 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 2029 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void exibirMenuCalculos();
-#line 1781 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 2038 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void exibirMenuAjusteVerde();
-#line 1795 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 2052 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void exibirMenuAjusteVermelho();
-#line 1809 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 2066 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void exibirMenuAjusteCinza();
-#line 1822 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 2077 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void calibrarVerdeMedia();
-#line 1958 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 2213 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void calibrarVermelhoMedia();
-#line 2114 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 2369 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void calibrarBrancoMedia();
-#line 2148 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 2403 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void calibrarCinzaMedia();
-#line 2255 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 2552 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void imprimirValoresEEPROM();
-#line 2313 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 2610 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void calculosVerde();
-#line 2356 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 2653 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void calculosVermelho();
-#line 2397 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 2694 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void calculosCinza();
-#line 2423 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 2740 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void alterarValorEEPROM(const char* nome, int endereco, int &variavel);
-#line 2436 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 2753 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void processarComandoSerial();
-#line 2563 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 2881 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void setup();
-#line 2648 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 2971 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void loop();
-#line 203 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
+#line 218 "C:\\Users\\VCP2909\\Desktop\\Carrinho_OBR\\Programação OBR_Arduino\\2025\\V4\\McQueen\\V4\\V4.ino"
 void tocar_buzzer(int freque, int unidades, int espera){
   int i = 0;
   for (i; i < unidades; i++) {
@@ -376,13 +383,29 @@ void verificaCores() {
   int luu1 = (int)lux1;
   int luu2 = (int)lux2;
 
+  Serial.println(F("Cores detectadas: "));
+  Serial.print(F("C1: ")); Serial.print(c1); Serial.print(F(", R1: ")); Serial.print(r1); Serial.print(F(", G1: ")); Serial.print(g1); Serial.print(F(", B1: ")); Serial.print(b1); Serial.print(F(", Lux1: ")); Serial.println(lux1);
+  Serial.print(F("C2: ")); Serial.print(c2); Serial.print(F(", R2: ")); Serial.print(r2); Serial.print(F(", G2: ")); Serial.print(g2); Serial.print(F(", B2: ")); Serial.print(b2); Serial.print(F(", Lux2: ")); Serial.println(lux2);
+
+  Serial.println("Valores guardados do cinza: "); 
+  Serial.print("minCCinzaDir= ");Serial.print(minCCinzaDir); Serial.print(", maxCCinzaDir="); Serial.print(maxCCinzaDir);
+  Serial.print(", minLuxCinzaDir="); Serial.print(minLuxCinzaDir); Serial.print(", maxLuxCinzaDir="); Serial.println(maxLuxCinzaDir);
+  Serial.print(" | minCCinzaEsq="); Serial.print(minCCinzaEsq); Serial.print(", maxCCinzaEsq="); Serial.print(maxCCinzaEsq);
+  Serial.print(", minLuxCinzaEsq="); Serial.print(minLuxCinzaEsq); Serial.print(", maxLuxCinzaEsq="); Serial.println(maxLuxCinzaEsq);
+  
+  Serial.println("Verificação cinza:");
+  Serial.print("cc1 >= minCCinzaDir"); Serial.print(" && cc1 <= maxCCinzaDir: "); Serial.print(cc1 >= minCCinzaDir); Serial.print(" && "); Serial.println(cc1 <= maxCCinzaDir);
+  Serial.print("luu1 >= minLuxCinzaDir"); Serial.print(" && luu1 <= maxLuxCinzaDir: "); Serial.print(luu1 >= minLuxCinzaDir); Serial.print(" && "); Serial.println(luu1 <= maxLuxCinzaDir);
+  Serial.print("cc2 >= minCCinzaEsq"); Serial.print(" && cc2 <= maxCCinzaEsq: "); Serial.print(cc2 >= minCCinzaEsq); Serial.print(" && "); Serial.println(cc2 <= maxCCinzaEsq);
+  Serial.print("luu2 >= minLuxCinzaEsq"); Serial.print(" && luu2 <= maxLuxCinzaEsq: "); Serial.print(luu2 >= minLuxCinzaEsq); Serial.print(" && "); Serial.println(luu2 <= maxLuxCinzaEsq);
+
   bool vermelho = ((r1 > g1 && r1 > b1 && r1 - g1 > diferencaDasCoresVermelho && cc1 >= minCVermelho 
                     && cc1 <= maxCVermelho && luu1 >= minLuxVermelho && luu1 <= maxLuxVermelho) || 
                     (r2 > g2 && r2 > b2 && r2 - g2 > diferencaDasCoresVermelho && cc2 >= minCVermelho 
                       && cc2 <= maxCVermelho && luu2 >= minLuxVermelho && luu2 <= maxLuxVermelho));
 
-  bool cinza = ((cc1 >= minCNoCinza && cc1 <= maxCNoCinza && luu1 >= minLuxCinza && luu1 <= maxLuxCinza) ||
-              (cc2 >= minCNoCinza && cc2 <= maxCNoCinza && luu2 >= minLuxCinza && luu2 <= maxLuxCinza));
+  bool cinza = (((cc1 >= minCCinzaDir && cc1 <= maxCCinzaDir) && (luu1 >= minLuxCinzaDir && luu1 <= maxLuxCinzaDir)) &&
+              ((cc2 >= minCCinzaEsq && cc2 <= maxCCinzaEsq) && (luu2 >= minLuxCinzaEsq && luu2 <= maxLuxCinzaEsq)));
 
   if (vermelho) {
     Serial.println(F("VERMELHO DETECTADO!"));
@@ -504,7 +527,6 @@ void curvaComHall(int direcao, int graus) {
     if (mudancaDetectadaCurva && !lambdaCurvaDetectado && 
       (millis() - ultimaDeteccaoCurva > debounceTimeCurva)) {
         
-        // NOVA LÓGICA: Se deve ignorar a primeira detecção (igual ao andarRetoComHall)
         if (ignorarPrimeiraDeteccao) {
           Serial.println("Ignorando primeira detecção de lambda curva (ajuste de leitura inicial)");
           ignorarPrimeiraDeteccao = false; // Só ignora uma vez
@@ -543,8 +565,8 @@ void curva90Esquerda(int angulo = 90) {
   curvaComHall(-1, angulo);
 }
 
-void curva180Direita() {
-  curvaComHall(1, 180);
+void curva180Direita(int angulo = 180) {
+  curvaComHall(1, angulo);
 }
 
 void andarRetoComHall(int distanciaCm, int anguloReferencia ,bool praTras = false) {
@@ -557,25 +579,34 @@ void andarRetoComHall(int distanciaCm, int anguloReferencia ,bool praTras = fals
   erroI = 0;
   erroAnterior = 0;
   
-  //int anguloReferencia = retornoAnguloZ();
-  
+  // --- Bias adaptativo (persistente entre chamadas) ---
+  // bias > 0 favorece o motor ESQUERDO; bias < 0 favorece o motor DIREITO
+  static float biasPercent = -1.5f;    // -0.20 .. +0.20 (±20%)
+  static int driftScore = 0;          // acumulador de deriva
+  const float biasStep = 0.05f;       // passo de 2% por evento persistente
+  const float biasMax  = 0.30f;       // limite máximo de 30%
+  const int driftWindow = 7;         // quantas leituras consistentes para somar bias
+  const int deadbandErro = 1;         // zona morta do erro para considerar "sem deriva"
+  const int decaimentoInercial = 2;   // reduz driftScore quando estabiliza
+  // ----------------------------------------------------
+
   Serial.print("Ângulo de referência: "); Serial.println(anguloReferencia);
-  
+
   // Cálculo dos lambdas necessários
   int lambdasNecessarios = (int)(distanciaCm * 1.05); // Ajustar conforme necessário
   if (lambdasNecessarios < 1) lambdasNecessarios = 1;
-  
+
   Serial.print("Lambdas necessários para "); Serial.print(distanciaCm); 
   Serial.print(" cm: "); Serial.println(lambdasNecessarios);
-  
+
   // Inicialização do sensor Hall
   int leituraInicial = analogRead(Hall_Direita);
   Serial.print("Leitura inicial do sensor Hall: "); Serial.println(leituraInicial);
-  
+
   delay(50);
   leituraInicial = analogRead(Hall_Direita);
   bool leituraInicialBaixa = false;
-  
+
   // Ajuste da leitura inicial se necessário
   if (leituraInicial < 350) {
     Serial.println("Valor ainda baixo, ajustando...");
@@ -586,139 +617,190 @@ void andarRetoComHall(int distanciaCm, int anguloReferencia ,bool praTras = fals
     leituraInicial = 650;
     leituraInicialBaixa = true;
   }
-  
+
   Serial.print("Leitura inicial ajustada foi necessária: "); Serial.println(leituraInicialBaixa ? "SIM" : "NÃO");
-  
+
   // Variáveis para contagem de lambdas
   int lambdasContados = 0;
   bool lambdaDetectado = false;
   unsigned long ultimaDeteccao = 0;
   const unsigned long debounceTime = 75;
-  
+
   // Flag para ignorar primeira detecção se leitura inicial foi ajustada
   bool ignorarPrimeiraDeteccao = leituraInicialBaixa;
-  
+
   int threshold = max(50, (int)(leituraInicial * 0.20));
-  
-  // Inicia movimento
+
+  // Função auxiliar para aplicar bias aos "bases" conforme direção
+  auto aplicarBiasBase = [&](int &baseE, int &baseD){
+    // Magnitude de avanço “pura” (sem correção) para cada lado
+    int magLeftForward  = 90 - veloBaseEsq;  // ex: 60
+    int magRightForward = veloBaseDir - 90;  // ex: 60
+
+    // Converte biasPercent em unidades de servo para cada lado
+    int biasLeftUnits  = (int)round(magLeftForward  * max(0.0f,  biasPercent));  // favorece esquerda
+    int biasRightUnits = (int)round(magRightForward * max(0.0f, -biasPercent));  // favorece direita
+
+    if (!praTras) {
+      // Frente: esquerda “mais pra frente” => valor MENOR; direita “mais pra frente” => valor MAIOR
+      baseE = veloBaseEsq - biasLeftUnits;
+      baseD = veloBaseDir + biasRightUnits;
+    } else {
+      // Ré: esquerda “mais pra trás” => valor MAIOR (base é veloBaseDir); direita “mais pra trás” => valor MENOR (base é veloBaseEsq)
+      baseE = veloBaseDir + biasLeftUnits;
+      baseD = veloBaseEsq - biasRightUnits;
+    }
+  };
+
+  // Inicia movimento com bias aplicado
   int velE, velD;
-  if (praTras) {
-    velE = veloBaseDir; 
-    velD = veloBaseEsq; 
-  } else {
-    velE = veloBaseEsq;
-    velD = veloBaseDir;
-  }
-  
-  motorE.write(velE);
-  motorD.write(velD);
-  
+  aplicarBiasBase(velE, velD);
+  motorE.write(constrain(velE, 0, 180));
+  motorD.write(constrain(velD, 0, 180));
+
   int leituraAtual;
   bool mudancaDetectada;
   unsigned long ultimaCorrecao = 0;
   const unsigned long intervaloCorrecao = 25; // Correção PID a cada 25ms
-  
-  while(lambdasContados < lambdasNecessarios) {
+
+  while (lambdasContados < lambdasNecessarios) {
     giro.update();
     leituraAtual = analogRead(Hall_Direita);
-    
+
     // Detecção de lambda (mudança magnética)
     mudancaDetectada = (leituraAtual < (leituraInicial - threshold) || 
-    leituraAtual > (leituraInicial + threshold));
-    
+                        leituraAtual > (leituraInicial + threshold));
+
     if (mudancaDetectada && !lambdaDetectado && 
-      (millis() - ultimaDeteccao > debounceTime)) {
-        
-        // Se deve ignorar a primeira detecção
-        if (ignorarPrimeiraDeteccao) {
-          Serial.println("Ignorando primeira detecção de lambda (ajuste de leitura inicial)");
-          ignorarPrimeiraDeteccao = false; // Só ignora uma vez
-          lambdaDetectado = true;
-          ultimaDeteccao = millis();
-        } else {
-          // Contabiliza normalmente
-          lambdaDetectado = true;
-          lambdasContados++;
-          ultimaDeteccao = millis();
-          Serial.print("Lambda detectado: "); Serial.println(lambdasContados);
+        (millis() - ultimaDeteccao > debounceTime)) {
+      if (ignorarPrimeiraDeteccao) {
+        Serial.println("Ignorando primeira detecção de lambda (ajuste de leitura inicial)");
+        ignorarPrimeiraDeteccao = false; // Só ignora uma vez
+        lambdaDetectado = true;
+        ultimaDeteccao = millis();
+      } else {
+        // Contabiliza normalmente
+        lambdaDetectado = true;
+        lambdasContados++;
+        ultimaDeteccao = millis();
+        Serial.print("Lambda detectado: "); Serial.println(lambdasContados);
+      }
+    }
+
+    if (!mudancaDetectada && lambdaDetectado) {
+      lambdaDetectado = false;
+    }
+
+    // Correção PID a intervalos regulares
+    if (millis() - ultimaCorrecao > intervaloCorrecao) {
+      giro.update();
+      anguloAtual = retornoAnguloZ();
+
+      // Cálculo PID
+      erroP = anguloAtual - anguloReferencia;
+      erroI += erroP;
+      erroI = constrain(erroI, -100, 100);
+      erroD = erroP - erroAnterior;
+      erroAnterior = erroP;
+
+      // Saída PID (magnitude)
+      ajuste = Kp * erroP + Ki * erroI + Kd * erroD;
+      ajuste = abs(ajuste);
+      ajuste = constrain(ajuste, 0, 30);
+
+      // --- Atualiza acumulador de deriva e bias ---
+      int signErr = 0;
+      if (erroP > deadbandErro) signErr = +1;       // puxando para a direita -> favorecer esquerda
+      else if (erroP < -deadbandErro) signErr = -1; // puxando para a esquerda -> favorecer direita
+
+      if (signErr != 0) {
+        driftScore += signErr;
+        // quando consistente o suficiente, ajusta bias
+        if (abs(driftScore) >= driftWindow) {
+          biasPercent += (signErr > 0 ? +biasStep : -biasStep);
+          biasPercent = constrain(biasPercent, -biasMax, +biasMax);
+          driftScore = 0;
+          Serial.print("[Bias] Novo biasPercent: ");
+          Serial.print(biasPercent * 100.0f); Serial.println("%");
+        }
+      } else {
+        // Decai “vontade de ajustar” quando estabiliza
+        if (driftScore > 0) driftScore = max(0, driftScore - decaimentoInercial);
+        else if (driftScore < 0) driftScore = min(0, driftScore + decaimentoInercial);
+
+        // Decai lentamente o bias quando sem erro persistente
+        if (fabs(biasPercent) > 0.001f) {
+          float dec = (biasPercent > 0 ? -biasStep * 0.25f : +biasStep * 0.25f);
+          biasPercent += dec;
+          if (fabs(biasPercent) < 0.005f) biasPercent = 0.0f; // zera próximo de 0
         }
       }
-      
-      if (!mudancaDetectada && lambdaDetectado) {
-        lambdaDetectado = false;
-      }
-      
-      // Correção PID a intervalos regulares
-      if (millis() - ultimaCorrecao > intervaloCorrecao) {
-        giro.update();
-        anguloAtual = retornoAnguloZ();
-        
-        // Cálculo PID
-        erroP = anguloAtual - anguloReferencia;
-        erroI += erroP;
-        erroI = constrain(erroI, -100, 100);
-        erroD = erroP - erroAnterior;
-        erroAnterior = erroP;
-        
-        // Saída PID
-        ajuste = Kp * erroP + Ki * erroI + Kd * erroD;
-        ajuste = abs(ajuste);
-        ajuste = constrain(ajuste, 0, 30);
-        
-        if (praTras) {
-          // Lógica invertida para movimento para trás
+      // --------------------------------------------
+
+      // Recalcula bases já com bias aplicado
+      int baseE, baseD;
+      aplicarBiasBase(baseE, baseD);
+
+      if (praTras) {
+        // Lógica invertida para movimento para trás
         if (erroP > 1) { // Desviou para a direita, corrigir para esquerda
-          velE = veloBaseDir - int(ajuste*1.5); 
-          velD = veloBaseEsq - ajuste;
-          Serial.println("erroP > 1");
+          velE = baseE - ajuste*1.5;
+          velD = baseD - ajuste;
         } else if (erroP < -1) { // Desviou para a esquerda, corrigir para direita
-          velE = veloBaseDir + ajuste;
-          velD = veloBaseEsq + int(ajuste*1.5);
-          Serial.println("erroP < -1");
+          velE = baseE + ajuste;
+          velD = baseD + ajuste*1.5;
         } else { // Está alinhado
-          velE = veloBaseDir;
-          velD = veloBaseEsq;
-          Serial.println("Alinhado");
+          velE = baseE;
+          velD = baseD;
         }
       } else {
         // Lógica normal para movimento para frente
         if (erroP > 1) { // Desviou para a direita, corrigir para esquerda
-          velE = veloBaseEsq - ajuste;
-          velD = veloBaseDir - int(ajuste*1.5);
-          Serial.println("erroP > 1");
+          velE = baseE - ajuste;
+          velD = baseD - ajuste*1.5;
         } else if (erroP < -1) { // Desviou para a esquerda, corrigir para direita
-          velE = veloBaseEsq + int(ajuste*1.5);
-          velD = veloBaseDir + ajuste;
-          Serial.println("erroP < -1");
+          velE = baseE + ajuste*1.5;
+          velD = baseD + ajuste;
         } else { // Está alinhado
-          velE = veloBaseEsq;
-          velD = veloBaseDir;
-          Serial.println("Alinhado");
+          velE = baseE;
+          velD = baseD;
         }
       }
-      
+
       // Constrain das velocidades
       velE = constrain(velE, 0, 180);
       velD = constrain(velD, 0, 180);
-      
+
       // Aplicar velocidades
       motorE.write(velE);
       motorD.write(velD);
-      
+
+      // Debug ocasional
+      static uint8_t dbgCtr = 0;
+      if ((dbgCtr++ % 8) == 0) {
+        Serial.print("[PID] erroP="); Serial.print(erroP);
+        Serial.print(" ajuste="); Serial.print(ajuste);
+        Serial.print(" bias="); Serial.print(biasPercent * 100.0f); Serial.print("%");
+        Serial.print(" baseE="); Serial.print(praTras ? veloBaseDir : veloBaseEsq);
+        Serial.print(" baseD="); Serial.print(praTras ? veloBaseEsq : veloBaseDir);
+        Serial.print(" velE="); Serial.print(velE);
+        Serial.print(" velD="); Serial.println(velD);
+      }
+
       ultimaCorrecao = millis();
     }
-    
+
     delay(10); // Pequeno delay para não sobrecarregar
   }
-  
+
   // Para os motores
   motorE.write(90);
   motorD.write(90);
   delay(100);
-  
+
   Serial.print("Movimento "); Serial.print(praTras ? "para TRÁS" : "para FRENTE");
   Serial.print(" de "); Serial.print(distanciaCm); 
-  Serial.println(" cm concluído com correção PID!");
+  Serial.println(" cm concluído com correção PID + bias!");
 }
 
 void sairFrente(){
@@ -767,7 +849,7 @@ const int distanciaParede = 50; //50
 const int distanciaSaida = 60; //60
 
 void resgate(){
-  Serial.println(F("Resgate detectado!"));
+  Serial.println(F("Resgate detetado!"));
   tocar_buzzer(500, 2, 25);
   
   motorE.write(90);
@@ -775,23 +857,44 @@ void resgate(){
 
   if(retornoAnguloY() > anguloDoReto + erroRampaDescida || retornoAnguloY() < anguloDoReto - erroRampaDescida) {
     Serial.println("Não é resgate 1!");
-    tocar_buzzer(500, 2, 25);
+    // tocar_buzzer(500, 2, 25);
     return;
-  }else if (mediaInfravermelho(1,2) >= distanciaMaxima && mediaInfravermelho(3,2) >= distanciaMaxima) {
+  }else if(mediaInfravermelho(1,2) >= 50 && mediaInfravermelho(3,2) >= 50){
     Serial.println("Não é resgate 2!");
-    tocar_buzzer(500, 2, 25);
+    // tocar_buzzer(500, 2, 25);
     return;
   }
+
+  giro.update();
+  while(retornoAnguloZ() > anguloReto || retornoAnguloZ() < anguloReto) {
+    giro.update();
+    if(retornoAnguloZ() > anguloReto) {
+      motorE.write(veloBaseEsq+55);
+      motorD.write(veloBaseEsq+55);
+    } else if(retornoAnguloZ() < anguloReto) {
+      motorE.write(veloBaseDir-55);
+      motorD.write(veloBaseDir-55);
+    }
+  }
+
+  motorD.write(90);
+  motorE.write(90);
+
+  andarRetoComHall(5, anguloReto);
 
   int valorEsquerda = mediaInfravermelho(1);
   int valorDireita = mediaInfravermelho(3);
 
   Serial.print("Valor Sensor Direita: "); Serial.println(valorDireita);
   Serial.print("Valor Sensor Esquerda: "); Serial.println(valorEsquerda);
-  Serial.print("distanciaMaxima: "); Serial.println(distanciaMaxima);
 
-  bool direita = valorDireita <= distanciaMaxima;
-  bool esquerda = valorEsquerda <= distanciaMaxima;
+  bool direita = valorDireita <= 16;
+  bool esquerda = valorEsquerda <= 16;
+  bool meio = meio = ((valorEsquerda >= 17 && valorEsquerda <= 50) && (valorDireita >= 17 && valorDireita <= 50));
+
+  Serial.print("Direita: "); Serial.println(direita);
+  Serial.print("Esquerda: "); Serial.println(esquerda);
+  Serial.print("Meio: "); Serial.println(meio);
 
   ligarGarra();
   garraMeio();
@@ -804,120 +907,305 @@ void resgate(){
   //        Alinha na parede lateral
   //    
   //************************************** */
-
-  andarRetoComHall(12, anguloReto);
-
-  if(esquerda){
-    curva90Direita();
-  }else if(direita){
-    curva90Esquerda();
-  }
-
-  andarPraTrasPorTempo(2000);
-  delay(100);
-  anguloReto = retornoAnguloZ();
-
-  //*************************************** */
-  //
-  //                PARTE 01
-  //  Vai até o meio para alinhar novamente  
-  //
-  //*************************************** */
-
-  andarRetoComHall(30, anguloReto);
   
-  //*************************************** */
-  //
-  //                PARTE 02
-  //    Verifica se tem o triângulo na frente
-  //           e alinha na parede
-  //
-  //*************************************** */
+  if(direita && esquerda && meio){
+    Serial.println("Direita e Esquerda e Meio, apenas meio ligado para precaver");
+    direita = false;
+    esquerda = false;
+  }else if(direita && esquerda){
+    Serial.println("Direita e Esquerda");
+    direita = false;
+    esquerda = false;
+    meio = true;
+  }
+  if(direita || esquerda){
+  andarRetoComHall(7, anguloReto);
 
-  if(esquerda){
-    curva90Esquerda();
-  }else if(direita){
-    curva90Direita();
+    if(esquerda){
+      curva90Direita();
+    }else if(direita){
+      curva90Esquerda();
+    }
+
+    andarPraTrasPorTempo(2000);
+    delay(100);
+    anguloReto = retornoAnguloZ();
+
+    //*************************************** */
+    //
+    //                PARTE 01
+    //  Vai até o meio para alinhar novamente  
+    //
+    //*************************************** */
+
+    andarRetoComHall(30, anguloReto);
+    
+    //*************************************** */
+    //
+    //                PARTE 02
+    //    Verifica se tem o triângulo na frente
+    //           e alinha na parede
+    //
+    //*************************************** */
+
+    if(esquerda){
+      curva90Esquerda();
+    }else if(direita){
+      curva90Direita();
+    }
+
+    andarPraTrasPorTempo(2500);
+    anguloReto = retornoAnguloZ();
+    delay(250);
+
+    bool paredeNaFrenteInicio, saidaFrenteInicio;
+
+    if(esquerda){
+      paredeNaFrenteInicio = mediaInfravermelho(3) <= distanciaParede;
+      saidaFrenteInicio = mediaInfravermelho(3) >= distanciaSaida;
+    }else if(direita){
+      paredeNaFrenteInicio = mediaInfravermelho(1) <= distanciaParede;
+      saidaFrenteInicio = mediaInfravermelho(1) >= distanciaSaida;
+    }
+
+    Serial.print("Parede na frente: "); Serial.println(paredeNaFrenteInicio);
+    Serial.print("Saída na frente: "); Serial.println(saidaFrenteInicio);
+
+    ligarGarra();
+    abrirGarra();
+    descerGarra();
+    delay(250);
+
+    //*************************************** */
+    //
+    //                PARTE 03
+    //    Vai pro meio com a garra aberta
+    // fecha, perto da borda, via mais pra frente
+    //      e verifica as saidas pros cantos
+    //
+    //*************************************** */
+
+    andarRetoComHall(25, anguloReto);
+    bool saidaEsquerdaMeio = mediaInfravermelho(1,2) > 65; 
+    bool saidaDireitaMeio = mediaInfravermelho(3,2) > 65;
+
+    //tocar_buzzer(1000, 1, 100);
+    
+    andarRetoComHall(18, anguloReto);
+    fecharGarraV2();
+    garraMeio();
+    delay(250);
+    andarRetoComHall(15, anguloReto);
+
+    //Carrinho está la na frente
+
+    bool saidaFrente = mediaInfravermelho(2) > distanciaMaxima;
+    bool trianguloEsquerda = mediaInfravermelho(1) <= distanciaMaxima;
+    bool trianguloDireita = mediaInfravermelho(3) <= distanciaMaxima;
+
+    Serial.print("Triângulo Esquerda: "); Serial.println(trianguloEsquerda);
+    Serial.print("Triângulo Direita: "); Serial.println(trianguloDireita);
+
+    if(trianguloDireita && trianguloEsquerda){
+      trianguloEsquerda == false;
+    }
+
+    if(trianguloDireita || trianguloEsquerda){
+      andarRetoComHall(30, anguloReto, true);
+
+      if(trianguloDireita){
+        curvaComHall(1, 45);
+      }else if(trianguloEsquerda){
+        curvaComHall(-1, 45);
+      }
+
+      anguloReto = retornoAnguloZ();
+
+      while(digitalRead(no) == HIGH){
+        andarRetoPorTempo(50);
+      }
+
+      //ligarGarra();
+      garra90();
+      abrirGarra();
+      delay(2000);
+      fecharGarra();
+      garraMeio();
+      delay(500);
+
+      anguloReto = retornoAnguloZ();
+
+      andarRetoComHall(25, anguloReto, true);
+      delay(250);
+
+      if(saidaFrente){
+        // Virando + 45 pra ficar reto com a parede
+        if(trianguloDireita){
+          curvaComHall(1, 40);
+        }else if(trianguloEsquerda){
+          curvaComHall(-1, 40);
+        }
+        anguloReto = retornoAnguloZ();
+
+        andarRetoComHall(45, anguloReto, true);
+        anguloReto = retornoAnguloZ();
+        andarRetoComHall(26, anguloReto);
+
+        if(trianguloDireita){
+          curva90Esquerda();
+        }else{
+          curva90Direita();
+        }
+        anguloReto = retornoAnguloZ();
+
+        andarRetoComHall(45, anguloReto, true);
+        anguloReto = retornoAnguloZ();
+        andarRetoComHall(65, anguloReto);
+
+        subirGarra();
+        desligarMotoresGarra();
+      }else if(saidaEsquerdaMeio || saidaDireitaMeio){
+        Serial.print("Saindo pelo meio: "); Serial.println(saidaEsquerdaMeio ? "Esquerda" : "Direita");
+        
+        if(trianguloDireita){
+          curvaComHall(-1, 45);
+        }else if(trianguloEsquerda){
+          curvaComHall(1, 45);
+        }
+        anguloReto = retornoAnguloZ();
+        andarRetoComHall(45, anguloReto, true);
+        anguloReto = retornoAnguloZ();
+        andarRetoComHall(26, anguloReto);
+
+        if(saidaEsquerdaMeio){
+          curva90Esquerda();
+        }else if(saidaDireitaMeio){
+          curva90Direita();
+        }
+        anguloReto = retornoAnguloZ();
+        andarRetoComHall(45, anguloReto, true);
+        anguloReto = retornoAnguloZ();
+        andarRetoComHall(65, anguloReto);
+        
+        subirGarra();
+        desligarMotoresGarra();
+      }
+    }else{
+      tocar_buzzer(1000, 5, 500);
+    }
+    
+    //**************************************** */
+    //
+    //                PARTE 04
+    //          Vai atrás da saida
+    //
+    //**************************************** */
+
+    Serial.println("=== [DEBUG] Iniciando busca pela saída ===");
+    Serial.print(F("Saida na frente em cima: ")); Serial.println(saidaFrente);
+    Serial.print(F("Saida na direita meio: ")); Serial.println(saidaDireitaMeio);
+    Serial.print(F("Saida na esquerda meio: ")); Serial.println(saidaEsquerdaMeio);
+    Serial.print(F("Saida na frente no inicio: ")); Serial.println(saidaFrenteInicio);
+
+    if(saidaFrente){
+      Serial.println("Saindo pela frente");
+      sairFrente();
+      andarRetoComHall(3, anguloReto);
+      return;
+    }else if(saidaDireitaMeio){
+      Serial.println("Saindo pela direita meio");
+      sairFrente();
+      andarRetoComHall(3, anguloReto);
+      return;
+    }else if(saidaEsquerdaMeio){
+      sairFrente();
+      andarRetoComHall(3, anguloReto);
+      return;
+    }else if(saidaFrenteInicio){
+      Serial.println("Saindo pela frente no inicio");
+      return;
+    }
   }
 
-  andarPraTrasPorTempo(2500);
-  anguloReto = retornoAnguloZ();
-  delay(250);
+  if(meio){
+    bool trianguloEntradaEsquerda = (valorEsquerda >= 14 && valorEsquerda <= 25);
+    bool trianguloEntradaDireita = (valorDireita >= 14 && valorDireita <= 25);
 
-  bool paredeNaFrenteInicio, saidaFrenteInicio;
+    if(trianguloEntradaEsquerda && trianguloEntradaDireita){
+      trianguloEntradaEsquerda = false;
+    }
 
-  if(esquerda){
-    paredeNaFrenteInicio = mediaInfravermelho(3) <= distanciaParede;
-    saidaFrenteInicio = mediaInfravermelho(3) >= distanciaSaida;
-  }else if(direita){
-    paredeNaFrenteInicio = mediaInfravermelho(1) <= distanciaParede;
-    saidaFrenteInicio = mediaInfravermelho(1) >= distanciaSaida;
-  }
+    Serial.print("Triângulo Entrada Esquerda: "); Serial.println(trianguloEntradaEsquerda);
+    Serial.print("Triângulo Entrada Direita: "); Serial.println(trianguloEntradaDireita);
+    delay(200);
 
-  Serial.print("Parede na frente: "); Serial.println(paredeNaFrenteInicio);
-  Serial.print("Saída na frente: "); Serial.println(saidaFrenteInicio);
+    ligarGarra();
+    abrirGarra();
+    descerGarra();
+    delay(500);
+    andarRetoComHall(35, anguloReto);
 
-  ligarGarra();
-  abrirGarra();
-  descerGarra();
-  delay(250);
+    tocar_buzzer(1000, 1, 100);
 
-  //*************************************** */
-  //
-  //                PARTE 03
-  //    Vai pro meio com a garra aberta
-  // fecha, perto da borda, via mais pra frente
-  //      e verifica as saidas pros cantos
-  //
-  //*************************************** */
+    bool saidaMeioEsquerda = mediaInfravermelho(1,2) > 65; 
+    bool saidaMeioDireita = mediaInfravermelho(3,2) > 65;
 
-  andarRetoComHall(25, anguloReto);
-  bool saidaEsquerdaMeio = mediaInfravermelho(1,2) > 65; 
-  bool saidaDireitaMeio = mediaInfravermelho(3,2) > 65;
+    andarRetoComHall(13, anguloReto);
 
-  //tocar_buzzer(1000, 1, 100);
-  
-  andarRetoComHall(18, anguloReto);
-  fecharGarraV2();
-  garraMeio();
-  delay(250);
-  andarRetoComHall(15, anguloReto);
+    fecharGarraV2();
+    garraMeio();
+    delay(250);
 
-  //Carrinho está la na frente
+    andarRetoComHall(10, anguloReto);
 
-  bool saidaFrente = mediaInfravermelho(2) > distanciaMaxima;
-  bool trianguloEsquerda = mediaInfravermelho(1) <= distanciaMaxima;
-  bool trianguloDireita = mediaInfravermelho(3) <= distanciaMaxima;
+    bool trianguloEsquerda = mediaInfravermelho(1) <= 25;
+    bool saidaFrente = mediaInfravermelho(2) > distanciaMaxima;
+    bool trianguloDireita = mediaInfravermelho(3) <= 25;
 
-  Serial.print("Triângulo Esquerda: "); Serial.println(trianguloEsquerda);
-  Serial.print("Triângulo Direita: "); Serial.println(trianguloDireita);
+    Serial.print("Triângulo Esquerda: "); Serial.println(trianguloEsquerda);
+    Serial.print("Saída Frente: "); Serial.println(saidaFrente);
+    Serial.print("Triângulo Direita: "); Serial.println(trianguloDireita);
 
-  if(trianguloDireita && trianguloEsquerda){
-    trianguloEsquerda == false;
-  }
+    if(trianguloEsquerda && trianguloDireita){
+      trianguloDireita = false;
+    }
 
-  if(trianguloDireita || trianguloEsquerda){
-    andarRetoComHall(30, anguloReto, true);
+    if((trianguloDireita && trianguloEntradaDireita)||(trianguloDireita && trianguloEntradaEsquerda)){
+      Serial.println("Triângulo Direita com Entrada Direita ou Esquerda");
+      trianguloDireita = false;
+    }else if((trianguloEsquerda && trianguloEntradaDireita)||(trianguloEsquerda && trianguloEntradaEsquerda)){
+      Serial.println("Triângulo Esquerda com Entrada Direita ou Esquerda");
+      trianguloEsquerda = false;
+    }
+
+    anguloReto = retornoAnguloZ();
+
+    andarRetoComHall(25, anguloReto, true);
+    delay(250);
 
     if(trianguloDireita){
       curvaComHall(1, 45);
     }else if(trianguloEsquerda){
       curvaComHall(-1, 45);
+    }else if(trianguloEntradaDireita){
+      curvaComHall(1, 90);
+      curvaComHall(1, 45);
+    }else if(trianguloEntradaEsquerda){
+      curvaComHall(-1, 90);
+      curvaComHall(-1, 45);
     }
-
     anguloReto = retornoAnguloZ();
 
-    unsigned long startTime = millis();
     while(digitalRead(no) == HIGH){
       andarRetoPorTempo(50);
     }
 
-    //ligarGarra();
     garra90();
     abrirGarra();
     delay(2000);
     fecharGarra();
     garraMeio();
+    desligarMotoresGarra();
     delay(500);
 
     anguloReto = retornoAnguloZ();
@@ -926,88 +1214,69 @@ void resgate(){
     delay(250);
 
     if(saidaFrente){
-      // Virando + 45 pra ficar reto com a parede
+      Serial.println("Saindo pela frente");
       if(trianguloDireita){
-        curvaComHall(1, 40);
-      }else if(trianguloEsquerda){
-        curvaComHall(-1, 40);
-      }
-      anguloReto = retornoAnguloZ();
-
-      andarRetoComHall(45, anguloReto, true);
-      anguloReto = retornoAnguloZ();
-      andarRetoComHall(26, anguloReto);
-
-      if(trianguloDireita){
+        curvaComHall(1, 45);
+        anguloReto = retornoAnguloZ();
+        andarRetoComHall(45, anguloReto, true);
+        anguloReto = retornoAnguloZ();
+        andarRetoComHall(26, anguloReto);
         curva90Esquerda();
-      }else{
-        curva90Direita();
-      }
-      anguloReto = retornoAnguloZ();
-
-      andarRetoComHall(45, anguloReto, true);
-      anguloReto = retornoAnguloZ();
-      andarRetoComHall(65, anguloReto);
-
-      subirGarra();
-    }else if(saidaEsquerdaMeio || saidaDireitaMeio){
-      Serial.print("Saindo pelo meio: "); Serial.println(saidaEsquerdaMeio ? "Esquerda" : "Direita");
-      
-      if(trianguloDireita){
+        anguloReto = retornoAnguloZ();
+        andarRetoComHall(30, anguloReto);
+      }else if(trianguloEsquerda){
         curvaComHall(-1, 45);
+        anguloReto = retornoAnguloZ();
+        andarRetoComHall(45, anguloReto, true);
+        anguloReto = retornoAnguloZ();
+        andarRetoComHall(26, anguloReto);
+        curva90Direita();
+        anguloReto = retornoAnguloZ();
+        andarRetoComHall(30, anguloReto);
+      }else if(trianguloEntradaEsquerda){
+        curvaComHall(1, 45);
+        anguloReto = retornoAnguloZ();
+        andarRetoComHall(45, anguloReto, true);
+        anguloReto = retornoAnguloZ();
+        andarRetoComHall(26, anguloReto);
+        curva90Direita();
+        anguloReto = retornoAnguloZ();
+        andarRetoComHall(30, anguloReto);
+      }else if(trianguloEntradaDireita){
+        curvaComHall(-1, 45);
+        anguloReto = retornoAnguloZ();
+        andarRetoComHall(45, anguloReto, true);
+        anguloReto = retornoAnguloZ();
+        andarRetoComHall(26, anguloReto);
+        curva90Esquerda();
+        anguloReto = retornoAnguloZ();
+        andarRetoComHall(30, anguloReto);
+      }
+      return;
+    }else if(saidaMeioDireita){
+      if(trianguloDireita){
+        curvaComHall(1, 45);
+        anguloReto = retornoAnguloZ();
       }else if(trianguloEsquerda){
         curvaComHall(1, 45);
-      }
-      anguloReto = retornoAnguloZ();
-      andarRetoComHall(45, anguloReto, true);
-      anguloReto = retornoAnguloZ();
-      andarRetoComHall(26, anguloReto);
-
-      if(saidaEsquerdaMeio){
-        curva90Esquerda();
-      }else if(saidaDireitaMeio){
         curva90Direita();
+        anguloReto = retornoAnguloZ();
+      }else if(trianguloEntradaEsquerda){
+        curvaComHall(-1, 45);
+        curva90Esquerda();
+      }else if(trianguloEntradaDireita){
+        curvaComHall(1, 45);
       }
-      anguloReto = retornoAnguloZ();
       andarRetoComHall(45, anguloReto, true);
       anguloReto = retornoAnguloZ();
-      andarRetoComHall(65, anguloReto);
-      
-      subirGarra();
+      andarRetoComHall(55, anguloReto); 
     }
-  }else{
-    tocar_buzzer(1000, 5, 500);
-  }
-  
-  //**************************************** */
-  //
-  //                PARTE 04
-  //          Vai atrás da saida
-  //
-  //**************************************** */
-
-  Serial.println("=== [DEBUG] Iniciando busca pela saída ===");
-  Serial.print(F("Saida na frente em cima: ")); Serial.println(saidaFrente);
-  Serial.print(F("Saida na direita meio: ")); Serial.println(saidaDireitaMeio);
-  Serial.print(F("Saida na esquerda meio: ")); Serial.println(saidaEsquerdaMeio);
-  Serial.print(F("Saida na frente no inicio: ")); Serial.println(saidaFrenteInicio);
-
-  if(saidaFrente){
-    Serial.println("Saindo pela frente");
+    
+    Serial.println("Saindo");
+    subirGarra();
+    desligarMotoresGarra();
     sairFrente();
     andarRetoComHall(3, anguloReto);
-    return;
-  }else if(saidaDireitaMeio){
-    Serial.println("Saindo pela direita meio");
-    sairFrente();
-    andarRetoComHall(3, anguloReto);
-    return;
-  }else if(saidaEsquerdaMeio){
-    sairFrente();
-    andarRetoComHall(3, anguloReto);
-    return;
-  }else if(saidaFrenteInicio){
-    Serial.println("Saindo pela frente no inicio");
     return;
   }
 }
@@ -1104,7 +1373,12 @@ void giroVerde(bool encrusilhada = false) {
     Serial.println("VERDE!! Curva 180°");
     tocar_buzzer(1000, 3, 100);
 
-    curva180Direita();
+    if(estavaDesalinhado || estavaDesalinhadoMais){
+      curva180Direita(175);
+    }
+    else{
+      curva180Direita();
+    }
 
     motorE.write(veloBaseEsq);
     motorD.write(veloBaseDir);
@@ -1168,7 +1442,7 @@ void correcao() {
   anguloAtual = retornoAnguloZ();
   
   int veloCorrecaoEsq = veloBaseEsq + 20;
-  int veloCorrecaoDir = veloBaseDir + 20;
+  int veloCorrecaoDir = veloBaseDir - 20;
 
   if (sl[0] == 0 || sl[1] == 0 || sl[2] == 0 || sl[3] == 0 || sl[4] == 0) {
     return;
@@ -1333,7 +1607,7 @@ void desvioObjeto(bool estavaDesalinhado = false, bool direita = true, bool esqu
     return;
   }
 }
-static bool estavaDesalinhado = false;
+
 int combinacaoSensores;
 
 void andarReto() {
@@ -1692,7 +1966,7 @@ void desligarMotoresGarra() {
 
 void descerGarra() {
   Serial.println("Descendo Garra");
-  motorG.write(180);
+  motorG.write(168);
   delay(2000);
 }
 
@@ -1709,14 +1983,14 @@ void garra90(){
 
 void subirGarra() {
   Serial.println("Subindo Garra");
-  motorG.write(12);
+  motorG.write(25);
   delay(500);
 }
 
 void abrirGarra() {
   Serial.println("Abrindo Garra");
   motorEsqG.write(175);
-  motorDirG.write(0);
+  motorDirG.write(5);
   delay(250);
 }
 
@@ -1729,61 +2003,36 @@ void fecharGarra() {
 
 void fecharGarraV2() {
   Serial.println("Fechando Garra V2");
-  motorEsqG.write(90);
-  motorDirG.write(90);
-  delay(250);
-}
 
-void descerGarraDevagar() {
-  Serial.println("Descendo Garra Devagar");
-  int posicaoAtual = motorG.read();  // Posição inicial (subida)
-  int posicaoFinal = 170; // Posição final (descida)
-  int velocidade = 2;     // Graus por passo (menor = mais lento)
-  int delayPasso = 12;    // Delay entre passos (ms)
-  
-  for (int pos = posicaoAtual; pos <= posicaoFinal; pos += velocidade) {
-    motorG.write(pos);
+  const int targetEsq = 60;
+  const int targetDir = 120;
+
+  int startEsq = motorEsqG.read();
+  int startDir = motorDirG.read();
+
+  int deltaEsq = targetEsq - startEsq;
+  int deltaDir = targetDir - startDir;
+
+  int steps = max(abs(deltaEsq), abs(deltaDir));
+  if (steps <= 0) {
+    delay(150);
+    return;
+  }
+
+  const int delayPasso = 12; // ms, ajuste de velocidade
+
+  for (int s = 1; s <= steps; s++) {
+    int posEsq = startEsq + (deltaEsq * s) / steps;
+    int posDir = startDir + (deltaDir * s) / steps;
+
+    motorEsqG.write(constrain(posEsq, 0, 180));
+    motorDirG.write(constrain(posDir, 0, 180));
     delay(delayPasso);
   }
-  motorG.write(posicaoFinal); // Garante posição final
+
+  delay(150);
 }
 
-void subirGarraDevagar() {
-  Serial.println("Subindo Garra Devagar");
-  int posicaoAtual = motorG.read(); // Posição inicial (descida)
-  int posicaoFinal = 8;   // Posição final (subida)
-  int velocidade = 2;     // Graus por passo
-  int delayPasso = 12;    // Delay entre passos (ms)
-  
-  for (int pos = posicaoAtual; pos >= posicaoFinal; pos -= velocidade) {
-    motorG.write(pos);
-    delay(delayPasso);
-  }
-  motorG.write(posicaoFinal); // Garante posição final
-}
-
-void garraMeioDevagar() {
-  Serial.println("Garra Meio Devagar");
-  int posicaoAtual = motorG.read(); // Lê posição atual
-  int posicaoFinal = 55;
-  int velocidade = 1;     // Movimento bem lento
-  int delayPasso = 30;
-  
-  if (posicaoAtual < posicaoFinal) {
-    // Subindo
-    for (int pos = posicaoAtual; pos <= posicaoFinal; pos += velocidade) {
-      motorG.write(pos);
-      delay(delayPasso);
-    }
-  } else {
-    // Descendo
-    for (int pos = posicaoAtual; pos >= posicaoFinal; pos -= velocidade) {
-      motorG.write(pos);
-      delay(delayPasso);
-    }
-  }
-  motorG.write(posicaoFinal);
-}
 
 
 //******************************************************************************
@@ -1923,12 +2172,10 @@ void exibirMenuAjusteCinza() {
   Serial.println(F("=== Menu 05 - Ajustar cinza manual ==="));
   Serial.println(F("1 - Ler sensores de cor"));
   Serial.println(F("2 - Calculo do Cinza"));
-  Serial.println(F("3 - maxLuxCinza"));
-  Serial.println(F("4 - minLuxCinza"));
-  Serial.println(F("5 - maxCCinza"));
-  Serial.println(F("6 - minCCinza"));
-  Serial.println(F("7 - Valores EEPROM Cinza"));
-  Serial.println(F("8 - Voltar"));
+  Serial.println(F("3 - Ajustar Limites do Sensor Direito"));
+  Serial.println(F("4 - Ajustar Limites do Sensor Esquerdo"));
+  Serial.println(F("5 - Exibir valores da EEPROM"));
+  Serial.println(F("6 - Voltar"));
   Serial.println(F("================"));
 }
 
@@ -2259,14 +2506,14 @@ void calibrarBrancoMedia() {
 }
 
 void calibrarCinzaMedia() {
-  Serial.println("=== Calibração do Cinza (Média) ===");
-  Serial.println("Coloque o sensor DIREITO sobre o CINZA e envie qualquer tecla para iniciar...");
+  Serial.println(F("=== Calibração do Cinza (Média Individual) ==="));
+  Serial.println(F("Coloque o sensor DIREITO sobre o CINZA e envie qualquer tecla para iniciar..."));
   while (!Serial.available()) { delay(10); }
   Serial.read();
 
   const int amostras = 10;
-  long somaLux1 = 0, somaC1 = 0;
-  long somaLux2 = 0, somaC2 = 0;
+  long somaLuxDir = 0, somaCDir = 0;
+  long somaLuxEsq = 0, somaCEsq = 0;
 
   // Sensor DIREITO
   for (int i = 0; i < amostras; i++) {
@@ -2289,8 +2536,8 @@ void calibrarCinzaMedia() {
     int cCinza = (int)c1;
     int luxCinza = (int)lux1;
 
-    somaLux1 += luxCinza;
-    somaC1 += cCinza;
+    somaLuxDir += luxCinza;
+    somaCDir += cCinza;
 
     Serial.print("[Direita] Amostra "); Serial.print(i+1);
     Serial.print(" | Lux: "); Serial.print(luxCinza);
@@ -2317,53 +2564,95 @@ void calibrarCinzaMedia() {
 
     motorE.write(90); // para
     motorD.write(90);
-    delay(50);
+    delay(150);
 
     tcs2.getRawData(&r2, &g2, &b2, &c2);
     lux2 = tcs2.calculateLux(r2, g2, b2);
     int cCinza = (int)c2;
     int luxCinza = (int)lux2;
 
-    somaLux2 += luxCinza;
-    somaC2 += cCinza;
+    somaLuxEsq += luxCinza;
+    somaCEsq += cCinza;
 
     Serial.print("[Esquerda] Amostra "); Serial.print(i+1);
     Serial.print(" | Lux: "); Serial.print(luxCinza);
     Serial.print(" | C: "); Serial.println(cCinza);
 
-    delay(75);
+    delay(25);
   }
 
-  int mediaLux = (somaLux1 + somaLux2) / (2 * amostras);
-  int mediaC = (somaC1 + somaC2) / (2 * amostras);
+  // Médias individuais
+  int mediaLuxDir = somaLuxDir / amostras;
+  int mediaCDir = somaCDir / amostras;
+  
+  int mediaLuxEsq = somaLuxEsq / amostras;
+  int mediaCEsq = somaCEsq / amostras;
 
-  int minLux = mediaLux * 0.95;
-  int maxLux = mediaLux * 1.2;
-  int minC = mediaC * 0.95;
-  int maxC = mediaC * 1.2;
+  // Margens (ajustadas para ser similares às do verde)
+  int minLuxDir = mediaLuxDir * 0.75;
+  int maxLuxDir = mediaLuxDir * 1.2;
+  int minCDir = mediaCDir * 0.75;
+  int maxCDir = mediaCDir * 1.35;
+
+  int minLuxEsq = mediaLuxEsq * 0.80;
+  int maxLuxEsq = mediaLuxEsq * 1.2;
+  int minCEsq = mediaCEsq * 0.80;
+  int maxCEsq = mediaCEsq * 1.25;
 
   Serial.println(F("Calibração concluída!"));
-  Serial.print(F("mediaLuxCinza: ")); Serial.println(mediaLux);
-  Serial.print(F("mediaCCinza: ")); Serial.println(mediaC);
-  Serial.print(F("minLuxCinza (80%): ")); Serial.println(minLux);
-  Serial.print(F("maxLuxCinza (120%): ")); Serial.println(maxLux);
-  Serial.print(F("minCCinza (80%): ")); Serial.println(minC);
-  Serial.print(F("maxCCinza (120%): ")); Serial.println(maxC);
+  Serial.print(F("mediaLuxCinzaDir: ")); Serial.println(mediaLuxDir);
+  Serial.print(F("mediaCCinzaDir: ")); Serial.println(mediaCDir);
+  Serial.print(F("mediaLuxCinzaEsq: ")); Serial.println(mediaLuxEsq);
+  Serial.print(F("mediaCCinzaEsq: ")); Serial.println(mediaCEsq);
 
-  EEPROM.put(EEPROM_minLuxCinza, minLux);
-  EEPROM.put(EEPROM_maxLuxCinza, maxLux);
-  EEPROM.put(EEPROM_minCNoCinza, minC);
-  EEPROM.put(EEPROM_maxCNoCinza, maxC);
+  // Salvando valores individuais na EEPROM
+  EEPROM.put(EEPROM_minLuxCinzaDir, minLuxDir);
+  EEPROM.put(EEPROM_maxLuxCinzaDir, maxLuxDir);
+  EEPROM.put(EEPROM_minCCinzaDir, minCDir);
+  EEPROM.put(EEPROM_maxCCinzaDir, maxCDir);
+  
+  EEPROM.put(EEPROM_minLuxCinzaEsq, minLuxEsq);
+  EEPROM.put(EEPROM_maxLuxCinzaEsq, maxLuxEsq);
+  EEPROM.put(EEPROM_minCCinzaEsq, minCEsq);
+  EEPROM.put(EEPROM_maxCCinzaEsq, maxCEsq);
+  
+  // Salvando também nos endereços antigos para compatibilidade
+  int minLuxCombinado = (minLuxDir + minLuxEsq) / 2;
+  int maxLuxCombinado = (maxLuxDir + maxLuxEsq) / 2;
+  int minCCombinado = (minCDir + minCEsq) / 2;
+  int maxCCombinado = (maxCDir + maxCEsq) / 2;
+  
+  EEPROM.put(EEPROM_minLuxCinza, minLuxCombinado);
+  EEPROM.put(EEPROM_maxLuxCinza, maxLuxCombinado);
+  EEPROM.put(EEPROM_minCNoCinza, minCCombinado);
+  EEPROM.put(EEPROM_maxCNoCinza, maxCCombinado);
 
-  minLuxCinza = minLux;
-  maxLuxCinza = maxLux;
-  minCNoCinza = minC;
-  maxCNoCinza = maxC;
+  // Atualizando variáveis globais (como são compartilhadas, usamos a média por enquanto)
+  minLuxCinza = minLuxCombinado;
+  maxLuxCinza = maxLuxCombinado;
+  minCNoCinza = minCCombinado;
+  maxCNoCinza = maxCCombinado;
 
-  Serial.println("Valores salvos na EEPROM!");
+  Serial.println("Valores individuais e combinados salvos na EEPROM!");
+  
+  // Exibir todos os valores calculados
+  Serial.println("=== Valores individuais calculados ===");
+  Serial.print("Sensor Direito - minLux: "); Serial.print(minLuxDir);
+  Serial.print(" | maxLux: "); Serial.print(maxLuxDir);
+  Serial.print(" | minC: "); Serial.print(minCDir);
+  Serial.print(" | maxC: "); Serial.println(maxCDir);
+  
+  Serial.print("Sensor Esquerdo - minLux: "); Serial.print(minLuxEsq);
+  Serial.print(" | maxLux: "); Serial.print(maxLuxEsq);
+  Serial.print(" | minC: "); Serial.print(minCEsq);
+  Serial.print(" | maxC: "); Serial.println(maxCEsq);
+  
+  Serial.println("=== Valores combinados (compatibilidade) ===");
+  Serial.print("minLux: "); Serial.print(minLuxCombinado);
+  Serial.print(" | maxLux: "); Serial.print(maxLuxCombinado);
+  Serial.print(" | minC: "); Serial.print(minCCombinado);
+  Serial.print(" | maxC: "); Serial.println(maxCCombinado);
 }
-
-// ...existing code...
 
 void imprimirValoresEEPROM() {
   int valor;
@@ -2518,8 +2807,10 @@ void calculosCinza() {
     int luu1 = (int)lux1;
     int luu2 = (int)lux2;
 
-    bool cinzaDireita = (cc1 >= minCNoCinza && cc1 <= maxCNoCinza && luu1 >= minLuxCinza && luu1 <= maxLuxCinza);
-    bool cinzaEsquerda = (cc2 >= minCNoCinza && cc2 <= maxCNoCinza && luu2 >= minLuxCinza && luu2 <= maxLuxCinza);
+    bool cinzaDireita = (cc1 >= minCCinzaDir && cc1 <= maxCCinzaDir && 
+                         luu1 >= minLuxCinzaDir && luu1 <= maxLuxCinzaDir);
+    bool cinzaEsquerda = (cc2 >= minCCinzaEsq && cc2 <= maxCCinzaEsq && 
+                          luu2 >= minLuxCinzaEsq && luu2 <= maxLuxCinzaEsq);
     bool cinzaAmbos = cinzaDireita && cinzaEsquerda;
 
     Serial.print(F("Cinza Direita: ")); Serial.println(cinzaDireita);
@@ -2527,10 +2818,28 @@ void calculosCinza() {
     Serial.print(F("Cinza Ambos: ")); Serial.println(cinzaAmbos);
     Serial.print(F("cc1: ")); Serial.print(cc1); Serial.print(F(" | cc2: ")); Serial.println(cc2);
     Serial.print(F("Lux1: ")); Serial.print(lux1); Serial.print(F(" | Lux2: ")); Serial.println(lux2);
-    Serial.print(F("R1: ")); Serial.print(r1); Serial.print(F(" | R2: ")); Serial.println(r2);
-    Serial.print(F("G1: ")); Serial.print(g1); Serial.print(F(" | G2: ")); Serial.println(g2);
-    Serial.print(F("B1: ")); Serial.print(b1); Serial.print(F(" | B2: ")); Serial.println(b2);
-    Serial.print(F("C1: ")); Serial.print(c1); Serial.print(F(" | C2: ")); Serial.println(c2);
+    
+    Serial.println(F("=== Parâmetros do Sensor Direito ==="));
+    Serial.print(F("minLuxCinzaDir <= luu1 <= maxLuxCinzaDir: "));
+    Serial.print(minLuxCinzaDir); Serial.print(F(" <= ")); 
+    Serial.print(luu1); Serial.print(F(" <= ")); 
+    Serial.println(maxLuxCinzaDir);
+    
+    Serial.print(F("minCCinzaDir <= cc1 <= maxCCinzaDir: "));
+    Serial.print(minCCinzaDir); Serial.print(F(" <= ")); 
+    Serial.print(cc1); Serial.print(F(" <= ")); 
+    Serial.println(maxCCinzaDir);
+    
+    Serial.println(F("=== Parâmetros do Sensor Esquerdo ==="));
+    Serial.print(F("minLuxCinzaEsq <= luu2 <= maxLuxCinzaEsq: "));
+    Serial.print(minLuxCinzaEsq); Serial.print(F(" <= ")); 
+    Serial.print(luu2); Serial.print(F(" <= ")); 
+    Serial.println(maxLuxCinzaEsq);
+    
+    Serial.print(F("minCCinzaEsq <= cc2 <= maxCCinzaEsq: "));
+    Serial.print(minCCinzaEsq); Serial.print(F(" <= ")); 
+    Serial.print(cc2); Serial.print(F(" <= ")); 
+    Serial.println(maxCCinzaEsq);
 }
 
 void alterarValorEEPROM(const char* nome, int endereco, int &variavel) {
@@ -2660,6 +2969,7 @@ void processarComandoSerial() {
           case 6: alterarValorEEPROM("minCCinza", EEPROM_minCNoCinza, minCNoCinza); break;
           case 7: imprimirValoresEEPROM(); break;
           case 0: menuAtual = 1; exibirMenuPrincipal(); break;
+          
           default: Serial.println("Opção inválida!"); exibirMenuAjusteCinza(); break;
         }
         break;
@@ -2724,13 +3034,11 @@ void setup() {
   EEPROM.get(EEPROM_MIN_C_VERDE_DIR, minCVerdeDir);
   EEPROM.get(EEPROM_MAX_C_VERDE_DIR, maxCVerdeDir);
   EEPROM.get(EEPROM_DIFERENCA_CORES_DIR, diferencaDasCoresDir);
-
   EEPROM.get(EEPROM_MIN_LUX_VERDE_ESQ, minLuxVerdeEsq);
   EEPROM.get(EEPROM_MAX_LUX_VERDE_ESQ, maxLuxVerdeEsq);
   EEPROM.get(EEPROM_MIN_C_VERDE_ESQ, minCVerdeEsq);
   EEPROM.get(EEPROM_MAX_C_VERDE_ESQ, maxCVerdeEsq);
   EEPROM.get(EEPROM_DIFERENCA_CORES_ESQ, diferencaDasCoresEsq);
-
   EEPROM.get(EEPROM_C_BRANCO, valorCnoBranco);
   EEPROM.get(EEPROM_maxLuxPreto, maxLuxPreto);
   EEPROM.get(EEPROM_maxCPreto, maxCPreto);
@@ -2743,7 +3051,14 @@ void setup() {
   EEPROM.get(EEPROM_minCVermelho, minCVermelho);
   EEPROM.get(EEPROM_maxCVermelho, maxCVermelho);
   EEPROM.get(EEPROM_diferencaDasCoresVermelho, diferencaDasCoresVermelho);
-
+  EEPROM.get(EEPROM_minLuxCinzaDir, minLuxCinzaDir);
+  EEPROM.get(EEPROM_maxLuxCinzaDir, maxLuxCinzaDir);
+  EEPROM.get(EEPROM_minCCinzaDir, minCCinzaDir);
+  EEPROM.get(EEPROM_maxCCinzaDir, maxCCinzaDir);
+  EEPROM.get(EEPROM_minLuxCinzaEsq, minLuxCinzaEsq);
+  EEPROM.get(EEPROM_maxLuxCinzaEsq, maxLuxCinzaEsq);
+  EEPROM.get(EEPROM_minCCinzaEsq, minCCinzaEsq);
+  EEPROM.get(EEPROM_maxCCinzaEsq, maxCCinzaEsq);
   ligarGarra();
   subirGarra();
   fecharGarra();
@@ -2759,15 +3074,18 @@ void setup() {
 //*******************************************************************************
 
 void loop() {
-  processarComandoSerial();
-  if (!modoConfig) {
-    andarReto();
-  }
+  // processarComandoSerial();
+  // if (!modoConfig) {
+  //   andarReto();
+  // }
 
-  // subirGarraDevagar();
-  // delay(5000);
-  // descerGarraDevagar();
-  // delay(5000);
+  ligarGarra();
+  abrirGarra();
+  descerGarra();
+  delay(5000);
+  fecharGarraV2();
+  subirGarra();
+  delay(5000);
 }
 
 
